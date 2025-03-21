@@ -1,14 +1,13 @@
-import { AdminModel } from "../models/user";
+import { AdminModel } from "../models/user.js";
 
 export const admin = async(request,response,next)=>{
     try {
-       const  userId = request._id
+       const  userId = request.body._id
 
-       const user = await AdminModel.findById(userId)
-
-       if(user.role !== 'ADMIN'){
+       const user = await AdminModel.findById(userId);
+       if(!user){
             return response.status(400).json({
-                message : "Permission denial",
+                message : "Permission denial only Admin has permision",
                 error : true,
                 success : false
             })

@@ -128,6 +128,67 @@ export async function registerEducatorController(request,response){
         })
     }
 }
+export async function registerAdminController(request,response){
+    try {
+        const  { name, email , password , role  } = request.body
+        console.log('request.body:', request.body)
+        if(!name || !email || !password){
+            return response.status(400).json({
+                message : "provide email, name, password",
+                error : true,
+                success : false
+            })
+        }
+
+        const user = await AdminModel.findOne({ email })
+
+        if(user){
+            return response.json({
+                message : "Already register email",
+                error : true,
+                success : false
+            })
+        }
+
+        const salt = await bcryptjs.genSalt(10)
+        const hashPassword = await bcryptjs.hash(password,salt)
+
+        const payload = {
+            name,
+            email,
+            role ,
+            password : hashPassword
+        }
+
+        const newUser = new AdminModel(payload)
+        const save = await newUser.save()
+
+        // const VerifyEmailUrl = `${process.env.FRONTEND_URL}/verify-email?code=${save?._id}`
+
+        // const verifyEmail = await sendEmail({
+        //     sendTo : email,
+        //     subject : "Verify email from Grocery Store",
+        //     html : verifyEmailTemplate({
+        //         name,
+        //         url : VerifyEmailUrl
+        //     })
+        // })
+
+        return response.json({
+            message : "User register successfully",
+            error : false,
+            success : true,
+            data : save
+        })
+
+    } catch (error) {
+        return response.status(500).json({
+            message : error.message || error,
+            error : true,
+            success : false
+        })
+    }
+}
 
 // loginController-For-All
 
@@ -197,15 +258,20 @@ export async function signin(request, response) {
             success: true,
             accessToken,
             refreshToken,
-            data: {
-                id: user._id,
-                name: user.name,
-                email: user.email,
-                role: user.role
+            userData: {
+                "_id": user._id,
+                "Name": user.name,
+                "Email": user.email,
+                "Role": user.role,
+                "Country":user.country,
+                "Native Language":user.nativeLanguage,
+                "Topic": user.topic,
+                "Expert": user.expert,
+                "Coach": user.coach,
+                "About": user.about,
+                "CreatedAt": user.createdAt,
             }
-        });
-
-       
+        });   
 
     } catch (error) {
         console.error("Signin error:", error);

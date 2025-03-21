@@ -52,12 +52,20 @@ const Lerner_userSchema = new mongoose.Schema({
         type : String,
         required : true
     },
+    otp : {
+        type : Number,
+    },
+    suspended : {
+        type : String,
+        enum : ['YES' , 'NO'],
+        default : 'NO'
+    }
 
 },{
     timestamps : true
 })
 
-export const LearnerUserModel = mongoose.model("User-learners ",Lerner_userSchema)
+export const LearnerUserModel = mongoose.model("User-learners",Lerner_userSchema)
 
 const Educator_userSchema = new mongoose.Schema({
     name : {
@@ -74,7 +82,6 @@ const Educator_userSchema = new mongoose.Schema({
         type : String,
         enum : ['ADMIN',"LEARNER","EDUCATOR"],
         required : true
-        // default : "USER"
     },
     country : {
         type : String,
@@ -109,6 +116,14 @@ const Educator_userSchema = new mongoose.Schema({
         type : String,
         required : true
     },
+    otp : {
+        type : Number,
+    },
+    suspended : {
+        type : String,
+        enum : ['YES' , 'NO'],
+        default : 'NO'
+    }
 
 },{
     timestamps : true,
@@ -139,4 +154,4 @@ const Admin = new mongoose.Schema({
     },
 })
 
-export const AdminModel = mongoose.model("Admin", Admin)
+export const AdminModel = mongoose.model("Admins", Admin)

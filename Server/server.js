@@ -6,6 +6,7 @@ dotenv.config();
 // files
 import DataBaseConfig from './config/dataBase/DataBaseConfig.js'
 import userRouter from './routes/user.js'
+import adminRouter from './routes/admin.js';
 const app = express()
 
 app.use(cors({
@@ -15,7 +16,8 @@ origin : "http://localhost:5173"
 
 app.use(express.json());
 
-app.use('/api/user',userRouter)
+app.use('/api/user',userRouter);
+app.use('/api/admin',adminRouter)
 
 
 
