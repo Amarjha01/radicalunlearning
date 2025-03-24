@@ -7,6 +7,7 @@ dotenv.config();
 import DataBaseConfig from './config/dataBase/DataBaseConfig.js'
 import userRouter from './routes/user.js'
 import adminRouter from './routes/admin.js';
+import verificationRouter from './routes/verification.js';
 const app = express()
 
 app.use(cors({
@@ -18,6 +19,7 @@ app.use(express.json());
 
 app.use('/api/user',userRouter);
 app.use('/api/admin',adminRouter)
+app.use('/api/verify', verificationRouter)
 
 
 
