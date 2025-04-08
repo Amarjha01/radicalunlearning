@@ -12,6 +12,7 @@ import SignIn from '../pages/SignIn.jsx'
 import SignUp from '../pages/SignUp.jsx'
 import LerSignUp from '../components/login&signup/LerSignUp.jsx'
 import EduSignUp from '../components/login&signup/EduSignUp.jsx'
+import Contact from '../pages/Contact.jsx'
 
 const routes = createBrowserRouter(
     [
@@ -36,8 +37,12 @@ const routes = createBrowserRouter(
                     element: <LearnerDashboard/>
                 },
                 {
-                    path: 'aboutUs',
+                    path: 'about',
                     element: <About />
+                },
+                {
+                    path: 'contact',
+                    element: <Contact />
                 },
                
                 

@@ -1,0 +1,76 @@
+.nav-z{
+    z-index: 50;
+}
+@property --angle{
+    syntax: "<angle>";
+    initial-value: 0deg;
+    inherits: false;
+  }
+  /* .button-1{
+    background-image: conic-gradient(from var(--angle), #FF5733, #FFC300, #DAF7A6, #900C3F , #FF5733);
+    background-image: conic-gradient(from var(--angle), #9f02ff , #1399fd);
+    animation: 1s spin linear infinite;
+  } */
+  .button-2{
+    background-image: conic-gradient(from var(--angle), #000000, #000000, #000000, #000000 , #ffffff);
+    animation: 3s spin linear infinite;
+  }
+
+  .button-1{
+    background-image: conic-gradient(from var(--angle), #9f02ff , #1399fd , #C68EFD);
+    animation: 5s spin linear infinite;
+  }
+
+  @keyframes spin{
+    from{
+      --angle: 0deg;
+    }
+    to{
+      --angle: 360deg;
+    }
+  }
+/* using in navbar gradient */
+  .filter-1{
+    filter: blur(5rem);
+  }
+  .filter-2{
+    filter: blur(1rem);
+  }
+/*  using in hero section */
+  /* .after::after {
+    content: "";
+    width: 100%;
+    height: 70%;
+    z-index: 40;
+    position: absolute;
+    background: linear-gradient(to bottom, transparent, #020817);
+}
+
+@media (min-width: 1280px) {
+    .after::after {
+        height: 80%;
+    }
+} */
+
+
+@keyframes scroll {
+    0% {
+      transform: translateX(0%); /* Start the animation off-screen */
+    }
+    100% {
+      transform: translateX(-250%); /* End the animation off-screen */
+    }
+  }
+  
+  .animate-scroll {
+    animation: scroll 25s linear infinite; /* Adjust the duration for a smoother scroll */
+    white-space: nowrap; /* Ensure the text stays on one line */
+  }
+
+  @media (min-width: 1280px) {
+    .animate-scroll {
+        animation: scroll 80s linear infinite; 
+        white-space: nowrap; 
+      }
+  }
+
