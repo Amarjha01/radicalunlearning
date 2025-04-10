@@ -11,7 +11,7 @@ function App() {
     {/* <Header /> */}
     <Nav />
     <Outlet />
-    {/* <Footer /> */}
+    <Footer />
    </div>
     </>
   )

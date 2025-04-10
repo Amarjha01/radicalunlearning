@@ -4,11 +4,13 @@ body{
 
 #root {
   /* background: #1F1300; */
-  max-width: 1280px;
+  max-width: 1680px;
   min-height:fit-content;
   margin: 0 auto;
   text-align: center;
 }
+
+
 
 ::-webkit-scrollbar{
   display: none;
@@ -45,4 +47,25 @@ body{
 .lufga-regular {
   font-family: lufga;
   font-weight: 900;
+}
+
+.agdasima-regular {
+  font-family: "Agdasima", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.agdasima-bold {
+  font-family: "Agdasima", sans-serif;
+  font-weight: 700;
+  font-style: normal;
+}
+
+.roboto-regular {
+  font-family: "Roboto", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+  /* font-variation-settings:
+    "wdth" 100; */
 }

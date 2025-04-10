@@ -1,0 +1,28 @@
+@keyframes pulseGlow {
+    0%, 100% {
+      box-shadow: 0 0 15px #6f57ff80, 0 0 30px #00f2fe40;
+    }
+    50% {
+      box-shadow: 0 0 25px #00f2fe, 0 0 50px #6f57ff;
+    }
+  }
+  
+  .pulse-glow {
+    animation: pulseGlow 2.5s ease-in-out infinite;
+  }
+
+  
+
+
+
+  /* sign in  */
+
+  .glow-hover {
+    transition: box-shadow 0.3s ease-in-out;
+  }
+  .glow-hover:hover {
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.4),
+                0 0 40px rgba(100, 100, 255, 0.3),
+                0 0 60px rgba(180, 0, 255, 0.2);
+  }
+  

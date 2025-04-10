@@ -91,7 +91,7 @@ const Hero2 = () => {
   return (
     <div className="flex flex-col items-center justify-center gap-16">
       {/* Animated Heading */}
-      <div className="my-5 text-sm lg:text-4xl codystar-regular text-white text-center overflow-hidden">
+      <div className="my-5 text-sm lg:text-4xl 2xl:text-6xl codystar-regular text-white text-center overflow-hidden">
         <div ref={textRef} className="inline-block">
           {text.split("").map((char, index) => (
             <span

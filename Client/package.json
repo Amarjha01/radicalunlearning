@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite --host 0.0.0.0",
+    "dev": "vite ",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview"
@@ -16,6 +16,7 @@
     "axios": "^1.8.4",
     "framer-motion": "^12.6.3",
     "icons": "^1.0.0",
+    "lucide-react": "^0.487.0",
     "react": "^19.0.0",
     "react-country-state-city": "^1.1.12",
     "react-dom": "^19.0.0",

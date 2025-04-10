@@ -1,0 +1,23 @@
+.input-dark {
+    @apply w-full p-3 bg-[#1f2937] border border-gray-600 rounded-lg text-white outline-none focus:border-blue-500 transition;
+  }
+  .input-container {
+    @apply bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48];
+  }
+  
+  .input-field {
+    @apply bg-transparent outline-none w-full text-white anta-regular;
+  }
+  
+  .input-select {
+    @apply w-full text-white bg-[#1e2a48] rounded outline-none;
+  }
+  
+  .input-textarea {
+    @apply w-full text-white bg-transparent outline-none anta-regular;
+  }
+  
+  .error-text {
+    @apply text-sm text-red-500;
+  }
+  
