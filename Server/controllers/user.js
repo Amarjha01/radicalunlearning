@@ -5,7 +5,7 @@ import jwt from 'jsonwebtoken';
 // LearnerUserController-registration
 export async function registerLearnerController(request,response){
     try {
-        const  { name, email , password , role , country , nativeLanguage , topic , expert , coach , about } = request.body
+        const  { name, email, role , country , language , dob, subjects , whatToLearn ,  needExpert , needCoach , bio , password , terms1 , terms2 , terms3  } = request.body
         console.log('request.body:', request.body)
         if(!name || !email || !password){
             return response.status(400).json({
@@ -31,7 +31,7 @@ export async function registerLearnerController(request,response){
         const payload = {
             name,
             email,
-            role , country , nativeLanguage , topic , expert , coach , about,
+            role , country , language , dob , subjects,  whatToLearn , needExpert , needCoach , bio, terms1 , terms2 , terms3, 
             password : hashPassword
         }
 
@@ -65,69 +65,163 @@ export async function registerLearnerController(request,response){
     }
 }
 
-// ExpertUserController-registration
+// needExpertUserController-registration
 
-export async function registerEducatorController(request,response){
+export async function registerEducatorController(request, response) {
     try {
-        const  { name, email , password , role , country , nativeLanguage , expert_area , services , payment_details , about } = request.body
-        console.log('request.body:', request.body)
-        if(!name || !email || !password){
-            return response.status(400).json({
-                message : "provide email, name, password",
-                error : true,
-                success : false
-            })
-        }
-
-        const user = await EducatorUserModel.findOne({ email })
-
-        if(user){
-            return response.json({
-                message : "Already register email",
-                error : true,
-                success : false
-            })
-        }
-
-        const salt = await bcryptjs.genSalt(10)
-        const hashPassword = await bcryptjs.hash(password,salt)
-
-        const payload = {
-            name,
-            email,
-            role , country , nativeLanguage , expert_area , services , payment_details , about,
-            password : hashPassword
-        }
-
-        const newUser = new EducatorUserModel(payload)
-        const save = await newUser.save()
-
-        // const VerifyEmailUrl = `${process.env.FRONTEND_URL}/verify-email?code=${save?._id}`
-
-        // const verifyEmail = await sendEmail({
-        //     sendTo : email,
-        //     subject : "Verify email from Grocery Store",
-        //     html : verifyEmailTemplate({
-        //         name,
-        //         url : VerifyEmailUrl
-        //     })
-        // })
-
-        return response.json({
-            message : "User register successfully",
-            error : false,
-            success : true,
-            data : save
-        })
-
+      const {
+        name,
+        email,
+        password,
+        role,
+        country,
+        language,
+        bio,
+        experience,
+        subjects,
+        serviceType,
+        payoutMethod,
+        upiId,
+        bankAccount,
+        ifscCode,
+        paypalEmail,
+        documents,
+        terms1,
+        terms2,
+        terms3,
+        terms4,
+        terms5,
+      } = request.body;
+  
+      console.log("request.body:", request.body);
+  
+      // Basic required fields check
+      if (!name || !email || !password) {
+        return response.status(400).json({
+          message: "Please provide name, email, and password",
+          error: true,
+          success: false,
+        });
+      }
+  
+      // Email format validation
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        return response.status(400).json({
+          message: "Invalid email format",
+          error: true,
+          success: false,
+        });
+      }
+  
+      // Password length validation
+      if (password.length < 8) {
+        return response.status(400).json({
+          message: "Password must be at least 8 characters long",
+          error: true,
+          success: false,
+        });
+      }
+  
+      // Terms agreement check
+      if (!terms1 || !terms2 || !terms3 || !terms4 || !terms5) {
+        return response.status(400).json({
+          message: "Please accept all terms and conditions",
+          error: true,
+          success: false,
+        });
+      }
+  
+      // Check payout method fields
+      if (payoutMethod === "upi" && !upiId) {
+        return response.status(400).json({
+          message: "UPI ID is required",
+          error: true,
+          success: false,
+        });
+      }
+  
+      if (payoutMethod === "bank" && (!bankAccount || !ifscCode)) {
+        return response.status(400).json({
+          message: "Bank account and IFSC code are required",
+          error: true,
+          success: false,
+        });
+      }
+  
+      if (payoutMethod === "paypal" && !paypalEmail) {
+        return response.status(400).json({
+          message: "PayPal email is required",
+          error: true,
+          success: false,
+        });
+      }
+  
+      const normalizedEmail = email.toLowerCase();
+      const existingUser = await EducatorUserModel.findOne({ email: normalizedEmail });
+  
+      if (existingUser) {
+        return response.status(400).json({
+          message: "Email already registered",
+          error: true,
+          success: false,
+        });
+      }
+  
+      // Hash password
+      const salt = await bcryptjs.genSalt(10);
+      const hashPassword = await bcryptjs.hash(password, salt);
+  
+      // Construct user payload
+      const payload = {
+        name,
+        email: normalizedEmail,
+        password: hashPassword,
+        role,
+        country,
+        language,
+        bio,
+        experience,
+        subjects,
+        serviceType,
+        payoutMethod,
+        upiId,
+        bankAccount,
+        ifscCode,
+        paypalEmail,
+        documents,
+        terms1,
+        terms2,
+        terms3,
+        terms4,
+        terms5,
+      };
+  
+      // Save user
+      const newUser = new EducatorUserModel(payload);
+      const savedUser = await newUser.save();
+  
+      // Remove password from response
+      const { password: _, ...userWithoutPassword } = savedUser.toObject();
+  
+      return response.json({
+        message: "User registered successfully",
+        error: false,
+        success: true,
+        data: userWithoutPassword,
+      });
+  
     } catch (error) {
-        return response.status(500).json({
-            message : error.message || error,
-            error : true,
-            success : false
-        })
+      return response.status(500).json({
+        message: error.message || "Something went wrong",
+        error: true,
+        success: false,
+      });
     }
-}
+  }
+  
+
+
 export async function registerAdminController(request,response){
     try {
         const  { name, email , password , role  } = request.body
@@ -194,7 +288,9 @@ export async function registerAdminController(request,response){
 
 export async function signin(request, response) {
     try {
-        const { role, email, password } = request.body;
+        const { email, password } = request.body;
+        const role = request.body.role?.toUpperCase();
+
         
         if (!role || !email || !password) {
             return response.status(400).json({
@@ -265,10 +361,10 @@ export async function signin(request, response) {
                 "Role": user.role,
                 "Country":user.country,
                 "Native Language":user.nativeLanguage,
-                "Topic": user.topic,
-                "Expert": user.expert,
-                "Coach": user.coach,
-                "About": user.about,
+                "whatToLearn": user.whatToLearn,
+                "needExpert": user.needExpert,
+                "needCoach": user.needCoach,
+                "bio": user.bio,
                 "CreatedAt": user.createdAt,
             }
         });   

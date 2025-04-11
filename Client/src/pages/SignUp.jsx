@@ -1,6 +1,8 @@
 import { Outlet, NavLink, useNavigate, Link } from "react-router-dom";
 import { AiFillHome } from "react-icons/ai";
 const SignUp = () => {
+
+  
   return (
     <div className="max-w-4xl min-h-screen mx-auto  p-6 rounded-lg shadow-md flex flex-col items-center z-50">
       <Link

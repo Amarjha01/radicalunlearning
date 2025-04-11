@@ -1,135 +1,186 @@
 import mongoose from "mongoose";
 
 const Lerner_userSchema = new mongoose.Schema({
-    name : {
-        type : String,
-        required : [true,"Provide name"],
-        required : true
+    name: {
+        type: String,
+        required: [true, "Provide name"],
     },
-    email : {
-        type : String,
-        required : [true,"Provide name"],
-        required : true
+    email: {
+        type: String,
+        required: [true, "Provide email"],
+        unique: true,
     },
-    role : {
-        type : String,
-        enum : ['ADMIN',"LEARNER","EDUCATOR"],
-        required : true
-        // default : "USER"
+    role: {
+        type: String,
+        required: true,
     },
-    country : {
-        type : String,
-        required : true
-
+    country: {
+        type: String,
+        required: true,
     },
-    nativeLanguage : {
-        type : String,
-        required : true
-
+    language: {
+        type: String,
+        required: true,
     },
-    topic : {
-        type : String,
-        required : true
-
+    dob: {
+        type: Date,
+        required: true,
     },
-    expert : {
-        type : String,
-        enum: ['YES','NO'],
-        default : 'NO',
-
+    subjects: {
+        type: [String],
+        required: true,
     },
-    coach : {
-        type : String,
-        required : true
-
+    needExpert: {
+        type: String,
     },
-    about : {
-        type : String,
-        required : true
-
+    needCoach: {
+        type: String,
     },
-    password : {
-        type : String,
-        required : true
+    bio: {
+        type: String,
+        required: true,
     },
-    otp : {
-        type : Number,
+    terms1: {
+        type: Boolean,
+        required: true,
     },
-    suspended : {
-        type : String,
-        enum : ['YES' , 'NO'],
-        default : 'NO'
+    terms2: {
+        type: Boolean,
+        required: true,
+    },
+    terms3: {
+        type: Boolean,
+        required: true,
+    },
+    password: {
+        type: String,
+        required: true,
+    },
+    otp: {
+        type: Number,
+        default : 0
+    },
+    suspended: {
+        type: String,
+        enum: ['YES', 'NO'],
+        default: 'NO',
     }
+}, {
+    timestamps: true
+});
 
-},{
-    timestamps : true
-})
+export const LearnerUserModel = mongoose.model("User-learners", Lerner_userSchema);
 
-export const LearnerUserModel = mongoose.model("User-learners",Lerner_userSchema)
+
 
 const Educator_userSchema = new mongoose.Schema({
-    name : {
-        type : String,
-        required : [true,"Provide name"],
-        required : true
+  name: {
+    type: String,
+    required: [true, "Provide name"],
+  },
+  email: {
+    type: String,
+    required: [true, "Provide email"],
+    unique: true,
+  },
+  role: {
+    type: String,
+    required: true,
+  },
+  country: {
+    type: String,
+    required: true,
+  },
+  language: {
+    type: String,
+    required: true,
+  },
+  bio: {
+    type: String,
+    required: true,
+  },
+  experience: {
+    type: String,
+    required: true,
+  },
+  subjects: {
+    type: [String], // array of subjects like ['Math', 'Art']
+    required: true,
+  },
+  serviceType: {
+    type: String,
+    required: true,
+  },
+  payoutMethod: {
+    type: String,
+    required: true,
+  },
+  upiId: {
+    type: String,
+    required: function () {
+      return this.payoutMethod === 'upi';
     },
-    email : {
-        type : String,
-        required : [true,"Provide name"],
-        required : true
+  },
+  bankAccount: {
+    type: String,
+    required: function () {
+      return this.payoutMethod === 'bank';
     },
-    role : {
-        type : String,
-        enum : ['ADMIN',"LEARNER","EDUCATOR"],
-        required : true
+  },
+  ifscCode: {
+    type: String,
+    required: function () {
+      return this.payoutMethod === 'bank';
     },
-    country : {
-        type : String,
-        required : true
+  },
+  paypalEmail: {
+    type: String,
+    required: function () {
+      return this.payoutMethod === 'paypal';
+    },
+  },
+  documents: {
+    type: [String], 
+    required: true,
+  },
+  password: {
+    type: String,
+    required: true,
+  },
+  terms1: {
+    type: Boolean,
+    required: true,
+  },
+  terms2: {
+    type: Boolean,
+    required: true,
+  },
+  terms3: {
+    type: Boolean,
+    required: true,
+  },
+  terms4: {
+    type: Boolean,
+    required: true,
+  },
+  terms5: {
+    type: Boolean,
+    required: true,
+  },
+//   otp: {
+//     type: Number,
+//   },
+//   suspended: {
+//     type: String,
+//     enum: ['YES', 'NO'],
+//     default: 'NO',
+//   },
+}, {
+  timestamps: true,
+});
 
-    },
-    nativeLanguage : {
-        type : String,
-        required : true
+export const EducatorUserModel = mongoose.model("User-educators", Educator_userSchema);
 
-    },
-    expert_area : {
-        type : Array,
-        required : true
-    },
-    services : {
-        type : String,
-        required : true
-
-    },
-    payment_details : {
-        type : Array,
-        required : true
-
-    },
-    documents : {
-        type : Array,
-        required : true
-    },
-
-    password : {
-        type : String,
-        required : true
-    },
-    otp : {
-        type : Number,
-    },
-    suspended : {
-        type : String,
-        enum : ['YES' , 'NO'],
-        default : 'NO'
-    }
-
-},{
-    timestamps : true,
-})
-
-export const EducatorUserModel = mongoose.model("User-educators", Educator_userSchema)
 
 const Admin = new mongoose.Schema({
     name : {

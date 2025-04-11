@@ -1,9 +1,13 @@
 import { useForm } from "react-hook-form";
 import { motion } from "framer-motion";
 import { useState } from "react";
-import { CountrySelect, LanguageSelect } from "react-country-state-city";
+import { IoMdEye } from "react-icons/io";
+import { IoMdEyeOff } from "react-icons/io";
+import { RiLockPasswordFill } from "react-icons/ri";
 import Select from "react-select";
 import "react-country-state-city/dist/react-country-state-city.css";
+// import API from "../../common/apis/ServerBaseURL";
+import axios from "axios";
 
 const LerSignUp = () => {
   const {
@@ -15,13 +19,21 @@ const LerSignUp = () => {
     formState: { errors },
   } = useForm();
 
-  const roleType = watch("roleType");
+  const roleType = watch("role");
   const dob = watch("dob");
+  const [isSubmitting , setIsSubmitting] = useState(false);
+  const [showPass, setShowPass] = useState(false);
   const [countryError, setCountryError] = useState(false);
   const [languageError, setLanguageError] = useState(false);
   const [country, setCountry] = useState("");
   const [language, setLanguage] = useState("");
   const [selectedTopics, setSelectedTopics] = useState([]);
+
+
+const handleShowPass = () =>{
+  setShowPass(!showPass);
+}
+
 
   const countryList = [
     "United States",
@@ -97,32 +109,46 @@ const LerSignUp = () => {
     }
   };
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     let hasError = false;
-
+  
     if (!country) {
       setCountryError(true);
       hasError = true;
     } else {
       setCountryError(false);
     }
-
+  
     if (!language) {
       setLanguageError(true);
       hasError = true;
     } else {
       setLanguageError(false);
     }
-
+  
     if (hasError) return;
-
-    console.log("Learner Form Submitted:", {
-      ...data,
-      country,
-      language,
-      subjects: data.subjects?.map((s) => s.value),
-    });
+  
+    try {
+      setIsSubmitting(true);
+  
+      const response = await axios.post('http://localhost:3000/api/user/register-learner', {
+        ...data,
+        country,
+        language,
+        subjects: selectedTopics.map((s) => s.value),
+      });
+  
+      alert("Registration Successful!");
+      console.log(response.data);
+      // reset(); // optional
+    } catch (error) {
+      console.log("Error in registration:", error);
+      alert("Something went wrong. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
+  
 
   return (
     <motion.form
@@ -140,12 +166,12 @@ const LerSignUp = () => {
         </label>
         <div className="flex items-center bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48]">
           <input
-            {...register("fullName", { required: true })}
+            {...register("name", { required: true })}
             placeholder="Full Name"
             className="bg-transparent outline-none w-full text-white anta-regular"
           />
         </div>
-        {errors.fullName && (
+        {errors.name && (
           <span className="text-sm text-red-800">Please enter full name</span>
         )}
       </div>
@@ -156,12 +182,12 @@ const LerSignUp = () => {
         </label>
         <div className="flex items-center bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48]">
           <input
-            {...register("mail", { required: true })}
+            {...register("email", { required: true })}
             placeholder="Enter Your mail id"
             className="bg-transparent outline-none w-full text-white anta-regular"
           />
         </div>
-        {errors.mail && (
+        {errors.email && (
           <span className="text-sm text-red-800">
             Please enter your mail Id.
           </span>
@@ -173,14 +199,14 @@ const LerSignUp = () => {
       Are you a learner or parent registering on behalf of learner?
       </label>
    <div className="bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48]">
-   <select {...register("roleType", { required: "Please select your role" })} className="w-full text-white outline-none bg-transparent rounded">
+   <select {...register("role", { required: "Please select your role" })} className="w-full text-white outline-none bg-transparent rounded">
         <option value="">Select</option>
         <option value="Learner">Learner</option>
         <option value="Parent">Parent</option>
       </select>
       
    </div>
-      {errors.roleType && <p className="text-red-600 text-sm">{errors.roleType.message}</p>}
+      {errors.role && <p className="text-red-600 text-sm">{errors.roleType.message}</p>}
      </div>
 
       {roleType === "Parent" && (
@@ -319,14 +345,52 @@ const LerSignUp = () => {
         className="w-full text-white bg-transparent outline-hidden rounded"
         rows={5}
         placeholder="About me (500 words max)"
+        
       />
 </div>
       {errors.bio && <p className="text-red-600 text-sm">{errors.bio.message}</p>}
 </div>
 
+          {/* Password */}
+          <div>
+            <div className="flex items-center gap-2 bg-[#1f2937] p-3 rounded-lg border border-gray-600 focus-within:border-blue-500">
+              <RiLockPasswordFill className="text-gray-400" />
+              <input
+                type={`${showPass ? 'text' : 'password'}`}
+                placeholder="Password"
+                {...register("password", {
+                  required: "Password is required",
+                  minLength: {
+                    value: 6,
+                    message: "Password must be at least 6 characters",
+                  },
+                  maxLength: {
+                    value: 100,
+                    message: "Password too long",
+                  },
+                  validate: (value) => {
+                    const hasScriptTag = /<script.*?>.*?<\/script>/i.test(value);
+                    return !hasScriptTag || "No script tags allowed!";
+                  }
+                })}
+                className="bg-transparent outline-none text-white w-full"
+              />
+               <button
+      type="button"
+      onClick={handleShowPass}
+      className="text-xl text-gray-400 focus:outline-none cursor-pointer"
+    >
+      {showPass ?  <IoMdEye /> : <IoMdEyeOff />}
+    </button>
+            </div>
+            {errors.password && (
+              <p className="text-red-400 text-sm">{errors.password.message}</p>
+            )}
+          </div>
+
       <fieldset className="text-white bg-[#0e142a] rounded-lg p-4 border border-[#1e2a48]">
         <legend className="font-bold">Accept Terms</legend>
-        <label className="block cursor-pointer">
+        <label className="block cursor-pointer ">
           <input type="checkbox" {...register("terms1", { required: true })} /> My parents are aware I'm using this site
         </label>
         {errors.terms1 && <p className="text-red-600 text-sm">Required</p>}

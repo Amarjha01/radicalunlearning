@@ -3,8 +3,10 @@ import { motion } from "framer-motion";
 import { useState } from "react";
 import { CountrySelect, LanguageSelect } from "react-country-state-city";
 import CreatableSelect from "react-select/creatable";
-import "react-country-state-city/dist/react-country-state-city.css";
-
+import { IoMdEye } from "react-icons/io";
+import { IoMdEyeOff } from "react-icons/io";
+import { RiLockPasswordFill } from "react-icons/ri";
+import axios from "axios";
 const subjectOptions = [
   { value: "Math", label: "Math" },
   { value: "Science", label: "Science" },
@@ -18,7 +20,7 @@ const subjectOptions = [
   { value: "Health", label: "Health" },
 ];
 
-// Add these arrays at the top of the file
+// Add these arrays at the top of the documents
 const countryList = [
   "United States",
   "India",
@@ -72,11 +74,17 @@ const languageList = [
 ];
 
 const EduSignUp = () => {
+  const [isSubmitting , setIsSubmitting] = useState(false);
+  const [showPass, setShowPass] = useState(false);
   const [countryError, setCountryError] = useState(false);
   const [languageError, setLanguageError] = useState(false);
   const [country, setCountry] = useState("");
   const [language, setLanguage] = useState("");
-  const [files, setFiles] = useState([]);
+  const [documentss, setdocumentss] = useState([]);
+
+  const handleShowPass = () =>{
+    setShowPass(!showPass);
+  }
 
   const {
     register,
@@ -91,7 +99,7 @@ const EduSignUp = () => {
   const educatorType = watch("role");
   const payoutMethod = watch("payoutMethod");
 
-  const onSubmit = (data) => {
+  const onSubmit = async(data) => {
     let hasError = false;
 
     if (!country) {
@@ -115,13 +123,36 @@ const EduSignUp = () => {
       country,
       language,
       subjects: data.subjects?.map((s) => s.value),
-      files,
+      documentss,
     });
+
+
+    try {
+      setIsSubmitting(true);
+  
+      const response = await axios.post('http://localhost:3000/api/user/register-educator', {
+        ...data,
+        country,
+        language,
+        subjects: data.subjects?.map((s) => s.value),
+      });
+      
+  
+      alert("Registration Successful!");
+      console.log(response.data);
+      // reset(); // optional
+    } catch (error) {
+      console.log("Error in registration:", error);
+      alert("Something went wrong. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+
   };
 
-  const handleFileUpload = (e) => {
-    const selected = Array.from(e.target.files).slice(0, 10);
-    setFiles(selected);
+  const handledocumentsUpload = (e) => {
+    const selected = Array.from(e.target.documentss).slice(0, 10);
+    setdocumentss(selected);
   };
 
   return (
@@ -141,12 +172,12 @@ const EduSignUp = () => {
         </label>
         <div className="flex items-center bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48]">
           <input
-            {...register("fullName", { required: true })}
+            {...register("name", { required: true })}
             placeholder="Full Name"
             className="bg-transparent outline-none w-full text-white anta-regular"
           />
         </div>
-        {errors.fullName && (
+        {errors.name && (
           <span className="text-sm text-red-800">Please enter full name</span>
         )}
       </div>
@@ -157,12 +188,12 @@ const EduSignUp = () => {
         </label>
         <div className="flex items-center bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48]">
           <input
-            {...register("mail", { required: true })}
+            {...register("email", { required: true })}
             placeholder="Enter Your mail id"
             className="bg-transparent outline-none w-full text-white anta-regular"
           />
         </div>
-        {errors.mail && (
+        {errors.email && (
           <span className="text-sm text-red-800">
             Please enter your mail Id.
           </span>
@@ -435,6 +466,44 @@ const EduSignUp = () => {
         </div>
       )}
 
+      
+                {/* Password */}
+                <div>
+                  <div className="flex items-center gap-2 bg-[#1f2937] p-3 rounded-lg border border-gray-600 focus-within:border-blue-500">
+                    <RiLockPasswordFill className="text-gray-400" />
+                    <input
+                      type={`${showPass ? 'text' : 'password'}`}
+                      placeholder="Password"
+                      {...register("password", {
+                        required: "Password is required",
+                        minLength: {
+                          value: 6,
+                          message: "Password must be at least 6 characters",
+                        },
+                        maxLength: {
+                          value: 100,
+                          message: "Password too long",
+                        },
+                        validate: (value) => {
+                          const hasScriptTag = /<script.*?>.*?<\/script>/i.test(value);
+                          return !hasScriptTag || "No script tags allowed!";
+                        }
+                      })}
+                      className="bg-transparent outline-none text-white w-full"
+                    />
+                     <button
+            type="button"
+            onClick={handleShowPass}
+            className="text-xl text-gray-400 focus:outline-none cursor-pointer"
+          >
+            {showPass ?  <IoMdEye /> : <IoMdEyeOff />}
+          </button>
+                  </div>
+                  {errors.password && (
+                    <p className="text-red-400 text-sm">{errors.password.message}</p>
+                  )}
+                </div>
+
       <fieldset className="border p-2 text-sm rounded space-y-2 text-white">
         <legend className="font-bold">Accept Terms</legend>
         {[1, 2, 3, 4, 5].map((num) => (
@@ -467,28 +536,30 @@ const EduSignUp = () => {
        <input
           type="file"
           multiple
-          accept=".pdf,.doc,.docx,.jpg,.png"
-          onChange={handleFileUpload}
+          accept=".pdf,.doc,.docx"
+          onChange={handledocumentsUpload}
           className="w-full text-white outline-none "
         />
        </div>
-        {files.length > 0 && (
+        {documentss.length > 0 && (
           <ul className="list-disc ml-5 text-sm text-gray-600">
-            {files.map((file, idx) => (
-              <li key={idx}>{file.name}</li>
+            {documentss.map((documents, idx) => (
+              <li key={idx}>{documents.name}</li>
             ))}
           </ul>
         )}
       </div>
           {/* Submit Button */}
-          <div className="text-center">
-            <button
-              type="submit"
-              className="mt-4 px-6 py-3 rounded-full bg-gradient-to-r from-[#6f57ff] to-[#00f2fe] text-white font-semibold tracking-wide hover:opacity-90 transition duration-300 cursor-pointer"
-            >
-              Send Message
-            </button>
-          </div>
+          <button
+  type="submit"
+  disabled={isSubmitting}
+  className={`mt-4 px-6 py-3 rounded-full bg-gradient-to-r from-[#6f57ff] to-[#00f2fe] text-white font-semibold tracking-wide ${
+    isSubmitting ? "opacity-50 cursor-not-allowed" : "hover:opacity-90"
+  } transition duration-300`}
+>
+  {isSubmitting ? "Submitting..." : "Send Message"}
+</button>
+
     </motion.form>
   );
 };

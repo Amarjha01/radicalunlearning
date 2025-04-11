@@ -1,8 +1,14 @@
-backendDomain="http://localhost:3000";
+const backendDomain = "http://localhost:3000";
 
-const API={
-    registration: { 
-        url: `${backendDomain}/api/signup`,
-        method: 'POST'
-    },
-}
+const API = {
+  registerLearner: { 
+    url: `${backendDomain}/api/user/register-learner`,
+    method: 'POST',
+  },
+  signIn: { 
+    url: `${backendDomain}/api/signin`,
+    method: 'POST',
+  },
+};
+
+export default API;
