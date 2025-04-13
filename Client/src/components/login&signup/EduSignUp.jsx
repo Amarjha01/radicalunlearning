@@ -179,7 +179,7 @@ const EduSignUp = () => {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
       onSubmit={handleSubmit(onSubmit)}
-      className="max-w-3xl  mx-auto  space-y-5 roboto-regular bg-[#0b0f19]/80 p-10 rounded-2xl shadow-[0_0_40px_#2b6bff40] backdrop-blur-lg  w-full border border-[#1e2a48]"
+      className="max-w-3xl  mx-auto  space-y-5 roboto-regular bg-[#0b0f19]/80 p-10 rounded-2xl hover:shadow-[0_0_40px_#2b6bff80] shadow-[0_0_40px_#2b6bff40] transition-all duration-300 backdrop-blur-lg  w-full border border-[#1e2a48]"
     >
       <h2 className="text-xl font-bold mb-4 orbitron-regular bg-gradient-to-r from-[#6f57ff] via-[#00f2fe] to-[#4facfe] bg-clip-text text-transparent">
         Educator Registration
