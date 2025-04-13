@@ -14,7 +14,7 @@
     "@reduxjs/toolkit": "^2.6.1",
     "@tailwindcss/vite": "^4.0.14",
     "axios": "^1.8.4",
-    "framer-motion": "^12.6.3",
+    "framer-motion": "^12.6.5",
     "icons": "^1.0.0",
     "lucide-react": "^0.487.0",
     "react": "^19.0.0",
@@ -25,7 +25,8 @@
     "react-redux": "^9.2.0",
     "react-router-dom": "^7.4.0",
     "react-select": "^5.10.1",
-    "tailwindcss": "^4.0.14"
+    "redux-persist": "^6.0.0",
+    "swiper": "^11.2.6"
   },
   "devDependencies": {
     "@eslint/js": "^9.21.0",

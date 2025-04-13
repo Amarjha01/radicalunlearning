@@ -1,9 +1,17 @@
 import React from "react";
-
+import CircularText from './CircularText';
 const About = () => {
   return (
+    
     <section className="min-h-screen w-full bg-[#060b1b] text-white px-6 md:px-20 py-20 flex flex-col items-center justify-center">
       {/* Glowing Main Title */}
+      
+      <CircularText
+  text="REACT*BITS*COMPONENTS*"
+  onHover="speedUp"
+  spinDuration={20}
+  className="custom-class"
+/>
       <h1 className="text-4xl md:text-5xl font-bold text-center mb-10 bg-gradient-to-r from-[#4facfe] via-[#6f57ff] to-[#00f2fe] bg-clip-text text-transparent orbitron-regular tracking-widest">
         🚀 About Us
       </h1>

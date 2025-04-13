@@ -20,6 +20,8 @@ const subjectOptions = [
   { value: "Health", label: "Health" },
 ];
 
+
+
 // Add these arrays at the top of the documents
 const countryList = [
   "United States",
@@ -86,6 +88,21 @@ const EduSignUp = () => {
     setShowPass(!showPass);
   }
 
+  // bio text area limit
+  const [bio, setBio] = useState("");
+  const [wordCount, setWordCount] = useState(0);
+  
+  // Count words in the bio and update the state
+  const handleBioChange = (e) => {
+    const value = e.target.value;
+    const words = value.trim().split(/\s+/).filter(Boolean); // Split by spaces and filter out empty strings
+    
+    if (words.length <= 150) {
+      setBio(value);
+      setWordCount(words.length);
+    }
+  };
+
   const {
     register,
     handleSubmit,
@@ -96,8 +113,9 @@ const EduSignUp = () => {
     control,
   } = useForm();
 
-  const educatorType = watch("role");
+  const educatorType = watch("subrole");
   const payoutMethod = watch("payoutMethod");
+  const serviceType = watch("serviceType")
 
   const onSubmit = async(data) => {
     let hasError = false;
@@ -157,11 +175,11 @@ const EduSignUp = () => {
 
   return (
     <motion.form
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
       onSubmit={handleSubmit(onSubmit)}
-      className="max-w-3xl mx-auto  space-y-5 roboto-regular bg-[#0b0f19]/80 p-10 rounded-2xl shadow-[0_0_40px_#2b6bff40] backdrop-blur-lg  w-full border border-[#1e2a48]"
+      className="max-w-3xl  mx-auto  space-y-5 roboto-regular bg-[#0b0f19]/80 p-10 rounded-2xl shadow-[0_0_40px_#2b6bff40] backdrop-blur-lg  w-full border border-[#1e2a48]"
     >
       <h2 className="text-xl font-bold mb-4 orbitron-regular bg-gradient-to-r from-[#6f57ff] via-[#00f2fe] to-[#4facfe] bg-clip-text text-transparent">
         Educator Registration
@@ -202,19 +220,19 @@ const EduSignUp = () => {
 
       <div>
         <label className="block font-medium text-sm w-full text-start text-white">
-          Select Your Country
+          Select Your Country:
         </label>
 
-        <div className="flex items-center bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48]">
+        <div className="anta-regular  flex items-center bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48]">
           <select
             value={country}
             onChange={(e) => {
               setCountry(e.target.value);
               setCountryError(false);
             }}
-            className="w-full text-white bg-[#1e2a48] rounded outline-none"
+            className="w-full text-white bg-[#1e2a48] rounded outline-none py-2"
           >
-            <option value="">Select Country</option>
+            <option value="" >Select Country</option>
             {countryList.map((c) => (
               <option key={c} value={c}>
                 {c}
@@ -231,16 +249,16 @@ const EduSignUp = () => {
 
       <div>
         <label className="block font-medium text-sm w-full text-start text-white">
-          Select your Language
+          Select your Language:
         </label>
-        <div className="flex items-center bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48]">
+        <div className=" anta-regular flex items-center bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48]">
           <select
             value={language}
             onChange={(e) => {
               setLanguage(e.target.value);
               setLanguageError(false);
             }}
-            className="w-full text-white bg-[#1e2a48] rounded outline-none"
+            className="w-full text-white bg-[#1e2a48] rounded outline-none py-2"
           >
             <option value="">Select Language</option>
             {languageList.map((lang) => (
@@ -259,14 +277,14 @@ const EduSignUp = () => {
 
       <div>
         <label className="block font-medium text-sm w-full text-start text-white">
-          Select Your Role
+        Are you interested in registering as:
         </label>
-        <div className="flex items-center bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48]">
+        <div className="anta-regular flex items-center bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48]">
           <select
-            {...register("role", { required: true })}
-            className="w-full text-white bg-[#1e2a48] rounded"
+            {...register("subrole", { required: true })}
+            className="w-full text-white bg-[#1e2a48] rounded py-2 cursor-pointer"
           >
-            <option value="">Select Role</option>
+            <option value="">Select Sub Role</option>
             <option value="Expert">Expert</option>
             <option value="Coach">Coach</option>
             <option value="Both">Both</option>
@@ -284,24 +302,52 @@ const EduSignUp = () => {
               Which subject(s) are you an expert at?
             </label>
             <div className=" bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48] text-white">
-              <Controller
-                name="subjects"
-                control={control}
-                rules={{ required: "Please select at least one subject." }}
-                render={({ field }) => (
-                  <CreatableSelect
-                    {...field}
-                    isMulti
-                    options={subjectOptions}
-                    onChange={(selected) => {
-                      if (selected.length <= 10) field.onChange(selected);
-                    }}
-                    value={field.value}
-                    placeholder="Select or create up to 10 subjects"
-                    className="text-white bg-[#1e2a48]"
-                  />
-                )}
-              />
+            <Controller
+  className="text-white bg-black"
+  name="subjects"
+  control={control}
+  rules={{ required: "Please select at least one subject." }}
+  render={({ field }) => (
+    <CreatableSelect
+      {...field}
+      isMulti
+      options={subjectOptions}
+      onChange={(selected) => {
+        if (selected.length <= 10) field.onChange(selected);
+      }}
+      value={field.value}
+      placeholder="Select or create up to 10 subjects"
+      className="text-white bg-[#0e142a] anta-regular"  // Tailwind for base styling
+      styles={{
+        control: (base) => ({
+          ...base,
+          backgroundColor: '#0e142a', // Override background color
+          color: 'white', // Override text color
+          borderColor: 'black', // Override border color if needed
+        }),
+        option: (base) => ({
+          ...base,
+          color: 'white', // Change the color of options
+          backgroundColor: '#0e142a', // Change option background color
+          '&:hover': {
+            backgroundColor: 'black', // Change option hover color
+            color: 'white', // Hover text color
+          },
+        }),
+        multiValue: (base) => ({
+          ...base,
+          backgroundColor: 'black', // Background of selected values
+          color: 'white', // Text color of selected values
+        }),
+        multiValueLabel: (base) => ({
+          ...base,
+          color: 'white', // Label color of selected values
+        }),
+      }}
+    />
+  )}
+/>
+
             </div>
             {errors.subjects && (
               <span className="text-sm text-red-800">
@@ -333,22 +379,26 @@ const EduSignUp = () => {
         </div>
       )}
 
-      <div>
-        <label className="block font-medium text-sm w-full text-start text-white">
-          Write About Yourself.
-        </label>
-        <div className=" bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48]">
-          <textarea
-            {...register("bio", { required: true })}
-            className="w-full text-white outline-none rounded"
-            rows={5}
-            placeholder="About me (500 words)"
-          />
-        </div>
-        {errors.bio && (
-          <span className="text-sm text-red-800">Bio is required</span>
-        )}
+<div>
+      <label className="block font-medium text-sm w-full text-start text-white">
+        Write About Yourself.
+      </label>
+      <div className="bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48]">
+        <textarea
+          value={bio}
+          onChange={handleBioChange}
+          className="w-full text-white outline-none rounded"
+          rows={5}
+          placeholder="About me (150 words)"
+        />
       </div>
+      <div className="text-white text-sm">
+        <span>{wordCount}/150 words</span>
+      </div>
+      {wordCount > 150 && (
+        <span className="text-sm text-red-800">You have exceeded the word limit!</span>
+      )}
+    </div>
 
       <div>
         <label className="block font-medium text-sm w-full text-start text-white">
@@ -357,7 +407,7 @@ const EduSignUp = () => {
         <div className=" bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48]">
           <select
             {...register("serviceType", { required: true })}
-            className="w-full text-white bg-[#1e2a48] rounded"
+            className="w-full text-white bg-[#1e2a48] rounded py-2"
           >
             <option value="">Select</option>
             <option value="Paid">Paid</option>
@@ -372,14 +422,15 @@ const EduSignUp = () => {
         )}
       </div>
 
-      <div>
+{(serviceType === "Paid" || serviceType === "Both") && (
+        <div>
         <label className="block font-medium text-sm w-full text-start text-white">
           Enter Your Payout Method
         </label>
         <div className="flex items-center bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48]">
           <select
             {...register("payoutMethod", { required: true })}
-            className="w-full text-white bg-[#1e2a48] rounded"
+            className="w-full text-white bg-[#1e2a48] rounded py-2"
           >
             <option value="">-- Select Method --</option>
             <option value="upi">UPI</option>
@@ -391,6 +442,7 @@ const EduSignUp = () => {
           <p className="text-red-500 text-sm">This field is required.</p>
         )}
       </div>
+)}
 
       {payoutMethod === "upi" && (
         <div className="mt-2">
@@ -400,7 +452,7 @@ const EduSignUp = () => {
           <div className="flex items-center bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48]">
             <input
               {...register("upiId", { required: true })}
-              className="w-full text-white bg-[#1e2a48] rounded"
+              className="w-full text-white bg-[#1e2a48] rounded py-2"
               placeholder="yourname@upi"
             />
           </div>
