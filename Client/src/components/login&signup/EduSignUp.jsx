@@ -8,7 +8,7 @@ import { IoMdEye } from "react-icons/io";
 import { IoMdEyeOff } from "react-icons/io";
 import { RiLockPasswordFill } from "react-icons/ri";
 import axios from "axios";
-
+import API from '../../common/apis/ServerBaseURL.jsx'
 const subjectOptions = [
   { value: "Math", label: "Math" },
   { value: "Science", label: "Science" },
@@ -211,7 +211,7 @@ const EduSignUp = () => {
         videoUrl,
       };
   
-      const response = await axios.post("http://localhost:3000/api/user/register-educator", payload);
+      const response = await axios.post(API.registerEducator.url, payload);
       
       alert("Registration Successful!");
       console.log("Server Response:", response.data);

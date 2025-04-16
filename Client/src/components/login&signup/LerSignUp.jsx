@@ -6,7 +6,7 @@ import { IoMdEye } from "react-icons/io";
 import { IoMdEyeOff } from "react-icons/io";
 import { RiLockPasswordFill } from "react-icons/ri";
 import Select from "react-select";
-
+import API from '../../common/apis/ServerBaseURL.jsx'
 import "react-country-state-city/dist/react-country-state-city.css";
 // import API from "../../common/apis/ServerBaseURL";
 import axios from "axios";
@@ -135,7 +135,7 @@ const handleShowPass = () =>{
     try {
       setIsSubmitting(true);
   
-      const response = await axios.post('http://localhost:3000/api/user/register-learner', {
+      const response = await axios.post(API.registerLearner.url, {
         ...data,
         country,
         language,

@@ -6,7 +6,7 @@ import { FaUserAlt } from "react-icons/fa";
 import { RiLockPasswordFill } from "react-icons/ri";
 import { IoMdEye } from "react-icons/io";
 import { IoMdEyeOff } from "react-icons/io";
-import API from "../common/apis/ServerBaseURL";
+import API from "../common/apis/ServerBaseURL.jsx";
 import { useDispatch } from 'react-redux';
 import { userinfo } from "../store/slices/userSlice.jsx";
 import { useNavigate } from "react-router-dom";
@@ -32,7 +32,7 @@ const SignIn = () => {
     try {
       isSubmitting(true);
       const response = await axios.post(
-        "http://localhost:3000/api/user/signin",
+        API.signIn.url,
         data
       );
       

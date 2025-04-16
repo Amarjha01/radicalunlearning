@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { LineChart, XAxis, YAxis, Tooltip, Legend, Line, ResponsiveContainer } from 'recharts';
 import { Users, BookOpen, DollarSign, Settings, Bell, Moon, Sun, Search, ChevronDown, Check, X, Trash2, Menu } from 'lucide-react';
 import axios from 'axios';
-
+import API from '../../common/apis/ServerBaseURL.jsx'
 
 import { useSelector } from "react-redux";
 import { useDispatch } from 'react-redux';
@@ -113,7 +113,7 @@ useEffect(()=>{
  useEffect(()=>{
   const fetchEducatorsData = async () =>{
     try {
-      const response = await axios.post("http://localhost:3000/api/admin/get-all-educator-data" ,{
+      const response = await axios.post(API.educatorsData.url ,{
   _id: user.userData.user._id
 });
 
@@ -133,7 +133,7 @@ useEffect(()=>{
  useEffect(()=>{
   const fetchLearnersData = async () =>{
     try {
-      const response = await axios.post("http://localhost:3000/api/admin/get-all-learner-data" ,{
+      const response = await axios.post(API.learnersData.url ,{
   _id: user.userData.user._id
 });
  if(response.status === 200){
@@ -153,7 +153,7 @@ useEffect(()=>{
  const approveEducator = async (email)=>{
   console.log(email)
 try {
-  const response = await axios.patch('http://localhost:3000/api/admin/approveEducator',{
+  const response = await axios.patch(API.approveEducator.url,{
   email : email,
   _id: user.userData.user._id
 
@@ -168,7 +168,7 @@ try {
 //  delete user 
 const deleteUser = async (email , role) =>{
   try {
-    const response = await axios.delete('http://localhost:3000/api/admin/deleteUser',{
+    const response = await axios.delete(API.deleteUser.url,{
    params:{
     email:email,
     role:role,
