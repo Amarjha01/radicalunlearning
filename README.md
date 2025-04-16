@@ -2,7 +2,8 @@
 
 A project-first, curiosity-driven platform reshaping how we learn. Forget checklists and ranks — we’re building a new era of learning that prioritizes growth, understanding, and real-world skills.
 
-![RadicalUnlearning UI](./screenshot.png) <!-- Replace with your actual UI image -->
+![radicalUnlearningUI](https://github.com/user-attachments/assets/b5720b83-04cb-4446-88d9-f09426bf6301)
+
 
 ---
 
