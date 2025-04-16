@@ -4,8 +4,8 @@ import { EducatorUserModel , LearnerUserModel} from "../models/user.js";
 export  const getAllEducatorData = async (req, resp) => {
 
     try {
-        const allEducatorData = await EducatorUserModel.find();
-        console.log('All Educator Data:', allEducatorData);
+        const allEducatorData = await EducatorUserModel.find().select('name email subrole role country Approved createdAt');
+        // console.log('All Educator Data:', allEducatorData);
         resp.status(200).json({
             message : ' all educator data is here!',
             data : allEducatorData,
@@ -28,10 +28,9 @@ export  const getAllLearnerData = async (req, resp) => {
 
     try {
 
-        const allEducatorData = await LearnerUserModel.find();
-        console.log('All Educator Data:', allEducatorData);
+        const allEducatorData = await LearnerUserModel.find().select('name email subrole role country createdAt');
         resp.status(200).json({
-            message : ' all educator data is here!',
+            message : ' all learner data is here!',
             data : allEducatorData,
             success : true,
             error : false
@@ -50,10 +49,10 @@ export  const getAllLearnerData = async (req, resp) => {
 // delete user
 export const deleteUser = async (req , resp) =>{
     try {
-        const {role , email} = req.body;
-
+        const {role , email} = req.query;
+         console.log(role, email)
         let user = ''
-        if(role === "EDUCATOR"){
+        if(role === "educator"){
              user = await EducatorUserModel.deleteOne({email})
              console.log("ok")
         }else {
@@ -93,6 +92,26 @@ export const suspendUser = async (req , resp) =>{
             error : error,
             success : false,
             error : true
+        })
+    }
+}
+ 
+// Approve educator
+export const approveEducator = async (req, res) =>{
+    try {
+        const {email} = req.body;
+        console.log(email)
+        await EducatorUserModel.updateOne({email},{Approved:true})
+        res.status(200).json({
+            message: 'Approved',
+            success:true,
+            error:false
+        })
+    } catch (error) {
+        res.status(500).json({
+            message:'error while approving educator',
+            success:false,
+            error:true
         })
     }
 }

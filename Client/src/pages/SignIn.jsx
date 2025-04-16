@@ -7,7 +7,14 @@ import { RiLockPasswordFill } from "react-icons/ri";
 import { IoMdEye } from "react-icons/io";
 import { IoMdEyeOff } from "react-icons/io";
 import API from "../common/apis/ServerBaseURL";
+import { useDispatch } from 'react-redux';
+import { userinfo } from "../store/slices/userSlice.jsx";
+import { useNavigate } from "react-router-dom";
+
+
 const SignIn = () => {
+  const navigate = useNavigate()
+  const dispatch = useDispatch();
   const [submitting, isSubmitting] = useState(false);
   const [showPass, setShowPass] = useState(false)
 
@@ -25,12 +32,26 @@ const SignIn = () => {
     try {
       isSubmitting(true);
       const response = await axios.post(
-        `API.signin.url`,
+        "http://localhost:3000/api/user/signin",
         data
       );
-      alert("Login Successful!");
-      console.log(response.data);
-    } catch (error) {
+      
+if(response?.data?.success == true){
+  const responseData = response.data;
+  console.log( response)
+  console.log("response data:", responseData.userData);
+  const userData = responseData.userData;
+  console.log("userdata extracted:" , userData)
+  const statePayload = {
+    userData
+  };
+  dispatch(userinfo(statePayload));
+  alert("Login Successful!");
+  navigate("/");
+ 
+}
+  } catch (error) {
+
       setErrorMessage(error.response?.data?.message || "Login failed.");
       console.log("errror: ", error);
     }

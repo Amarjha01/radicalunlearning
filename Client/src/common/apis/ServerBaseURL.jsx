@@ -6,7 +6,7 @@ const API = {
     method: 'POST',
   },
   signIn: { 
-    url: `${backendDomain}/api/signin`,
+    url: `${backendDomain}/api/user/signin`,
     method: 'POST',
   },
 };

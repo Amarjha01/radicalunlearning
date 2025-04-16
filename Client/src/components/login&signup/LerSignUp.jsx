@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { motion } from "framer-motion";
 import { useState } from "react";
@@ -5,9 +6,11 @@ import { IoMdEye } from "react-icons/io";
 import { IoMdEyeOff } from "react-icons/io";
 import { RiLockPasswordFill } from "react-icons/ri";
 import Select from "react-select";
+
 import "react-country-state-city/dist/react-country-state-city.css";
 // import API from "../../common/apis/ServerBaseURL";
 import axios from "axios";
+
 
 const LerSignUp = () => {
   const {
@@ -17,9 +20,10 @@ const LerSignUp = () => {
     setError,
     clearErrors,
     formState: { errors },
+    reset,
   } = useForm();
 
-  const roleType = watch("role");
+  const roleType = watch("roleType");
   const dob = watch("dob");
   const [isSubmitting , setIsSubmitting] = useState(false);
   const [showPass, setShowPass] = useState(false);
@@ -29,7 +33,7 @@ const LerSignUp = () => {
   const [language, setLanguage] = useState("");
   const [selectedTopics, setSelectedTopics] = useState([]);
 
-
+  const Navigate = useNavigate();
 const handleShowPass = () =>{
   setShowPass(!showPass);
 }
@@ -111,7 +115,7 @@ const handleShowPass = () =>{
 
   const onSubmit = async (data) => {
     let hasError = false;
-  
+  console.log("data:", data)
     if (!country) {
       setCountryError(true);
       hasError = true;
@@ -135,10 +139,18 @@ const handleShowPass = () =>{
         ...data,
         country,
         language,
+        role: "learner",
         subjects: selectedTopics.map((s) => s.value),
       });
+      alert(response?.data?.message);
+      console.log("response:", response)
+
+  if(response?.ok){
+    reset()
+    Navigate('/signin')
+  }
   
-      alert("Registration Successful!");
+      
       console.log(response.data);
       // reset(); // optional
     } catch (error) {
@@ -156,15 +168,15 @@ const handleShowPass = () =>{
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
       onSubmit={handleSubmit(onSubmit)}
-      className="max-w-3xl mx-auto  space-y-5 roboto-regular bg-[#0b0f19]/80 p-10 rounded-2xl shadow-[0_0_40px_#2b6bff40] backdrop-blur-lg  w-full border border-[#1e2a48]"
+      className="max-w-3xl mx-auto  space-y-5 roboto-regular bg-[#0b0f19]/80 p-10 rounded-2xl shadow-[0_0_40px_#2b6bff40] hover:shadow-[0_0_40px_#2b6bff90] backdrop-blur-lg  w-full border border-[#1e2a48] duration-100"
     >
-      <h2 className="text-xl font-bold mb-4 orbitron-regular bg-gradient-to-r from-[#6f57ff] via-[#00f2fe] to-[#4facfe] bg-clip-text text-transparent">Learner Registration</h2>
+      <h2 className="text-2xl font-bold mb-4 orbitron-regular bg-gradient-to-r from-[#6f57ff] via-[#00f2fe] to-[#4facfe] bg-clip-text text-transparent tracking-widest ">Learner Registration</h2>
 
       <div>
         <label className="block font-medium text-sm w-full text-start text-white">
           Full Name
         </label>
-        <div className="flex items-center bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48]">
+        <div className="flex items-center bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500">
           <input
             {...register("name", { required: true })}
             placeholder="Full Name"
@@ -180,7 +192,7 @@ const handleShowPass = () =>{
         <label className="block font-medium text-sm w-full text-start text-white">
           Email
         </label>
-        <div className="flex items-center bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48]">
+        <div className="flex items-center bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500">
           <input
             {...register("email", { required: true })}
             placeholder="Enter Your mail id"
@@ -198,8 +210,8 @@ const handleShowPass = () =>{
      <label className="block font-medium text-sm w-full text-start text-white ">
       Are you a learner or parent registering on behalf of learner?
       </label>
-   <div className="bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48]">
-   <select {...register("role", { required: "Please select your role" })} className="w-full text-white outline-none bg-transparent rounded">
+   <div className="flex items-center bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500">
+   <select {...register("roleType", { required: true , message: "Please select your roleType" })} className="w-full text-white bg-[#0e142a]  outline-none rounded py-1  cursor-pointer ">
         <option value="">Select</option>
         <option value="Learner">Learner</option>
         <option value="Parent">Parent</option>
@@ -207,11 +219,11 @@ const handleShowPass = () =>{
       
    </div>
       {errors.role && <p className="text-red-600 text-sm">{errors.roleType.message}</p>}
-     </div>
-
       {roleType === "Parent" && (
         <p className="text-blue-600 text-sm">Please provide details of the learner, not yourself.</p>
       )}
+     </div>
+
 
 
 <div>
@@ -219,14 +231,14 @@ const handleShowPass = () =>{
           Select Your Country
         </label>
 
-        <div className="flex items-center bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48]">
+        <div className="flex items-center bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500">
           <select
             value={country}
             onChange={(e) => {
               setCountry(e.target.value);
               setCountryError(false);
             }}
-            className="w-full text-white bg-[#1e2a48] rounded outline-none"
+            className="w-full text-white bg-[#0e142a]  outline-none rounded py-1  cursor-pointer "
           >
             <option value="">Select Country</option>
             {countryList.map((c) => (
@@ -247,14 +259,14 @@ const handleShowPass = () =>{
         <label className="block font-medium text-sm w-full text-start text-white">
           Select your Language
         </label>
-        <div className="flex items-center bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48]">
+        <div className="flex items-center bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500">
           <select
             value={language}
             onChange={(e) => {
               setLanguage(e.target.value);
               setLanguageError(false);
             }}
-            className="w-full text-white bg-[#1e2a48] rounded outline-none"
+            className="w-full text-white bg-[#0e142a]  outline-none rounded py-1  cursor-pointer "
           >
             <option value="">Select Language</option>
             {languageList.map((lang) => (
@@ -273,11 +285,11 @@ const handleShowPass = () =>{
 
       <div>
       <label className="block font-medium text-sm w-full text-start text-white">Date of Birth</label>
-    <div className="flex items-center bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48]">
+    <div className="flex items-center bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500">
     <input
         type="date"
         {...register("dob", { required: "Date of birth is required" })}
-        className="w-full text-white bg-transparent rounded"
+        className="w-full text-white bg-[#0e142a]  outline-none rounded py-1  cursor-pointer "
       />
     </div>
       {errors.dob && <p className="text-red-600 text-sm">{errors.dob.message}</p>}
@@ -313,8 +325,8 @@ const handleShowPass = () =>{
       <span className="text-xs text-blue-600 block mb-1">
         *Expert is specialised in the learning area and has gained practical experience over several years of doing it
       </span>
-  <div className="flex items-center bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48]">
-  <select {...register("needExpert", { required: "Please select an option" })} className="w-full text-white bg-transparent outline-hidden rounded">
+  <div className="flex items-center bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500">
+  <select {...register("needExpert", { required: "Please select an option" })} className="w-full text-white bg-[#0e142a]  outline-none rounded py-1  cursor-pointer ">
         <option value="">Select</option>
         <option value="No">No</option>
         <option value="Yes">Yes</option>
@@ -328,8 +340,8 @@ const handleShowPass = () =>{
       <span className="text-xs text-blue-600 block mb-1">
         *Coach is not specialised in the learning area but will help you with your overall wellbeing
       </span>
-   <div className="flex items-center bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48]">
-   <select {...register("needCoach", { required: "Please select an option" })} className="w-full text-white bg-transparent outline-hidden rounded">
+   <div className="flex items-center bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500">
+   <select {...register("needCoach", { required: "Please select an option" })} className="w-full text-white bg-[#0e142a]  outline-none rounded py-1  cursor-pointer ">
         <option value="">Select</option>
         <option value="No">No</option>
         <option value="Yes">Yes</option>
@@ -339,7 +351,7 @@ const handleShowPass = () =>{
     </div>
 <div>
 <label className="block font-medium text-sm w-full text-start text-white">Write About Your Self</label>
-<div className="flex items-center bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48]">
+<div className="flex items-center bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500">
 <textarea
         {...register("bio", { required: "Please tell us about yourself" })}
         className="w-full text-white bg-transparent outline-hidden rounded"
@@ -353,7 +365,7 @@ const handleShowPass = () =>{
 
           {/* Password */}
           <div>
-            <div className="flex items-center gap-2 bg-[#1f2937] p-3 rounded-lg border border-gray-600 focus-within:border-blue-500">
+            <div className="flex items-center gap-2 bg-[#0e142a] p-3 rounded-lg border border-gray-600 focus-within:border-blue-500">
               <RiLockPasswordFill className="text-gray-400" />
               <input
                 type={`${showPass ? 'text' : 'password'}`}
@@ -373,8 +385,7 @@ const handleShowPass = () =>{
                     return !hasScriptTag || "No script tags allowed!";
                   }
                 })}
-                className="bg-transparent outline-none text-white w-full"
-              />
+                className="w-full text-white bg-[#0e142a]  outline-none rounded py-1   "              />
                <button
       type="button"
       onClick={handleShowPass}
@@ -388,7 +399,7 @@ const handleShowPass = () =>{
             )}
           </div>
 
-      <fieldset className="text-white bg-[#0e142a] rounded-lg p-4 border border-[#1e2a48]">
+      <fieldset className="text-white bg-[#0e142a] rounded-lg p-4 border border-[#1e2a48] focus-within:border-blue-500">
         <legend className="font-bold">Accept Terms</legend>
         <label className="block cursor-pointer ">
           <input type="checkbox" {...register("terms1", { required: true })} /> My parents are aware I'm using this site
@@ -407,14 +418,17 @@ const handleShowPass = () =>{
       </fieldset>
 
           {/* Submit Button */}
-          <div className="text-center">
-            <button
-              type="submit"
-              className="mt-4 px-6 py-3 rounded-full bg-gradient-to-r from-[#6f57ff] to-[#00f2fe] text-white font-semibold tracking-wide hover:opacity-90 transition duration-300 cursor-pointer"
-            >
-              Send Message
-            </button>
-          </div>
+          <button
+        type="submit"
+        disabled={isSubmitting}
+        className={`mt-4 px-6 py-1 rounded-full bg-[#1e2a48] font-semibold tracking-wide cursor-pointer ${
+          isSubmitting ? "opacity-50 cursor-not-allowed" : "hover:opacity-90"
+        } transition duration-300`}
+      >
+        <span className="bg-gradient-to-r from-[#6f57ff] to-[#00f2fe] bg-clip-text text-transparent text-shadow-lg text-2xl orbitron-regular">
+          {isSubmitting ? "Submitting..." : "Submit"}
+        </span>
+      </button>
 
     </motion.form>
   );

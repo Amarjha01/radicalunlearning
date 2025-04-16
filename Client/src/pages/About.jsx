@@ -3,7 +3,7 @@ import CircularText from './CircularText';
 const About = () => {
   return (
     
-    <section className="min-h-screen w-full bg-[#060b1b] text-white px-6 md:px-20 py-20 flex flex-col items-center justify-center">
+    <section className="min-h-screen w-full  text-white px-6 md:px-20 py-20 flex flex-col items-center justify-center">
       {/* Glowing Main Title */}
       
       <CircularText

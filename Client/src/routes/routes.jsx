@@ -1,5 +1,5 @@
 import {createBrowserRouter} from 'react-router-dom'
-
+import ProtectedRoute from './ProtectedRoute';
 // import pages
 
 import Home from '../pages/Home.jsx'
@@ -13,7 +13,7 @@ import SignUp from '../pages/SignUp.jsx'
 import LerSignUp from '../components/login&signup/LerSignUp.jsx'
 import EduSignUp from '../components/login&signup/EduSignUp.jsx'
 import Contact from '../pages/Contact.jsx'
-
+import User from '../pages/User.jsx'
 const routes = createBrowserRouter(
     [
         {
@@ -24,18 +24,7 @@ const routes = createBrowserRouter(
                     path: '/',
                     element: <Home />
                 },
-                {
-                    path: 'admin/dashboard',
-                    element: <AdminDashboard />
-                },
-                {
-                    path: 'educator/dashboard',
-                    element: <EducatorDashboard />
-                },
-                {
-                    path: 'learner/dashboard',
-                    element: <LearnerDashboard/>
-                },
+                
                 {
                     path: 'about',
                     element: <About />
@@ -66,6 +55,34 @@ const routes = createBrowserRouter(
                 }
             ]
         },
+        {
+            path:'user',
+            element: <User />
+        },
+        {
+            path: 'dashboard/admin',
+            element: (
+              <ProtectedRoute role="admin">
+                <AdminDashboard />
+              </ProtectedRoute>
+            )
+          },
+          {
+            path: 'dashboard/educator',
+            element: (
+              <ProtectedRoute role="educator">
+                <EducatorDashboard />
+              </ProtectedRoute>
+            )
+          },
+          {
+            path: 'dashboard/learner',
+            element: (
+              <ProtectedRoute role="learner">
+                <LearnerDashboard />
+              </ProtectedRoute>
+            )
+          }
     ]
 )
 export default routes;

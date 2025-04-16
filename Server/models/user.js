@@ -14,6 +14,10 @@ const Lerner_userSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    roleType: {
+        type: String,
+        required: true,
+    },
     country: {
         type: String,
         required: true,
@@ -85,7 +89,10 @@ const Educator_userSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    required: true,
+  },
+  subrole: {
+      type: String,
+      required: true,
   },
   country: {
     type: String,
@@ -139,8 +146,12 @@ const Educator_userSchema = new mongoose.Schema({
       return this.payoutMethod === 'paypal';
     },
   },
-  documents: {
-    type: [String], 
+documentUrl: {
+    type: String, 
+    required: true,
+  },
+  videoUrl: {
+    type: String, 
     required: true,
   },
   password: {
@@ -167,14 +178,19 @@ const Educator_userSchema = new mongoose.Schema({
     type: Boolean,
     required: true,
   },
-//   otp: {
-//     type: Number,
-//   },
-//   suspended: {
-//     type: String,
-//     enum: ['YES', 'NO'],
-//     default: 'NO',
-//   },
+  Approved: {
+    type: Boolean,
+    default: false 
+},
+  otp: {
+    type: Number,
+    default: 0
+  },
+  suspended: {
+    type: String,
+    enum: ['YES', 'NO'],
+    default: 'NO',
+  },
 }, {
   timestamps: true,
 });

@@ -23,23 +23,6 @@ app.use('/api/verify', verificationRouter)
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 const PORT=process.env.PORT || 30001
 DataBaseConfig().then(()=>{
     app.listen(PORT,'0.0.0.0',()=>{

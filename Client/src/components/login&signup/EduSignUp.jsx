@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import { useForm, Controller } from "react-hook-form";
 import { motion } from "framer-motion";
 import { useState } from "react";
@@ -7,6 +8,7 @@ import { IoMdEye } from "react-icons/io";
 import { IoMdEyeOff } from "react-icons/io";
 import { RiLockPasswordFill } from "react-icons/ri";
 import axios from "axios";
+
 const subjectOptions = [
   { value: "Math", label: "Math" },
   { value: "Science", label: "Science" },
@@ -76,33 +78,20 @@ const languageList = [
 ];
 
 const EduSignUp = () => {
-  const [isSubmitting , setIsSubmitting] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPass, setShowPass] = useState(false);
   const [countryError, setCountryError] = useState(false);
   const [languageError, setLanguageError] = useState(false);
   const [country, setCountry] = useState("");
   const [language, setLanguage] = useState("");
-  const [documentss, setdocumentss] = useState([]);
+  const [documentFile, setDocumentFile] = useState(null);
+  const [videoFile, setVideoFile] = useState(null);
 
-  const handleShowPass = () =>{
-    setShowPass(!showPass);
-  }
-
-  // bio text area limit
   const [bio, setBio] = useState("");
   const [wordCount, setWordCount] = useState(0);
-  
-  // Count words in the bio and update the state
-  const handleBioChange = (e) => {
-    const value = e.target.value;
-    const words = value.trim().split(/\s+/).filter(Boolean); // Split by spaces and filter out empty strings
-    
-    if (words.length <= 150) {
-      setBio(value);
-      setWordCount(words.length);
-    }
-  };
 
+
+  const Navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -111,84 +100,160 @@ const EduSignUp = () => {
     clearErrors,
     formState: { errors },
     control,
+    reset,
   } = useForm();
 
   const educatorType = watch("subrole");
   const payoutMethod = watch("payoutMethod");
-  const serviceType = watch("serviceType")
+  const serviceType = watch("serviceType");
 
-  const onSubmit = async(data) => {
+  const handleShowPass = () => setShowPass(!showPass);
+
+  const handleBioChange = (e) => {
+    const value = e.target.value;
+    const words = value.trim().split(/\s+/).filter(Boolean);
+    if (words.length <= 150) {
+      setBio(value);
+      setWordCount(words.length);
+    }
+  };
+
+  const handleDocumentSelect = (e) => {
+    const file = e.target.files[0];
+    if (!file || file.type !== "application/pdf") {
+      alert("Please upload a valid PDF file.");
+      return;
+    }
+    if (file.size > 20 * 1024 * 1024) {
+      alert("PDF must be under 20MB.");
+      return;
+    }
+    setDocumentFile(file);
+  };
+
+  const handleVideoSelect = (e) => {
+    const file = e.target.files[0];
+    if (!file || file.type !== "video/mp4") {
+      alert("Only MP4 files are allowed.");
+      return;
+    }
+    if (file.size > 100 * 1024 * 1024) {
+      alert("Video must be under 100MB.");
+      return;
+    }
+    setVideoFile(file);
+  };
+
+  const uploadToCloudinary = async (file, resourceType = "auto") => {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", "radicalunlearning");
+    formData.append("cloud_name", "dbnticsz8");
+
+    try {
+      const res = await fetch(`https://api.cloudinary.com/v1_1/dbnticsz8/${resourceType}/upload`, {
+        method: "POST",
+        body: formData,
+      });
+      const data = await res.json();
+      return data.secure_url;
+    } catch (err) {
+      console.error("Cloudinary Upload Error:", err);
+      return null;
+    }
+  };
+
+  const onSubmit = async (data) => {
     let hasError = false;
-
+  
     if (!country) {
       setCountryError(true);
       hasError = true;
     } else {
       setCountryError(false);
     }
-
+  
     if (!language) {
       setLanguageError(true);
       hasError = true;
     } else {
       setLanguageError(false);
     }
-
+  
+    if (!documentFile || !videoFile) {
+      alert("Please upload both PDF document and video.");
+      return;
+    }
+  
     if (hasError) return;
-
-    console.log("Educator Form Submitted:", {
-      ...data,
-      country,
-      language,
-      subjects: data.subjects?.map((s) => s.value),
-      documentss,
-    });
-
-
+  
     try {
       setIsSubmitting(true);
   
-      const response = await axios.post('http://localhost:3000/api/user/register-educator', {
+      const [documentUrl, videoUrl] = await Promise.all([
+        uploadToCloudinary(documentFile, "raw"),
+        uploadToCloudinary(videoFile, "video"),
+      ]);
+  
+      if (!documentUrl || !videoUrl) {
+        alert("File upload failed. Please try again.");
+        return;
+      }
+  
+      const payload = {
         ...data,
         country,
         language,
         subjects: data.subjects?.map((s) => s.value),
-      });
-      
+        role: "educator",
+        bio,
+        documentUrl,
+        videoUrl,
+      };
   
+      const response = await axios.post("http://localhost:3000/api/user/register-educator", payload);
+      
       alert("Registration Successful!");
-      console.log(response.data);
-      // reset(); // optional
+      console.log("Server Response:", response.data);
+
+      reset(); // This clears all controlled fields
+      setBio(""); // manually clear bio state
+      setWordCount(0);
+      setCountry("");
+      setLanguage("");
+      setDocumentFile(null);
+      setVideoFile(null);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      Navigate('/signin')
+
     } catch (error) {
-      console.log("Error in registration:", error);
-      alert("Something went wrong. Please try again.");
+      console.error("Error in registration:", error);
+      // Show server-side error message from backend if available
+      const message = error.response?.data?.message || "Something went wrong. Please try again.";
+      alert(message);
     } finally {
       setIsSubmitting(false);
     }
-
   };
-
-  const handledocumentsUpload = (e) => {
-    const selected = Array.from(e.target.documentss).slice(0, 10);
-    setdocumentss(selected);
-  };
+  
+  
 
   return (
     <motion.form
-      initial={{ opacity: 0, y: 30 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.5 }}
       onSubmit={handleSubmit(onSubmit)}
-      className="max-w-3xl  mx-auto  space-y-5 roboto-regular bg-[#0b0f19]/80 p-10 rounded-2xl hover:shadow-[0_0_40px_#2b6bff80] shadow-[0_0_40px_#2b6bff40] transition-all duration-300 backdrop-blur-lg  w-full border border-[#1e2a48]"
+      className="max-w-3xl  mx-auto  space-y-5 roboto-regular   bg-[#0b0f19]/80 p-10 rounded-2xl shadow-[0_0_40px_#2b6bff40] hover:shadow-[0_0_40px_#2b6bff90]  duration-100 backdrop-blur-lg  w-full border border-blue-500 "
     >
-      <h2 className="text-xl font-bold mb-4 orbitron-regular bg-gradient-to-r from-[#6f57ff] via-[#00f2fe] to-[#4facfe] bg-clip-text text-transparent">
+      <h2 className="text-2xl font-extrabold mb-4 orbitron-regular bg-gradient-to-r from-[#6f57ff] via-[#00f2fe] to-[#4facfe] bg-clip-text text-transparent tracking-widest">
         Educator Registration
       </h2>
       <div>
         <label className="block font-medium text-sm w-full text-start text-white">
           Full Name
         </label>
-        <div className="flex items-center bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48]">
+        <div className="flex items-center bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500 ">
           <input
             {...register("name", { required: true })}
             placeholder="Full Name"
@@ -204,7 +269,7 @@ const EduSignUp = () => {
         <label className="block font-medium text-sm w-full text-start text-white">
           Email
         </label>
-        <div className="flex items-center bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48]">
+        <div className="flex items-center bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500 ">
           <input
             {...register("email", { required: true })}
             placeholder="Enter Your mail id"
@@ -223,14 +288,14 @@ const EduSignUp = () => {
           Select Your Country:
         </label>
 
-        <div className="anta-regular  flex items-center bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48]">
+        <div className="anta-regular  flex items-center bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500 ">
           <select
             value={country}
             onChange={(e) => {
               setCountry(e.target.value);
               setCountryError(false);
             }}
-            className="w-full text-white bg-[#1e2a48] rounded outline-none py-2"
+            className="w-full text-white bg-[#0e142a]  outline-none rounded py-1  cursor-pointer "
           >
             <option value="" >Select Country</option>
             {countryList.map((c) => (
@@ -251,14 +316,14 @@ const EduSignUp = () => {
         <label className="block font-medium text-sm w-full text-start text-white">
           Select your Language:
         </label>
-        <div className=" anta-regular flex items-center bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48]">
+        <div className=" anta-regular flex items-center bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500 ">
           <select
             value={language}
             onChange={(e) => {
               setLanguage(e.target.value);
               setLanguageError(false);
             }}
-            className="w-full text-white bg-[#1e2a48] rounded outline-none py-2"
+            className="w-full text-white bg-[#0e142a]  rounded outline-none py-1 cursor-pointer"
           >
             <option value="">Select Language</option>
             {languageList.map((lang) => (
@@ -279,10 +344,10 @@ const EduSignUp = () => {
         <label className="block font-medium text-sm w-full text-start text-white">
         Are you interested in registering as:
         </label>
-        <div className="anta-regular flex items-center bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48]">
+        <div className="anta-regular flex items-center bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500 ">
           <select
             {...register("subrole", { required: true })}
-            className="w-full text-white bg-[#1e2a48] rounded py-2 cursor-pointer"
+            className="w-full text-white bg-[#0e142a] outline-none rounded py-1 cursor-pointer"
           >
             <option value="">Select Sub Role</option>
             <option value="Expert">Expert</option>
@@ -291,7 +356,7 @@ const EduSignUp = () => {
           </select>
         </div>
         {errors.role && (
-          <span className="text-sm text-red-800">Please enter role</span>
+          <span className="text-sm text-red-800">Please enter sub role</span>
         )}
       </div>
 
@@ -301,9 +366,9 @@ const EduSignUp = () => {
             <label className="block font-medium text-sm w-full text-start text-white">
               Which subject(s) are you an expert at?
             </label>
-            <div className=" bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48] text-white">
+            <div className=" bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500  text-white">
             <Controller
-  className="text-white bg-black"
+  className=""
   name="subjects"
   control={control}
   rules={{ required: "Please select at least one subject." }}
@@ -317,13 +382,13 @@ const EduSignUp = () => {
       }}
       value={field.value}
       placeholder="Select or create up to 10 subjects"
-      className="text-white bg-[#0e142a] anta-regular"  // Tailwind for base styling
+      className="text-white outline-none bg-[#0e142a] anta-regular"  // Tailwind for base styling
       styles={{
         control: (base) => ({
           ...base,
           backgroundColor: '#0e142a', // Override background color
           color: 'white', // Override text color
-          borderColor: 'black', // Override border color if needed
+          borderColor: 'blue', // Override border color if needed
         }),
         option: (base) => ({
           ...base,
@@ -332,6 +397,7 @@ const EduSignUp = () => {
           '&:hover': {
             backgroundColor: 'black', // Change option hover color
             color: 'white', // Hover text color
+            borderColor: 'blue',
           },
         }),
         multiValue: (base) => ({
@@ -363,11 +429,11 @@ const EduSignUp = () => {
           <label className="block font-medium text-sm w-full text-start text-white">
             Share Your Experience In Subjects You Choosen.
           </label>
-          <div className=" bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48]">
+          <div className=" bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500 ">
             <textarea
               {...register("experience", { required: true })}
               placeholder="Specify topics within subject area with practical experience (500 words)"
-              className="w-full text-white rounded"
+              className="w-full text-white outline-none rounded"
               rows={5}
             />
           </div>
@@ -383,7 +449,7 @@ const EduSignUp = () => {
       <label className="block font-medium text-sm w-full text-start text-white">
         Write About Yourself.
       </label>
-      <div className="bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48]">
+      <div className="bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500 ">
         <textarea
           value={bio}
           onChange={handleBioChange}
@@ -404,10 +470,10 @@ const EduSignUp = () => {
         <label className="block font-medium text-sm w-full text-start text-white">
           Are you providing your services as:
         </label>
-        <div className=" bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48]">
+        <div className=" bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500 ">
           <select
             {...register("serviceType", { required: true })}
-            className="w-full text-white bg-[#1e2a48] rounded py-2"
+            className="w-full text-white bg-[#0e142a] outline-none cursor-pointer rounded py-1"
           >
             <option value="">Select</option>
             <option value="Paid">Paid</option>
@@ -427,13 +493,13 @@ const EduSignUp = () => {
         <label className="block font-medium text-sm w-full text-start text-white">
           Enter Your Payout Method
         </label>
-        <div className="flex items-center bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48]">
+        <div className="flex items-center bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500 ">
           <select
             {...register("payoutMethod", { required: true })}
-            className="w-full text-white bg-[#1e2a48] rounded py-2"
+            className="w-full text-white bg-[#0e142a] outline-none cursor-pointer rounded py-1"
           >
             <option value="">-- Select Method --</option>
-            <option value="upi">UPI</option>
+            <option  value="upi">UPI</option>
             <option value="bank">Bank Transfer</option>
             <option value="paypal">PayPal</option>
           </select>
@@ -449,10 +515,10 @@ const EduSignUp = () => {
           <label className="block font-medium text-sm w-full text-start text-white">
             Enter UPI ID
           </label>
-          <div className="flex items-center bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48]">
+          <div className="flex items-center bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500 ">
             <input
               {...register("upiId", { required: true })}
-              className="w-full text-white bg-[#1e2a48] rounded py-2"
+              className="w-full text-white bg-[#0e142a] outline-none   rounded py-2"
               placeholder="yourname@upi"
             />
           </div>
@@ -468,7 +534,7 @@ const EduSignUp = () => {
             <label className="block font-medium text-sm w-full text-start text-white">
               Bank Account Number
             </label>
-            <div className=" text-white bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48]">
+            <div className=" text-white bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500 ">
               <input
                 {...register("bankAccount", { required: true })}
                 className="w-full text-white bg-transparent outline-none rounded"
@@ -485,7 +551,7 @@ const EduSignUp = () => {
             <label className="block font-medium text-sm w-full text-start text-white">
               IFSC Code
             </label>
-            <div className=" text-white bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48]">
+            <div className=" text-white bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500  ">
               <input
                 {...register("ifscCode", { required: true })}
                 className="w-full text-white bg-transparent outline-none rounded"
@@ -500,11 +566,11 @@ const EduSignUp = () => {
       )}
 
       {payoutMethod === "paypal" && (
-        <div className="mt-2">
+        <div className="mt-2 ">
           <label className="block font-medium text-sm w-full text-start text-white">
             PayPal Email
           </label>
-          <div className=" bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48]">
+          <div className=" bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500  ">
             <input
               type="email"
               {...register("paypalEmail", { required: true })}
@@ -521,7 +587,7 @@ const EduSignUp = () => {
       
                 {/* Password */}
                 <div>
-                  <div className="flex items-center gap-2 bg-[#1f2937] p-3 rounded-lg border border-gray-600 focus-within:border-blue-500">
+                  <div className="flex items-center gap-2 bg-[#0e142a]  p-3 rounded-lg border border-[#1e2a48] focus-within:border-blue-500  ">
                     <RiLockPasswordFill className="text-gray-400" />
                     <input
                       type={`${showPass ? 'text' : 'password'}`}
@@ -556,7 +622,7 @@ const EduSignUp = () => {
                   )}
                 </div>
 
-      <fieldset className="border p-2 text-sm rounded space-y-2 text-white">
+      <fieldset className="border border-blue-500 p-2 text-sm rounded-lg space-y-2 text-white">
         <legend className="font-bold">Accept Terms</legend>
         {[1, 2, 3, 4, 5].map((num) => (
           <label className="block cursor-pointer" key={num}>
@@ -579,38 +645,55 @@ const EduSignUp = () => {
           </label>
         ))}
       </fieldset>
-
-      <div>
+ {/* PDF Upload */}
+ <div>
         <label className="block font-medium text-sm w-full text-start text-white">
           Upload Documents pdf only (Max 20 MB )
         </label>
-       <div className="flex items-center bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48] cursor-pointer ">
-       <input
-          type="file"
-          multiple
-          accept=".pdf,.doc,.docx"
-          onChange={handledocumentsUpload}
-          className="w-full text-white outline-none "
-        />
-       </div>
-        {documentss.length > 0 && (
-          <ul className="list-disc ml-5 text-sm text-gray-600">
-            {documentss.map((documents, idx) => (
-              <li key={idx}>{documents.name}</li>
-            ))}
-          </ul>
+        <div className="flex items-center bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500">
+          <input
+            type="file"
+            accept=".pdf"
+            onChange={handleDocumentSelect}
+            className="w-full text-white outline-none cursor-pointer"
+          />
+        </div>
+        {documentFile && (
+          <p className="text-sm text-gray-400 mt-1">Selected: {documentFile.name}</p>
         )}
       </div>
-          {/* Submit Button */}
-          <button
-  type="submit"
-  disabled={isSubmitting}
-  className={`mt-4 px-6 py-3 rounded-full bg-gradient-to-r from-[#6f57ff] to-[#00f2fe] text-white font-semibold tracking-wide ${
-    isSubmitting ? "opacity-50 cursor-not-allowed" : "hover:opacity-90"
-  } transition duration-300`}
->
-  {isSubmitting ? "Submitting..." : "Send Message"}
-</button>
+
+      {/* Video Upload */}
+      <div>
+        <label className="block font-medium text-sm w-full text-start text-white">
+          Upload Introduction Video (MP4 only, Max 100 MB)
+        </label>
+        <div className="flex items-center bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500">
+          <input
+            type="file"
+            accept="video/mp4"
+            onChange={handleVideoSelect}
+            className="w-full text-white outline-none cursor-pointer"
+          />
+        </div>
+        {videoFile && (
+          <p className="text-sm text-gray-400 mt-1">Selected: {videoFile.name}</p>
+        )}
+      </div>
+
+      {/* Submit Button */}
+      <button
+        type="submit"
+        disabled={isSubmitting}
+        className={`mt-4 px-6 py-1 rounded-full bg-[#1e2a48] font-semibold tracking-wide cursor-pointer ${
+          isSubmitting ? "opacity-50 cursor-not-allowed" : "hover:opacity-90"
+        } transition duration-300`}
+      >
+        <span className="bg-gradient-to-r from-[#6f57ff] to-[#00f2fe] bg-clip-text text-transparent text-shadow-lg text-2xl orbitron-regular">
+          {isSubmitting ? "Submitting..." : "Submit"}
+        </span>
+      </button>
+
 
     </motion.form>
   );

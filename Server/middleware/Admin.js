@@ -2,7 +2,7 @@ import { AdminModel } from "../models/user.js";
 
 export const admin = async(request,response,next)=>{
     try {
-       const  userId = request.body._id
+       const  userId = request?.body?._id || request?.query?._id
 
        const user = await AdminModel.findById(userId);
        if(!user){
