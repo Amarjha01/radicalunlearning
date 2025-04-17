@@ -3,24 +3,10 @@ import { LineChart, XAxis, YAxis, Tooltip, Legend, Line, ResponsiveContainer } f
 import { Users, BookOpen, DollarSign, Settings, Bell, Moon, Sun, Search, ChevronDown, Check, X, Trash2, Menu } from 'lucide-react';
 import axios from 'axios';
 import API from '../../common/apis/ServerBaseURL.jsx'
-
+import UserDetailsList from '../../components/Dashboard/UserDetailsList.jsx'
 import { useSelector } from "react-redux";
 import { useDispatch } from 'react-redux';
 import { clearUser } from "../../store/slices/userSlice.jsx";
-
-// Dummy data
-const dummyEducators = [
-  { id: 1, name: "Dr. Jane Smith", email: "jane.smith@example.com", subject: "Computer Science", joinDate: "2024-01-15", status: "Approved" },
-  { id: 2, name: "Prof. John Davis", email: "john.davis@example.com", subject: "Mathematics", joinDate: "2024-02-20", status: "Approved" },
-  { id: 3, name: "Sarah Johnson", email: "sarah.j@example.com", subject: "Digital Marketing", joinDate: "2024-03-05", status: "Approved" },
-];
-
-const dummyPendingEducators = [
-  { id: 4, name: "Michael Roberts", email: "m.roberts@example.com", subject: "Data Science", joinDate: "2024-03-28", status: "Pending" },
-  { id: 5, name: "Emma Williams", email: "emma.w@example.com", subject: "Graphic Design", joinDate: "2024-04-02", status: "Pending" },
-];
-
-
 
 const dummyRevenueData = [
   { month: 'Jan', revenue: 4500 },
@@ -42,39 +28,33 @@ export default function AdminDashboard() {
   const [learners, setLearners] = useState([]);
   const [subscriptionFee, setSubscriptionFee] = useState(49.99);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
+  const [educatorDetailedData , setEducatorDetailedData] = useState({});
   // Calculate stats
   const totalEducators = educators.length;
   const totalLearners = learners.length;
   const totalRevenue = dummyRevenueData.reduce((sum, data) => sum + data.revenue, 0);
   const monthlyRevenue = dummyRevenueData[dummyRevenueData.length - 1].revenue;
-  
 
-  console.log('euddata', educators)
+  const [viewUserDetails, setViewUserDetails] = useState(false);
 
-
+// filter educator
 useEffect(()=>{
   const FilterEducators = ()=>{
     const filterPendingEducators = educators.filter(educators=>
      educators.Approved === false
    )
    setPendingEducators(filterPendingEducators)
-   console.log('filterPendingEducators', filterPendingEducators )
 
 
     const filterApprovedEducators = educators.filter(educators=>
      educators.Approved === true
    )
    setApprovedEducators(filterApprovedEducators)
-   console.log('filteredApprovedEducators', filterApprovedEducators )
    }
    FilterEducators();
 
 },[educators])
   
-  const deleteLearner = (id) => {
-    setLearners(learners.filter(learner => learner.id !== id));
-  };
   
   const updateSubscriptionFee = (e) => {
     e.preventDefault();
@@ -110,7 +90,6 @@ useEffect(()=>{
     const user = useSelector((state) => state.user);
 
     // fetching educator data
- useEffect(()=>{
   const fetchEducatorsData = async () =>{
     try {
       const response = await axios.post(API.educatorsData.url ,{
@@ -124,13 +103,34 @@ useEffect(()=>{
       console.log('error in fetching data of educator:' , error);
     }
    }
-   if (user?.userData?.user?._id) {
-    fetchEducatorsData();
-  }
- },[user])
+
+   useEffect(() => {
+    if (user?.userData?.user?._id) {
+      fetchEducatorsData();
+    }
+  }, [user]);
+  
+  const fetchEducatorsDetailedData = async (email) => {
+    try {
+      
+      const response = await axios.post(API.educatorsDetailedData.url, {
+        email: email,
+        _id: user.userData.user._id,
+      });
+  
+  
+      if (response.status === 200) {
+        setEducatorDetailedData(response.data.data);
+        setViewUserDetails(true)
+      }
+    } catch (error) {
+      console.error("Error fetching detailed data:", error);
+    }
+  };
+  
+
 
   // fetching learner data
- useEffect(()=>{
   const fetchLearnersData = async () =>{
     try {
       const response = await axios.post(API.learnersData.url ,{
@@ -143,11 +143,11 @@ useEffect(()=>{
       console.log('error in fetching data of educator:' , error);
     }
    }
-
-   if (user?.userData?.user?._id) {
-    fetchLearnersData();
-  }
- },[user ])
+   useEffect(() => {
+    if (user?.userData?.user?._id) {
+      fetchLearnersData();
+    }
+  }, [user]);
 
 //  approve user
  const approveEducator = async (email)=>{
@@ -159,6 +159,9 @@ try {
 
   })
 
+  if (response.status === 200) {
+    fetchEducatorsData(); // Refresh list after approval
+  }
   console.log("response approve", response)
 } catch (error) {
   console.log('approve error' , error)
@@ -175,7 +178,11 @@ const deleteUser = async (email , role) =>{
     _id: user.userData.user._id
    }
     })
-    alirt('user deleted success fully')
+    
+    if (response.status === 200) {
+      fetchEducatorsData(); 
+      fetchLearnersData();
+    }
   } catch (error) {
     alirt(response.message)
     console.log(error)
@@ -183,7 +190,14 @@ const deleteUser = async (email , role) =>{
 }
 
   return (
-    <div className={`${darkMode ? 'dark bg-gray-900' : 'bg-gray-50'} min-h-screen transition-colors duration-300`}>
+    <div className={`${darkMode ? 'dark bg-gray-900' : 'bg-gray-50'} min-h-screen transition-colors duration-300 w-full z-50`}>
+     {
+      viewUserDetails && (
+        <div className={` absolute z-50 flex justify-center items-center w-full  p-10  bg-black`}><UserDetailsList user={educatorDetailedData} />
+        <span onClick={()=>{setViewUserDetails(false)}} className=' text-white absolute right-5 text-3xl top-0 cursor-pointer'>X</span>
+        </div>
+      )
+     }
       {/* Sidebar - Desktop */}
       <div className="hidden md:flex fixed h-full w-64 bg-white dark:bg-gray-800 shadow-md flex-col">
         <div className="p-4 flex items-center space-x-2">
@@ -317,7 +331,7 @@ const deleteUser = async (email , role) =>{
       
       
       {/* Main Content */}
-      <div className="md:ml-64 p-4 transition-all duration-300 bg-">
+      <div className="md:ml-64 p-4 transition-all duration-300 relative">
         {/* Top bar */}
         <div className="bg-white dark:bg-gray-800 shadow rounded-lg mb-4 p-4 flex justify-between items-center">
           <div className="flex items-center">
@@ -418,6 +432,7 @@ const deleteUser = async (email , role) =>{
                       <th scope="col" className="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Sub-Role</th>
                       <th scope="col" className="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Country</th>
                       <th scope="col" className="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Join Date</th>
+                      <th scope="col" className="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">View Details</th>
                     </tr>
                   </thead>
                   <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
@@ -428,6 +443,7 @@ const deleteUser = async (email , role) =>{
                         <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{educator.subrole}</td>
                         <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{educator.country}</td>
                         <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300"> {new Date(educator.createdAt).toLocaleDateString()}</td>
+                        <td onClick={()=>{fetchEducatorsDetailedData(educator.email)}} className="px-3 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-green-500 cursor-pointer">View</td>
                       </tr>
                     ))}
                   </tbody>
@@ -446,6 +462,7 @@ const deleteUser = async (email , role) =>{
                       <th scope="col" className="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Email</th>
                       <th scope="col" className="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Request Date</th>
                       <th scope="col" className="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Actions</th>
+                      <th scope="col" className="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">View Details</th>
                     </tr>
                   </thead>
                   <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
@@ -470,6 +487,7 @@ const deleteUser = async (email , role) =>{
                             </button>
                           </div>
                         </td>
+                        <td onClick={()=>{fetchEducatorsDetailedData(educator.email)}} className="px-3 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-green-500 cursor-pointer">View</td>
                       </tr>
                     )) : (
                       <tr>
@@ -581,6 +599,7 @@ const deleteUser = async (email , role) =>{
       </div>
       
       
+     
       </div>
     )
   }

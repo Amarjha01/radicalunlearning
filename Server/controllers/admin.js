@@ -115,3 +115,24 @@ export const approveEducator = async (req, res) =>{
         })
     }
 }
+
+export const getEducatorDataDetails = async(req, res) =>{
+    try {
+        const {email , _id} = req.body;
+        console.log(email,_id)
+        const response = await EducatorUserModel.findOne({email:email});
+        console.log(response)
+        res.status(200).json({
+            message:`fetched user details successfully for this email ${email} `,
+            data:response,
+            success:true,
+            error:false
+        })
+    } catch (error) {
+        res.status(500).json({
+            message:"failed to fetch data",
+            error:true,
+            success:false
+        })
+    }
+}

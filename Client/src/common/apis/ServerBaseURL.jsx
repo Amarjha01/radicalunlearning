@@ -1,5 +1,5 @@
-// const backendDomain = "http://localhost:3000";
-const backendDomain = "api.radical-unlearning.com";
+const backendDomain = "http://localhost:3000";
+// const backendDomain = "https://api.radical-unlearning.com/";
 
 const API = {
   registerLearner: { 
@@ -18,6 +18,10 @@ const API = {
 
   educatorsData: { 
     url: `${backendDomain}/api/admin/get-all-educator-data`,
+    method: 'POST',
+  },
+  educatorsDetailedData: { 
+    url: `${backendDomain}/api/admin/getEducatorDataDetails`,
     method: 'POST',
   },
   learnersData: { 

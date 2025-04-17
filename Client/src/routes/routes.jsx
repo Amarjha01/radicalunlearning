@@ -33,6 +33,30 @@ const routes = createBrowserRouter(
                     path: 'contact',
                     element: <Contact />
                 },
+                {
+                  path: 'dashboard/admin',
+                  element: (
+                    <ProtectedRoute role="admin">
+                      <AdminDashboard />
+                    </ProtectedRoute>
+                  )
+                },
+                {
+                  path: 'dashboard/educator',
+                  element: (
+                    <ProtectedRoute role="educator">
+                      <EducatorDashboard />
+                    </ProtectedRoute>
+                  )
+                },
+                {
+                  path: 'dashboard/learner',
+                  element: (
+                    <ProtectedRoute role="learner">
+                      <LearnerDashboard />
+                    </ProtectedRoute>
+                  )
+                }
                
                 
             ]
@@ -55,34 +79,7 @@ const routes = createBrowserRouter(
                 }
             ]
         },
-        {
-            path:'user',
-            element: <User />
-        },
-        {
-            path: 'dashboard/admin',
-            element: (
-              <ProtectedRoute role="admin">
-                <AdminDashboard />
-              </ProtectedRoute>
-            )
-          },
-          {
-            path: 'dashboard/educator',
-            element: (
-              <ProtectedRoute role="educator">
-                <EducatorDashboard />
-              </ProtectedRoute>
-            )
-          },
-          {
-            path: 'dashboard/learner',
-            element: (
-              <ProtectedRoute role="learner">
-                <LearnerDashboard />
-              </ProtectedRoute>
-            )
-          }
+        
     ]
 )
 export default routes;
