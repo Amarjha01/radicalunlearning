@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Calendar, Clock, Users, User, DollarSign, Settings, Bell, LogOut, Moon, Sun, Eye, MoreVertical, Edit, ChevronDown, Upload, Search, X } from 'lucide-react';
-
+import axios from 'axios';
+import API from '../../common/apis/ServerBaseURL.jsx'
 import { useSelector } from "react-redux";
 import { useDispatch } from 'react-redux';
 import { clearUser } from "../../store/slices/userSlice.jsx";
@@ -84,14 +85,19 @@ export default function EducatorDashboard() {
   const [darkMode, setDarkMode] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [viewMode, setViewMode] = useState("list"); // list or calendar
-  const [profileData, setProfileData] = useState(dummyEducatorProfile);
+  const [profileData, setProfileData] = useState({});
   const [sessions, setSessions] = useState(dummyScheduledSessions);
   const [isChangePasswordOpen, setIsChangePasswordOpen] = useState(false);
 
   const dispatch = useDispatch();
 
   const user = useSelector((state) => state.user);
+  console.log("user",profileData);
   
+useEffect(()=>{
+  setProfileData(user.userData.user)
+})
+
   const handleLogout = () => {
     dispatch(clearUser());
   };
@@ -144,10 +150,11 @@ export default function EducatorDashboard() {
   return (
     
     
-      <div className={`${darkMode ? 'dark' : ''} min-h-screen`}>
+      <div className={`${darkMode ? 'dark' : ''} min-h-screen `}>
       <div className="bg-gray-50 dark:bg-gray-900 min-h-screen">
         {/* Sidebar - Desktop */}
-        <aside className="fixed inset-y-0 left-0 z-10 w-64 bg-white dark:bg-gray-800 shadow-lg transform transition-transform duration-300 md:translate-x-0 hidden md:block">
+     <div className=' flex'>
+     <aside className="min-h-screen inset-y-0 left-0 z-10 w-64 bg-white dark:bg-gray-800 shadow-lg transform transition-transform duration-300 md:translate-x-0 hidden md:block">
           <div className="flex flex-col h-full">
             <div className="px-4 py-6 flex items-center justify-center border-b border-gray-200 dark:border-gray-700">
               <div className="relative w-12 h-12 rounded-full overflow-hidden bg-indigo-100 dark:bg-indigo-900 mr-3">
@@ -219,9 +226,37 @@ export default function EducatorDashboard() {
             </div>
           </div>
         </aside>
-        
-        {/* Mobile Header with Menu Toggle */}
-        <div className="md:hidden bg-white dark:bg-gray-800 shadow-sm py-4 px-4 sticky top-0 z-20">
+                {/* Main Content Area */}
+                <div className=" p-4">
+          {/* Top Bar with Notifications and Dark Mode Toggle */}
+          <div className="hidden md:flex justify-between items-center mb-6">
+            <h1 className="text-2xl font-bold text-gray-800 dark:text-white">
+              {activeTab === "dashboard" && "My Scheduled Sessions"}
+              {activeTab === "profile" && "My Profile"}
+              {activeTab === "payment" && "Payment Settings"}
+            </h1>
+            
+            <div className="flex items-center space-x-4">
+              <div className="relative">
+                <button className="p-2 rounded-full text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                  <Bell className="h-5 w-5" />
+                  <span className="absolute top-0 right-0 h-2 w-2 rounded-full bg-red-500"></span>
+                </button>
+              </div>
+              <button 
+                onClick={() => setDarkMode(!darkMode)}
+                className="p-2 rounded-full text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+              >
+                {darkMode ? (
+                  <Sun className="h-5 w-5" />
+                ) : (
+                  <Moon className="h-5 w-5" />
+                )}
+              </button>
+            </div>
+          </div>
+
+          <div className="md:hidden bg-white dark:bg-gray-800 shadow-sm py-4 px-4 sticky top-0 z-20">
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               <button 
@@ -256,124 +291,6 @@ export default function EducatorDashboard() {
             </div>
           </div>
         </div>
-        
-        {/* Mobile Sidebar */}
-        {mobileMenuOpen && (
-          <div className="fixed inset-0 z-30 md:hidden">
-            <div className="absolute inset-0 bg-gray-600 opacity-75" onClick={() => setMobileMenuOpen(false)}></div>
-            <div className="absolute inset-y-0 left-0 w-64 bg-white dark:bg-gray-800 shadow-lg transform transition-transform duration-300">
-              <div className="flex flex-col h-full">
-                <div className="px-4 py-6 flex items-center border-b border-gray-200 dark:border-gray-700">
-                  <div className="relative w-10 h-10 rounded-full overflow-hidden bg-indigo-100 dark:bg-indigo-900 mr-3">
-                    <img 
-                      src={profileData.avatar} 
-                      alt="Profile" 
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div>
-                    <h2 className="text-lg font-semibold text-gray-800 dark:text-white">Educator Portal</h2>
-                    <p className="text-sm text-gray-600 dark:text-gray-300">{profileData.name}</p>
-                  </div>
-                </div>
-                
-                <nav className="flex-1 px-4 py-6 space-y-1">
-                  <button 
-                    onClick={() => {
-                      setActiveTab("dashboard");
-                      setMobileMenuOpen(false);
-                    }}
-                    className={`flex items-center px-3 py-2 w-full text-left rounded-md text-sm font-medium ${
-                      activeTab === "dashboard" 
-                      ? "bg-indigo-100 text-indigo-600 dark:bg-indigo-900 dark:text-indigo-200" 
-                      : "text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
-                    }`}
-                  >
-                    <Calendar className="mr-3 h-5 w-5" />
-                    <span>Dashboard</span>
-                  </button>
-                  
-                  <button 
-                    onClick={() => {
-                      setActiveTab("profile");
-                      setMobileMenuOpen(false);
-                    }}
-                    className={`flex items-center px-3 py-2 w-full text-left rounded-md text-sm font-medium ${
-                      activeTab === "profile" 
-                      ? "bg-indigo-100 text-indigo-600 dark:bg-indigo-900 dark:text-indigo-200" 
-                      : "text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
-                    }`}
-                  >
-                    <User className="mr-3 h-5 w-5" />
-                    <span>Profile</span>
-                  </button>
-                  
-                  <button 
-                    onClick={() => {
-                      setActiveTab("payment");
-                      setMobileMenuOpen(false);
-                    }}
-                    className={`flex items-center px-3 py-2 w-full text-left rounded-md text-sm font-medium ${
-                      activeTab === "payment" 
-                      ? "bg-indigo-100 text-indigo-600 dark:bg-indigo-900 dark:text-indigo-200" 
-                      : "text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
-                    }`}
-                  >
-                    <DollarSign className="mr-3 h-5 w-5" />
-                    <span>Payment Settings</span>
-                  </button>
-                </nav>
-                
-                <div className="px-4 py-6 border-t border-gray-200 dark:border-gray-700">
-                  <div className="flex items-center justify-between mb-4">
-                    <button 
-                      className="flex items-center text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400"
-                    >
-                      <Eye className="h-5 w-5 mr-2" />
-                      <span>View as learner</span>
-                    </button>
-                  </div>
-                  <button 
-                    className="flex items-center w-full px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-red-600 dark:hover:text-red-400"
-                  >
-                    <LogOut className="h-5 w-5 mr-2" />
-                    <span>Logout</span>
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-        
-        {/* Main Content Area */}
-        <div className="md:ml-64 p-4">
-          {/* Top Bar with Notifications and Dark Mode Toggle */}
-          <div className="hidden md:flex justify-between items-center mb-6">
-            <h1 className="text-2xl font-bold text-gray-800 dark:text-white">
-              {activeTab === "dashboard" && "My Scheduled Sessions"}
-              {activeTab === "profile" && "My Profile"}
-              {activeTab === "payment" && "Payment Settings"}
-            </h1>
-            
-            <div className="flex items-center space-x-4">
-              <div className="relative">
-                <button className="p-2 rounded-full text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
-                  <Bell className="h-5 w-5" />
-                  <span className="absolute top-0 right-0 h-2 w-2 rounded-full bg-red-500"></span>
-                </button>
-              </div>
-              <button 
-                onClick={() => setDarkMode(!darkMode)}
-                className="p-2 rounded-full text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-              >
-                {darkMode ? (
-                  <Sun className="h-5 w-5" />
-                ) : (
-                  <Moon className="h-5 w-5" />
-                )}
-              </button>
-            </div>
-          </div>
           
           {/* Mobile Content Title */}
           <div className="md:hidden mb-4">
@@ -547,51 +464,314 @@ export default function EducatorDashboard() {
           
           {/* Profile View */}
           {activeTab === "profile" && (
-            <div className="bg-white dark:bg-gray-800 shadow-md rounded-lg p-6">
-              <div className="flex flex-col md:flex-row md:space-x-8">
-                {/* Avatar Section */}
-                <div className="md:w-1/4 flex flex-col items-center mb-6 md:mb-0">
-                  <div className="relative w-32 h-32 rounded-full overflow-hidden bg-gray-200 dark:bg-gray-700 mb-4">
+  <div className="bg-white dark:bg-gray-800 shadow-md rounded-lg p-6">
+    <div className="flex flex-col md:flex-row md:space-x-8">
+      {/* Avatar Section */}
+      <div className="md:w-1/4 flex flex-col items-center mb-6 md:mb-0">
+        <div className="relative w-32 h-32 rounded-full overflow-hidden bg-gray-200 dark:bg-gray-700 mb-4">
+          <img 
+            src={profileData.avatar} 
+            alt="Profile" 
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity duration-300">
+            <button className="p-2 bg-white dark:bg-gray-800 rounded-full">
+              
+              
+              
+            </button>
+          </div>
+        </div>
+        <div>
+  <input 
+    type="file" 
+    accept=".jpg,.jpeg" 
+    className="hidden" 
+    id="fileUpload" 
+    // onChange={handleFileChange} 
+  />
+
+  <label htmlFor="fileUpload">
+    <button
+      type="button"
+      className="group px-4 py-2 bg-indigo-50 text-indigo-600 dark:bg-indigo-900 dark:text-indigo-200 rounded-md text-sm font-medium flex items-center justify-center cursor-pointer"
+    >
+      <span className="group-hover:hidden">Upload new photo</span>
+      <Upload className="hidden group-hover:block h-5 w-5 text-gray-700 dark:text-gray-300" />
+    </button>
+  </label>
+</div>
+
+
+      </div>
+      
+      {/* Profile Form */}
+      <div className="md:w-3/4">
+        <form onSubmit={handleProfileSubmit}>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            {/* Full Name */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Full Name
+              </label>
+              <input 
+                type="text" 
+                value={profileData.name}
+                onChange={(e) => setProfileData({...profileData, name: e.target.value})}
+                className="w-full rounded-md border border-gray-300 dark:border-gray-600 shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                required
+              />
+            </div>
+
+            {/* Email */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Email
+              </label>
+              <input 
+                type="email" 
+                value={profileData.email}
+                onChange={(e) => setProfileData({...profileData, email: e.target.value})}
+                className="w-full rounded-md border border-gray-300 dark:border-gray-600 shadow-sm py-2 px-3 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+              />
+            </div>
+
+            {/* Role */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Role
+              </label>
+              <input 
+                type="text" 
+                value={profileData.role}
+                onChange={(e) => setProfileData({...profileData, role: e.target.value})}
+                className="w-full rounded-md border border-gray-300 dark:border-gray-600 shadow-sm py-2 px-3 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+              />
+            </div>
+
+            {/* Subrole */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Subrole
+              </label>
+              <input 
+                type="text" 
+                value={profileData.subrole}
+                onChange={(e) => setProfileData({...profileData, subrole: e.target.value})}
+                className="w-full rounded-md border border-gray-300 dark:border-gray-600 shadow-sm py-2 px-3 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+              />
+            </div>
+
+            {/* Country */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Country
+              </label>
+              <input 
+                type="text" 
+                value={profileData.country}
+                onChange={(e) => setProfileData({...profileData, country: e.target.value})}
+                className="w-full rounded-md border border-gray-300 dark:border-gray-600 shadow-sm py-2 px-3 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+              />
+            </div>
+
+            {/* Language */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Language
+              </label>
+              <input 
+                type="text" 
+                value={profileData.language}
+                onChange={(e) => setProfileData({...profileData, language: e.target.value})}
+                className="w-full rounded-md border border-gray-300 dark:border-gray-600 shadow-sm py-2 px-3 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+              />
+            </div>
+
+            {/* Service Type */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Service Type
+              </label>
+              <input 
+                type="text" 
+                value={profileData.serviceType}
+                onChange={(e) => setProfileData({...profileData, serviceType: e.target.value})}
+                className="w-full rounded-md border border-gray-300 dark:border-gray-600 shadow-sm py-2 px-3 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+              />
+            </div>
+
+            {/* Payout Method */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Payout Method
+              </label>
+              <input 
+                type="text" 
+                value={profileData.payoutMethod}
+                onChange={(e) => setProfileData({...profileData, payoutMethod: e.target.value})}
+                className="w-full rounded-md border border-gray-300 dark:border-gray-600 shadow-sm py-2 px-3 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+              />
+            </div>
+
+            {/* UPI ID */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                UPI ID
+              </label>
+              <input 
+                type="text" 
+                value={profileData.upiID}
+                onChange={(e) => setProfileData({...profileData, upiID: e.target.value})}
+                className="w-full rounded-md border border-gray-300 dark:border-gray-600 shadow-sm py-2 px-3 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+              />
+            </div>
+
+            {/* Approved */}
+            <div className="flex items-center space-x-2 mt-4">
+              <input 
+                type="checkbox" 
+                checked={profileData.Approved}
+                onChange={(e) => setProfileData({...profileData, Approved: e.target.checked})}
+                className="h-4 w-4 text-indigo-600 border-gray-300 rounded"
+              />
+              <label className="text-sm text-gray-700 dark:text-gray-300">Approved</label>
+            </div>
+
+            {/* Experience */}
+            <div className="md:col-span-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Experience
+              </label>
+              <textarea 
+                value={profileData.experience}
+                onChange={(e) => setProfileData({...profileData, experience: e.target.value})}
+                className="w-full rounded-md border border-gray-300 dark:border-gray-600 shadow-sm py-2 px-3 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                rows={2}
+              />
+            </div>
+
+            {/* Bio */}
+            <div className="md:col-span-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Bio
+              </label>
+              <textarea 
+                value={profileData.bio}
+                onChange={(e) => setProfileData({...profileData, bio: e.target.value})}
+                className="w-full rounded-md border border-gray-300 dark:border-gray-600 shadow-sm py-2 px-3 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                rows={4}
+              />
+            </div>
+          </div>
+          <button 
+            type="submit" 
+            className="px-6 py-2 bg-indigo-600 text-white rounded-md font-medium hover:bg-indigo-700"
+          >
+            Save Profile
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+)}
+
+
+          </div>
+     </div>
+        
+        {/* Mobile Header with Menu Toggle */}
+        
+        
+        {/* Mobile Sidebar */}
+        {mobileMenuOpen && (
+          <div className="fixed inset-0 z-30 md:hidden">
+            <div className="absolute inset-0 bg-gray-600 opacity-75" onClick={() => setMobileMenuOpen(false)}></div>
+            <div className="absolute inset-y-0 left-0 w-64 bg-white dark:bg-gray-800 shadow-lg transform transition-transform duration-300">
+              <div className="flex flex-col h-full">
+                <div className="px-4 py-6 flex items-center border-b border-gray-200 dark:border-gray-700">
+                  <div className="relative w-10 h-10 rounded-full overflow-hidden bg-indigo-100 dark:bg-indigo-900 mr-3">
                     <img 
                       src={profileData.avatar} 
                       alt="Profile" 
                       className="w-full h-full object-cover"
                     />
-                    <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity duration-300">
-                      <button className="p-2 bg-white dark:bg-gray-800 rounded-full">
-                        <Upload className="h-5 w-5 text-gray-700 dark:text-gray-300" />
-                      </button>
-                    </div>
                   </div>
-                  <button className="px-4 py-2 bg-indigo-50 text-indigo-600 dark:bg-indigo-900 dark:text-indigo-200 rounded-md text-sm font-medium">
-                    Upload new photo
-                  </button>
+                  <div>
+                    <h2 className="text-lg font-semibold text-gray-800 dark:text-white">Educator Portal</h2>
+                    <p className="text-sm text-gray-600 dark:text-gray-300">{profileData.name}</p>
+                  </div>
                 </div>
                 
-                {/* Profile Form */}
-                <div className="md:w-3/4">
-                  <form onSubmit={handleProfileSubmit}>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                          Full Name
-                        </label>
-                        <input 
-                          type="text" 
-                          value={profileData.name}
-                          onChange={(e) => setProfileData({...profileData, name: e.target.value})}
-                          className="w-full rounded-md border border-gray-300 dark:border-gray-600 shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                          required
-                        />
-                      </div>
-                      </div>
-                      </form>
-                    </div>
-                    </div>
-                    </div>
-          )}
-
+                <nav className="flex-1 px-4 py-6 space-y-1">
+                  <button 
+                    onClick={() => {
+                      setActiveTab("dashboard");
+                      setMobileMenuOpen(false);
+                    }}
+                    className={`flex items-center px-3 py-2 w-full text-left rounded-md text-sm font-medium ${
+                      activeTab === "dashboard" 
+                      ? "bg-indigo-100 text-indigo-600 dark:bg-indigo-900 dark:text-indigo-200" 
+                      : "text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
+                    }`}
+                  >
+                    <Calendar className="mr-3 h-5 w-5" />
+                    <span>Dashboard</span>
+                  </button>
+                  
+                  <button 
+                    onClick={() => {
+                      setActiveTab("profile");
+                      setMobileMenuOpen(false);
+                    }}
+                    className={`flex items-center px-3 py-2 w-full text-left rounded-md text-sm font-medium ${
+                      activeTab === "profile" 
+                      ? "bg-indigo-100 text-indigo-600 dark:bg-indigo-900 dark:text-indigo-200" 
+                      : "text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
+                    }`}
+                  >
+                    <User className="mr-3 h-5 w-5" />
+                    <span>Profile</span>
+                  </button>
+                  
+                  <button 
+                    onClick={() => {
+                      setActiveTab("payment");
+                      setMobileMenuOpen(false);
+                    }}
+                    className={`flex items-center px-3 py-2 w-full text-left rounded-md text-sm font-medium ${
+                      activeTab === "payment" 
+                      ? "bg-indigo-100 text-indigo-600 dark:bg-indigo-900 dark:text-indigo-200" 
+                      : "text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
+                    }`}
+                  >
+                    <DollarSign className="mr-3 h-5 w-5" />
+                    <span>Payment Settings</span>
+                  </button>
+                </nav>
+                
+                <div className="px-4 py-6 border-t border-gray-200 dark:border-gray-700">
+                  <div className="flex items-center justify-between mb-4">
+                    <button 
+                      className="flex items-center text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400"
+                    >
+                      <Eye className="h-5 w-5 mr-2" />
+                      <span>View as learner</span>
+                    </button>
+                  </div>
+                  <button 
+                    className="flex items-center w-full px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-red-600 dark:hover:text-red-400"
+                  >
+                    <LogOut className="h-5 w-5 mr-2" />
+                    <span>Logout</span>
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
+        )}
+        
+
           </div>
           </div> 
     )

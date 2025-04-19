@@ -39,9 +39,7 @@ const SignIn = () => {
 if(response?.data?.success == true){
   const responseData = response.data;
   console.log( response)
-  console.log("response data:", responseData.userData);
   const userData = responseData.userData;
-  console.log("userdata extracted:" , userData)
   const statePayload = {
     userData
   };

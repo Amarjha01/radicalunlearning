@@ -16,9 +16,9 @@ const Footer= () =>  {
             <a href="#" className="hover:underline"> Privacy</a>
           </div>
           <div className="flex gap-4 justify-center lg:justify-start mt-4 text-xl">
-            <a href="#"><FaInstagram /></a>
-            <a href="#"><FaFacebookF /></a>
-            <a href="#"><FaYoutube /></a>
+            <a href="https://www.instagram.com/radicalunlearning/"><FaInstagram /></a>
+            <a href="https://www.facebook.com/profile.php?id=61573197735821"><FaFacebookF /></a>
+            <a href="https://www.youtube.com/@Radical-Unlearning"><FaYoutube /></a>
           </div>
           <p className="text-xs mt-4">© 2025 Radical Unlearning. All rights reserved.</p>
         </div>
@@ -26,11 +26,11 @@ const Footer= () =>  {
         <div className="space-y-4 text-center lg:text-left">
           <div className="flex items-center gap-3 justify-center lg:justify-start">
             <FaPhoneAlt />
-            <a href="tel:+44123456789" className="hover:underline">+44-123456789</a>
+            <a href="tel:+44 7557 201060" className="hover:underline">+44 7557 201060</a>
           </div>
           <div className="flex items-center gap-3 justify-center lg:justify-start">
             <FaEnvelope />
-            <a href="mailto:support@example.com" className="hover:underline">Support@example.com</a>
+            <a href="mailto:support@example.com" className="hover:underline">help@radicalunlearning.com</a>
           </div>
           <div className="flex items-center gap-3 justify-center lg:justify-start">
             <FaRobot />

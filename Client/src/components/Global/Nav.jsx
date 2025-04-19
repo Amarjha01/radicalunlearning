@@ -17,7 +17,6 @@ const Nav = () => {
   const dispatch = useDispatch();
 
   const user = useSelector((state) => state.user);
-  console.log("checking user:", user.userData)
   
   useEffect(() => {
     if (!user || !user.userData) {

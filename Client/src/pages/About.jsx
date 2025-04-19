@@ -1,17 +1,20 @@
 import React from "react";
 import CircularText from './CircularText';
+import VimeoPlayer from '../components/About/Video.jsx'
+import GroupChat from "../components/Chat/GroupChat.jsx";
+
 const About = () => {
   return (
     
     <section className="min-h-screen w-full  text-white px-6 md:px-20 py-20 flex flex-col items-center justify-center">
       {/* Glowing Main Title */}
       
-      <CircularText
-  text="REACT*BITS*COMPONENTS*"
+      {/* <CircularText
+  text="RADICAL*UNLEARNING*"
   onHover="speedUp"
   spinDuration={20}
   className="custom-class"
-/>
+/> */}
       <h1 className="text-4xl md:text-5xl font-bold text-center mb-10 bg-gradient-to-r from-[#4facfe] via-[#6f57ff] to-[#00f2fe] bg-clip-text text-transparent orbitron-regular tracking-widest">
         🚀 About Us
       </h1>
@@ -78,7 +81,61 @@ const About = () => {
             If you’ve ever felt like traditional learning didn’t quite fit you — welcome home.
           </p>
         </div>
+        {/* Radical Unlearning Principles - Creative Layout */}
+<div className="relative z-10 mt-12">
+  <h2 className="text-3xl font-bold text-center mb-10 text-[#7f9cf5] anta-regular tracking-wide">
+    🌱 Principles of Radical Unlearning
+  </h2>
+
+  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    {[
+      "Learner decides learning goals",
+      "Learner chooses learning method(s)",
+      "Learner decides if they need support",
+      "Learner decides if they would like to be measured & how",
+      "Learner focuses on deep learning instead of superficial mastery",
+      "No reward & punishment",
+      "Trust learner & process of learning",
+      "Redefine 'intelligence' & respect diversity",
+      "Learner can go beyond the educator",
+    ].map((principle, index) => (
+      <div
+        key={index}
+        className="group relative bg-[#101827]/70 text-white border border-[#1e2a48] p-6 rounded-2xl shadow-[0_0_30px_#4facfe30] hover:shadow-[0_0_40px_#00f2fe60] transition duration-300 backdrop-blur-lg"
+      >
+        <div className="absolute -top-4 -left-4 bg-gradient-to-br from-[#4facfe] to-[#00f2fe] text-black font-bold w-10 h-10 rounded-full flex items-center justify-center text-sm shadow-lg">
+          {index + 1}
+        </div>
+        <p className="text-base text-gray-200 leading-relaxed group-hover:text-white anta-regular">
+          {principle}
+        </p>
       </div>
+    ))}
+  </div>
+
+  <p className="mt-12 text-center text-gray-400 italic text-sm max-w-2xl mx-auto">
+    True education begins when learners are trusted to explore their paths — free from constraints, full of curiosity.
+  </p>
+</div>
+{/* Cinematic Video Section */}
+{/* 🎬 Cinematic Video Section */}
+<div className="mt-20 w-full flex flex-col items-center justify-center px-4 md:px-20">
+  <h2 className="text-3xl font-bold text-center mb-6 text-[#00f2fe] anta-regular">
+    🎥 A Glimpse Into Our World
+  </h2>
+
+  <div className="w-full max-w-4xl">
+    <VimeoPlayer />
+  </div>
+
+  <p className="mt-6 max-w-xl text-center text-gray-300 italic text-base leading-relaxed">
+    “Sometimes, the best learning begins when we let go of what we thought we knew.”
+  </p>
+</div>
+
+
+      </div>
+      <GroupChat /> 
     </section>
   );
 };

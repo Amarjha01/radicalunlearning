@@ -363,14 +363,31 @@ export async function signin(request, response) {
         response.cookie("accessToken", accessToken, cookiesOption);
         response.cookie("refreshToken", refreshToken, cookiesOption);
         console.log("current user logd in :",  user)
+        const data = {
+          name:user.name
+        }
         return response.status(200).json({
             message: `Login successful as ${user.role}`,
             success: true,
             accessToken,
             refreshToken,
-           
+          
             userData: {
-                user,
+                user:{
+                  name:user.name,
+                  email:user.email,
+                  role:user.role,
+                  subrole:user.subrole,
+                  country:user.country,
+                  language:user.language,
+                  bio:user.bio,
+                  experience:user.experience,
+                  subjects:user.subjects,
+                  serviceType:user.serviceType,
+                  payoutMethod:user.payoutMethod,
+                  upiID:user.upiId,
+                  Approved:user.Approved
+                },
                 "role": user.role,
                 
             }

@@ -17,7 +17,7 @@ const ContactUs = () => {
   };
 
   return (
-    <section className="min-h-screen w-full   flex items-center justify-center px-6 py-16 md:px-16 orbitron-regular bg">
+    <section className="min-h-screen w-full    flex items-center justify-center px-6 py-16 md:px-16 orbitron-regular bg">
       <div className="bg-[#0b0f19]/80 p-10 rounded-2xl shadow-[0_0_40px_#2b6bff40] backdrop-blur-lg max-w-xl w-full border border-[#1e2a48]">
         <h2 className="text-3xl md:text-4xl mb-8 text-center bg-gradient-to-r from-[#6f57ff] via-[#00f2fe] to-[#4facfe] bg-clip-text text-transparent tracking-wide orbitron-regular">
           Contact Us
