@@ -386,7 +386,8 @@ export async function signin(request, response) {
                   serviceType:user.serviceType,
                   payoutMethod:user.payoutMethod,
                   upiID:user.upiId,
-                  Approved:user.Approved
+                  Approved:user.Approved,
+                  _id:user._id
                 },
                 "role": user.role,
                 
@@ -405,8 +406,8 @@ export async function signin(request, response) {
 
 export async function updateUserDetails(request,response){
     try {
-        const id = request.id 
-        const { name, email, mobile, role, password } = request.body 
+      const role = request.body.role.toUpperCase();
+        const { name, email, mobile,  _id } = request.body 
 
         let hashPassword = ""
 

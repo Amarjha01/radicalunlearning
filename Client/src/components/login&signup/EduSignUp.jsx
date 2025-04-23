@@ -2,7 +2,6 @@ import { useNavigate } from "react-router-dom";
 import { useForm, Controller } from "react-hook-form";
 import { motion } from "framer-motion";
 import { useState } from "react";
-import { CountrySelect, LanguageSelect } from "react-country-state-city";
 import CreatableSelect from "react-select/creatable";
 import { IoMdEye } from "react-icons/io";
 import { IoMdEyeOff } from "react-icons/io";

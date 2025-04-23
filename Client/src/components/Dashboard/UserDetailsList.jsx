@@ -1,12 +1,14 @@
 import React from 'react';
 
 const UserDetails = ({ user }) => {
+  console.log('user detailed called');
+  
   if (!user || Object.keys(user).length === 0) {
     return <p className="p-4">No user data available.</p>;
   }
 
   return (
-    <div className="p-4 h-fit">
+    <div className="p-4 max-w-[50%]">
       <div className="h-fit border rounded-lg p-4 mb-6 shadow bg-white">
         <h2 className="text-xl font-semibold mb-4 text-indigo-600">User Details</h2>
         <div className="flex flex-col gap-4 text-sm text-gray-800">

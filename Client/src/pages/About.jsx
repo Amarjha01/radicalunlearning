@@ -1,7 +1,6 @@
 import React from "react";
 import CircularText from './CircularText';
 import VimeoPlayer from '../components/About/Video.jsx'
-import GroupChat from "../components/Chat/GroupChat.jsx";
 
 const About = () => {
   return (
@@ -135,7 +134,6 @@ const About = () => {
 
 
       </div>
-      <GroupChat /> 
     </section>
   );
 };

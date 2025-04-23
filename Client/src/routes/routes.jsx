@@ -14,6 +14,7 @@ import LerSignUp from '../components/login&signup/LerSignUp.jsx'
 import EduSignUp from '../components/login&signup/EduSignUp.jsx'
 import Contact from '../pages/Contact.jsx'
 import User from '../pages/User.jsx'
+import TopBar from '../components/Dashboard/admin/TopBar.jsx';
 const routes = createBrowserRouter(
     [
         {
@@ -33,30 +34,7 @@ const routes = createBrowserRouter(
                     path: 'contact',
                     element: <Contact />
                 },
-                {
-                  path: 'dashboard/admin',
-                  element: (
-                    <ProtectedRoute role="admin">
-                      <AdminDashboard />
-                    </ProtectedRoute>
-                  )
-                },
-                {
-                  path: 'dashboard/educator',
-                  element: (
-                    <ProtectedRoute role="educator">
-                      <EducatorDashboard />
-                    </ProtectedRoute>
-                  )
-                },
-                {
-                  path: 'dashboard/learner',
-                  element: (
-                    <ProtectedRoute role="learner">
-                      <LearnerDashboard />
-                    </ProtectedRoute>
-                  )
-                }
+            
                
                 
             ]
@@ -79,6 +57,35 @@ const routes = createBrowserRouter(
                 }
             ]
         },
+        {
+          path: 'dashboard/admin',
+          element: (
+            <ProtectedRoute role="admin">
+              <AdminDashboard />
+            </ProtectedRoute>
+          ),
+          children:[
+            <ProtectedRoute role="admin">
+              <TopBar />
+            </ProtectedRoute>
+          ]
+        },
+        {
+          path: 'dashboard/educator',
+          element: (
+            <ProtectedRoute role="educator">
+              <EducatorDashboard />
+            </ProtectedRoute>
+          )
+        },
+        {
+          path: 'dashboard/learner',
+          element: (
+            <ProtectedRoute role="learner">
+              <LearnerDashboard />
+            </ProtectedRoute>
+          )
+        }
         
     ]
 )
