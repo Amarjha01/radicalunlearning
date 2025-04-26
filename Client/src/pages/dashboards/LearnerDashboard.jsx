@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { 
   Home, 
   Award, 
@@ -16,7 +16,19 @@ import {
   ArrowRight,
   ChevronRight
 } from 'lucide-react';
-
+import { IoVideocam } from "react-icons/io5";
+import GroupChat from "../../components/Chat/GroupChat.jsx";
+import { MdHome } from "react-icons/md";
+import { CiChat1 } from "react-icons/ci";
+import { TbUserSearch } from "react-icons/tb";
+import { MdOutlineSearch } from "react-icons/md";
+import { CiLock } from "react-icons/ci";
+import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import axios from 'axios';
+import API from '../../common/apis/ServerBaseURL.jsx';
+import VideoCall from '../../p2p/VideoCall.jsx'
+import TodoApp from '../../components/Dashboard/TodoApp.jsx';
 // Dummy data for development
 const dummyUser = {
   name: "Alex Thompson",
@@ -143,117 +155,6 @@ const formatDateTime = (dateTimeString) => {
   const dateOptions = { month: 'short', day: 'numeric' };
   const timeOptions = { hour: '2-digit', minute: '2-digit' };
   return `${date.toLocaleDateString('en-US', dateOptions)} at ${date.toLocaleTimeString('en-US', timeOptions)}`;
-};
-
-// Main dashboard components
-const LearnerDashboard = () => {
-
-  const [activeTab, setActiveTab] = useState('Overview');
-  const [darkMode, setDarkMode] = useState(false);
-  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
-
-  // Toggle dark mode
-  const toggleDarkMode = () => {
-    setDarkMode(!darkMode);
-  };
-
-  return (
-    <div className={`min-h-screen ${darkMode ? 'bg-gray-900 text-white' : 'bg-gray-50 text-gray-800'}`}>
-      {/* Mobile Sidebar Toggle */}
-      <div className="md:hidden p-4 flex justify-between items-center bg-blue-600 text-white">
-        <h1 className="font-bold">RadicalUnlearning</h1>
-        <button 
-          onClick={() => setMobileSidebarOpen(!mobileSidebarOpen)}
-          className="p-2 rounded-md hover:bg-blue-700"
-        >
-          {mobileSidebarOpen ? 'Close' : 'Menu'}
-        </button>
-      </div>
-
-      <div className="flex flex-col md:flex-row">
-        {/* Sidebar */}
-        <div className={`
-          ${mobileSidebarOpen ? 'block' : 'hidden'} 
-          md:block md:w-64 md:min-h-screen 
-          ${darkMode ? 'bg-gray-800' : 'bg-white'} 
-          border-r border-gray-200 shadow-sm
-        `}>
-          {/* Logo */}
-          <div className="p-4 flex justify-center md:justify-start">
-            <h2 className="text-xl font-bold text-blue-600">RadicalUnlearning</h2>
-          </div>
-
-          {/* User Profile Card */}
-          <div className="mx-4 mb-6 p-4 rounded-lg bg-blue-50 dark:bg-gray-700 flex items-center">
-            <img 
-              src={dummyUser.avatarUrl} 
-              alt="User Avatar" 
-              className="w-10 h-10 rounded-full mr-3"
-            />
-            <div>
-              <p className={`font-semibold ${darkMode ? 'text-white' : 'text-gray-800'}`}>{dummyUser.name}</p>
-              <p className="text-xs text-gray-500 dark:text-gray-300">{dummyUser.subscriptionStatus} Plan</p>
-            </div>
-          </div>
-
-          {/* Navigation */}
-          <nav className="mt-2">
-            {[
-              { name: 'Overview', icon: <Home size={18} /> },
-              { name: 'My Goals', icon: <Award size={18} /> },
-              { name: 'Portfolio', icon: <Folder size={18} /> },
-              { name: 'Sessions', icon: <Calendar size={18} /> },
-              { name: 'Settings', icon: <Settings size={18} /> }
-            ].map((item) => (
-              <button
-                key={item.name}
-                onClick={() => {
-                  setActiveTab(item.name);
-                  setMobileSidebarOpen(false);
-                }}
-                className={`flex items-center w-full p-3 mx-2 my-1 rounded-md transition-colors ${
-                  activeTab === item.name
-                    ? 'bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-300'
-                    : 'hover:bg-gray-100 dark:hover:bg-gray-700'
-                }`}
-              >
-                <span className="mr-3">{item.icon}</span>
-                <span>{item.name}</span>
-              </button>
-            ))}
-          </nav>
-
-          {/* Dark Mode Toggle & Logout */}
-          <div className="absolute bottom-0 left-0 w-64 border-t border-gray-200 p-4">
-            <div className="flex justify-between mb-4">
-              <button 
-                onClick={toggleDarkMode}
-                className={`flex items-center px-3 py-2 rounded-md ${
-                  darkMode ? 'text-blue-300' : 'text-gray-600'
-                }`}
-              >
-                {darkMode ? <Sun size={18} className="mr-2" /> : <Moon size={18} className="mr-2" />}
-                {darkMode ? 'Light Mode' : 'Dark Mode'}
-              </button>
-            </div>
-            <button className="flex items-center text-red-500 hover:text-red-600 px-3 py-2 rounded-md w-full">
-              <LogOut size={18} className="mr-2" />
-              Logout
-            </button>
-          </div>
-        </div>
-
-        {/* Main Content */}
-        <div className="flex-1 overflow-x-hidden p-4 md:p-8">
-          {activeTab === 'Overview' && <OverviewTab darkMode={darkMode} />}
-          {activeTab === 'My Goals' && <GoalsTab darkMode={darkMode} goals={dummyGoals} />}
-          {activeTab === 'Portfolio' && <PortfolioTab darkMode={darkMode} portfolio={dummyPortfolio} />}
-          {activeTab === 'Sessions' && <SessionsTab darkMode={darkMode} sessions={dummySessions} />}
-          {activeTab === 'Settings' && <SettingsTab darkMode={darkMode} user={dummyUser} />}
-        </div>
-      </div>
-    </div>
-  );
 };
 
 // Overview Tab Component
@@ -405,145 +306,91 @@ const OverviewTab = ({ darkMode }) => {
   );
 };
 
+// Search educator
+const SearchTab = ({ darkMode }) => {
+  const [searchKey, setSearchKey] = useState('');
+  const [allEducator, setAllEducator] = useState([]);
+  console.log(allEducator);
+
+  const searcheducator = async () => {
+    try {
+      const response = await axios.get('http://localhost:3000/api/user/searchEducator', {
+        params: {
+          searchKey: searchKey,
+        },
+      });
+
+      if (response.status === 200) {
+        setAllEducator(response.data.data); // Assuming the API returns an array of educators
+      }
+    } catch (error) {
+      console.error('Error fetching educators:', error);
+    }
+  };
+
+const handlePay = (_id , amount) =>{
+
+}
+
+  return (
+    <div className="w-full h-auto flex flex-col">
+      {/* Search Input and Search Icon */}
+      <div className="flex items-center space-x-2">
+        <input
+          onChange={(e) => {setSearchKey(e.target.value) }}
+          type="text"
+          id="name"
+          name="name"
+          required
+          size="10"
+          className="border p-2 w-full outline-none rounded-lg"
+          placeholder="Search by subjects........"
+        />
+        <MdOutlineSearch
+          onClick={searcheducator}
+          className="text-5xl cursor-pointer"
+        />
+      </div>
+
+      {/* Displaying Educator List */}
+      <div className="mt-6">
+        {allEducator.length > 0 ? (
+          allEducator.map((educator) => (
+            <div key={educator.id} className="mb-4 p-4 border rounded-lg shadow-md bg-white text-start">
+              <h3 className="text-xl font-semibold ">Name: {educator.name}</h3>
+              <p className="text-gray-500">Country: {educator.country}</p>
+              <p className="text-gray-700 mt-2">Bio: {educator.bio}</p>
+              <span className="flex items-center">{"Topic:   "}
+                {
+                  educator.subjects.map((subjects , index) =>(
+                    <p className="text-gray-700"> {subjects},</p>
+                  ))
+                }
+              </span>
+              <p className="text-gray-700 mt-2">$ 513</p>
+              <span onClick={()=>{handlePay(educator._id, 513)}} className=' flex  justify-center items-center cursor-pointer'>
+        <CiLock className=' text-red-700' />
+      <button className='cursor-pointer'>Pay to Unlock full view</button>
+      </span>
+            </div>
+          ))
+        ) : (
+          <p>No educators found</p>
+        )}
+      </div>
+  
+    </div>
+  );
+};
+
+
 // Goals Tab Component
 const GoalsTab = ({ darkMode, goals }) => {
   const [selectedGoal, setSelectedGoal] = useState(null);
   const [showAddForm, setShowAddForm] = useState(false);
-  
   return (
     <div>
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">My Learning Goals</h1>
-        <button 
-          onClick={() => setShowAddForm(true)}
-          className="flex items-center bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md"
-        >
-          <Plus size={18} className="mr-1" /> Add Goal
-        </button>
-      </div>
-      
-      {/* Goals Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {goals.map(goal => (
-          <div 
-            key={goal.id}
-            className={`p-6 rounded-lg shadow-sm ${darkMode ? 'bg-gray-800' : 'bg-white'}`}
-          >
-            <div className="flex justify-between items-center mb-4">
-              <h3 className={`font-semibold ${goal.status === "Completed" ? "text-green-500" : ""}`}>
-                {goal.title}
-              </h3>
-              <span 
-                className={`px-2 py-1 text-xs rounded-full ${
-                  goal.status === "Completed" 
-                    ? "bg-green-100 text-green-600 dark:bg-green-900 dark:text-green-300" 
-                    : "bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-300"
-                }`}
-              >
-                {goal.status}
-              </span>
-            </div>
-            
-            <div className="mb-4">
-              <div className="flex justify-between text-sm text-gray-500 dark:text-gray-400 mb-1">
-                <span>Progress</span>
-                <span>{goal.completion}%</span>
-              </div>
-              <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5 mb-1">
-                <div 
-                  className={`h-2.5 rounded-full ${
-                    goal.status === "Completed" ? "bg-green-500" : "bg-blue-500"
-                  }`}
-                  style={{ width: `${goal.completion}%` }}
-                ></div>
-              </div>
-            </div>
-            
-            <div className="flex justify-between text-sm text-gray-500 dark:text-gray-400 mb-4">
-              <div>Start: {formatDate(goal.startDate)}</div>
-              <div>Target: {formatDate(goal.targetDate)}</div>
-            </div>
-            
-            <div className="flex justify-end space-x-2">
-              <button 
-                onClick={() => setSelectedGoal(goal)}
-                className="text-blue-500 hover:text-blue-600 flex items-center text-sm"
-              >
-                <Edit size={16} className="mr-1" /> Edit
-              </button>
-              {goal.status !== "Completed" && (
-                <button 
-                  className="text-green-500 hover:text-green-600 flex items-center text-sm"
-                >
-                  <CheckCircle size={16} className="mr-1" /> Complete
-                </button>
-              )}
-            </div>
-          </div>
-        ))}
-      </div>
-      
-      {/* Add New Goal Form */}
-      {showAddForm && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className={`w-full max-w-md p-6 rounded-lg ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
-            <h2 className="text-xl font-semibold mb-4">Add New Goal</h2>
-            <form>
-              <div className="mb-4">
-                <label className="block text-sm font-medium mb-1">Goal Title</label>
-                <input 
-                  type="text" 
-                  className={`w-full p-2 rounded-md border ${
-                    darkMode ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-300'
-                  }`}
-                  placeholder="Enter goal title" 
-                />
-              </div>
-              
-              <div className="grid grid-cols-2 gap-4 mb-4">
-                <div>
-                  <label className="block text-sm font-medium mb-1">Start Date</label>
-                  <input 
-                    type="date" 
-                    className={`w-full p-2 rounded-md border ${
-                      darkMode ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-300'
-                    }`}
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1">Target Date</label>
-                  <input 
-                    type="date" 
-                    className={`w-full p-2 rounded-md border ${
-                      darkMode ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-300'
-                    }`}
-                  />
-                </div>
-              </div>
-              
-              <div className="flex justify-end space-x-3 mt-6">
-                <button 
-                  type="button"
-                  onClick={() => setShowAddForm(false)}
-                  className={`px-4 py-2 rounded-md ${
-                    darkMode 
-                      ? 'bg-gray-700 hover:bg-gray-600' 
-                      : 'bg-gray-200 hover:bg-gray-300'
-                  }`}
-                >
-                  Cancel
-                </button>
-                <button 
-                  type="submit"
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md"
-                >
-                  Add Goal
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+  <TodoApp />
     </div>
   );
 };
@@ -830,8 +677,22 @@ const SessionsTab = ({ darkMode, sessions }) => {
   );
 };
 
+const VideoCallTab = () =>{
+return(
+  <VideoCall />
+)
+  
+}
+
+const ChatTab = ({darkMode}) =>{
+return(
+<GroupChat />
+)
+
+}
+
 // Settings Tab Component
-const SettingsTab = ({ darkMode, user }) => {
+const SettingsTab = ({ darkMode, user , userData}) => {
   const [activeSection, setActiveSection] = useState('profile');
   
   return (
@@ -868,7 +729,7 @@ const SettingsTab = ({ darkMode, user }) => {
             <div className="md:w-1/3 flex flex-col items-center mb-6 md:mb-0">
               <div className="w-32 h-32 rounded-full overflow-hidden mb-4">
                 <img 
-                  src={user.avatarUrl} 
+                  src='https://amarjha.tech/assets/MyImg-BjWvYtsb.svg'
                   alt="Profile Avatar"
                   className="w-full h-full object-cover"
                 />
@@ -889,7 +750,7 @@ const SettingsTab = ({ darkMode, user }) => {
                       className={`w-full p-2 rounded-md border ${
                         darkMode ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-300'
                       }`}
-                      defaultValue={user.name}
+                      defaultValue={userData.name}
                     />
                   </div>
                   <div>
@@ -899,7 +760,7 @@ const SettingsTab = ({ darkMode, user }) => {
                       className={`w-full p-2 rounded-md border ${
                         darkMode ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-300'
                       }`}
-                      defaultValue={user.email}
+                      defaultValue={userData.email}
                     />
                   </div>
                 </div>
@@ -912,7 +773,7 @@ const SettingsTab = ({ darkMode, user }) => {
                       className={`w-full p-2 rounded-md border ${
                         darkMode ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-300'
                       }`}
-                      defaultValue={user.country}
+                      defaultValue={userData.country}
                     />
                   </div>
                   <div>
@@ -921,7 +782,7 @@ const SettingsTab = ({ darkMode, user }) => {
                       className={`w-full p-2 rounded-md border ${
                         darkMode ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-300'
                       }`}
-                      defaultValue={user.language}
+                      defaultValue={userData.language}
                     >
                       <option value="English">English</option>
                       <option value="Spanish">Spanish</option>
@@ -939,32 +800,11 @@ const SettingsTab = ({ darkMode, user }) => {
                       darkMode ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-300'
                     }`}
                     rows="4"
-                    defaultValue={user.bio}
+                    defaultValue={userData.bio}
                   />
                 </div>
                 
-                <div className="mb-6">
-                  <label className="block text-sm font-medium mb-1">Learning Interests</label>
-                  <div className="flex flex-wrap gap-2">
-                    {["AI", "UX Design", "Entrepreneurship", "Frontend", "Backend", "Mobile Dev", "Data Science", "Cloud Computing"].map((interest) => (
-                      <label 
-                        key={interest} 
-                        className={`px-3 py-2 text-sm rounded-md flex items-center ${
-                          user.learningInterests.includes(interest)
-                            ? "bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-300"
-                            : "bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300"
-                        }`}
-                      >
-                        <input 
-                          type="checkbox" 
-                          className="mr-2"
-                          defaultChecked={user.learningInterests.includes(interest)}
-                        />
-                        {interest}
-                      </label>
-                    ))}
-                  </div>
-                </div>
+
                 
                 <div className="flex justify-end">
                   <button 
@@ -1248,6 +1088,134 @@ const SettingsTab = ({ darkMode, user }) => {
   );
 };
 
+
+
+
+// Main dashboard components
+const LearnerDashboard = () => {
+
+  const [activeTab, setActiveTab] = useState('Overview');
+  const [darkMode, setDarkMode] = useState(false);
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+  const [profileData, setProfileData] = useState({});
+
+
+  const dispatch = useDispatch();
+  const user = useSelector((state) => state.user);
+  useEffect(() => {
+    if (user?.userData?.user) {
+      setProfileData(user.userData.user);
+    }
+  }, ); 
+  // Toggle dark mode
+  const toggleDarkMode = () => {
+    setDarkMode(!darkMode);
+  };
+
+  return (
+    <div className={`min-h-screen ${darkMode ? 'bg-gray-900 text-white' : 'bg-gray-50 text-gray-800'}`}>
+      {/* Mobile Sidebar Toggle */}
+      <div className="md:hidden p-4 flex justify-between items-center bg-blue-600 text-white">
+        <h1 className="font-bold">RadicalUnlearning</h1>
+        <button 
+          onClick={() => setMobileSidebarOpen(!mobileSidebarOpen)}
+          className="p-2 rounded-md hover:bg-blue-700"
+        >
+          {mobileSidebarOpen ? 'Close' : 'Menu'}
+        </button>
+      </div>
+
+      <div className="flex flex-col md:flex-row">
+        {/* Sidebar */}
+        <div className={`
+          ${mobileSidebarOpen ? 'block' : 'hidden'} 
+          md:block md:w-64 md:min-h-screen 
+          ${darkMode ? 'bg-gray-800' : 'bg-white'} 
+          border-r border-gray-200 shadow-sm px-2 fixed
+        `}>
+          {/* Logo */}
+          <div className="p-4 flex justify-center md:justify-start">
+            <h2 className="text-xl font-bold text-blue-600">RadicalUnlearning</h2>
+          </div>
+
+          {/* User Profile Card */}
+          <div className="mx-4 mb-6 p-4 rounded-lg bg-blue-50 dark:bg-gray-700 flex items-center">
+            <img 
+              src='https://amarjha.tech/assets/MyImg-BjWvYtsb.svg' 
+              alt="User Avatar" 
+              className="w-10 h-10 rounded-full mr-3"
+            />
+            <div className=' flex flex-col'>
+              <p className={`font-semibold ${darkMode ? 'text-white' : 'text-gray-800'}`}>{dummyUser.subscriptionStatus} Plan</p>
+              <p className="text-xs text-gray-500 dark:text-gray-300">{profileData.name}</p>
+            </div>
+          </div>
+
+          {/* Navigation */}
+          <nav className="mt-2">
+            {[
+              { name: 'Overview', icon: <Home size={18} /> },
+              { name: 'Search Educator', icon: <TbUserSearch size={18} /> },
+              { name: 'My Goals', icon: <Award size={18} /> },
+              { name: 'Portfolio', icon: <Folder size={18} /> },
+              { name: 'Sessions', icon: <Calendar size={18} /> },
+              { name: 'video', icon: <IoVideocam size={18} /> },
+              { name: 'communityChat', icon: <CiChat1 size={18} /> },
+              { name: 'Settings', icon: <Settings size={18} /> },
+            ].map((item) => (
+              <button
+                key={item.name}
+                onClick={() => {
+                  setActiveTab(item.name);
+                  setMobileSidebarOpen(false);
+                }}
+                className={`flex items-center w-full p-3 rounded-md transition-colors ${
+                  activeTab === item.name
+                    ? 'bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-300'
+                    : 'hover:bg-gray-100 dark:hover:bg-gray-700'
+                }`}
+              >
+                <span className="mr-3">{item.icon}</span>
+                <span>{item.name}</span>
+              </button>
+            ))}
+          </nav>
+
+          {/* Dark Mode Toggle & Logout */}
+          <div className="absolute bottom-0 left-0 w-64 border-t border-gray-200 p-4">
+            <div className="flex justify-between mb-4">
+              <button 
+                onClick={toggleDarkMode}
+                className={`flex items-center px-3 py-2 rounded-md ${
+                  darkMode ? 'text-blue-300' : 'text-gray-600'
+                }`}
+              >
+                {darkMode ? <Sun size={18} className="mr-2" /> : <Moon size={18} className="mr-2" />}
+                {darkMode ? 'Light Mode' : 'Dark Mode'}
+              </button>
+            </div>
+            <button className="flex items-center text-red-500 hover:text-red-600 px-3 py-2 rounded-md w-full">
+              <LogOut size={18} className="mr-2" />
+              Logout
+            </button>
+          </div>
+        </div>
+
+        {/* Main Content */}
+        <div className="flex-1 overflow-x-hidden p-4 md:p-8 md:pl-[35vw] lg:pl-[23vw]">
+          {activeTab === 'Overview' && <OverviewTab darkMode={darkMode} userData={profileData} />}
+          {activeTab === 'Search Educator' && <SearchTab darkMode={darkMode} userData={profileData} />}
+          {activeTab === 'My Goals' && <GoalsTab darkMode={darkMode} goals={dummyGoals} userData={profileData} />}
+          {activeTab === 'Portfolio' && <PortfolioTab darkMode={darkMode} portfolio={dummyPortfolio} userData={profileData} />}
+          {activeTab === 'Sessions' && <SessionsTab darkMode={darkMode} sessions={dummySessions} userData={profileData} />}
+          {activeTab === 'video' && <VideoCallTab />}
+          {activeTab === 'communityChat' && <ChatTab darkMode={darkMode}  />}
+          {activeTab === 'Settings' && <SettingsTab darkMode={darkMode} user={dummyUser} userData={profileData} />}
+        </div>
+      </div>
+    </div>
+  );
+};
 
 export default LearnerDashboard;
 

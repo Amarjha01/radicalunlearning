@@ -15,7 +15,6 @@ const API = {
     method: 'POST',
   },
   // APIs for Admin dashboard 
-
   educatorsData: { 
     url: `${backendDomain}/api/admin/get-all-educator-data`,
     method: 'POST',
@@ -36,6 +35,13 @@ const API = {
     url: `${backendDomain}/api/admin/deleteUser`,
     method: 'POST',
   },
+  // APIs for learner
+  searchEducator:{
+    url: `${backendDomain}/api/user/searchEducator`,
+  },
+  addtodos:{
+    url: `${backendDomain}/api/user/addtodos`,
+  }
 };
 
 export default API;

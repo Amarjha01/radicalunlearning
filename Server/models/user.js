@@ -34,6 +34,9 @@ const Lerner_userSchema = new mongoose.Schema({
         type: [String],
         required: true,
     },
+    todos: {
+        type: [String],
+    },
     needExpert: {
         type: String,
     },
@@ -68,7 +71,11 @@ const Lerner_userSchema = new mongoose.Schema({
         type: String,
         enum: ['YES', 'NO'],
         default: 'NO',
-    }
+    },
+    
+      unlockededucators:{
+      type:[String]
+      }
 }, {
     timestamps: true
 });

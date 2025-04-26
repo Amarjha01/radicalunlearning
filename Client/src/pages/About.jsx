@@ -1,7 +1,7 @@
 import React from "react";
 import CircularText from './CircularText';
 import VimeoPlayer from '../components/About/Video.jsx'
-
+import VideoCall from '../p2p/VideoCall.jsx'
 const About = () => {
   return (
     
@@ -14,6 +14,7 @@ const About = () => {
   spinDuration={20}
   className="custom-class"
 /> */}
+<VideoCall />
       <h1 className="text-4xl md:text-5xl font-bold text-center mb-10 bg-gradient-to-r from-[#4facfe] via-[#6f57ff] to-[#00f2fe] bg-clip-text text-transparent orbitron-regular tracking-widest">
         🚀 About Us
       </h1>

@@ -1,3 +1,16 @@
+// ⚠️ Add this at the very top of your entry file
+import { Buffer } from 'buffer'
+import process from 'process'
+
+window.global = window
+window.Buffer = Buffer
+window.process = process
+
+
+
+
+
+
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { RouterProvider } from 'react-router-dom'
