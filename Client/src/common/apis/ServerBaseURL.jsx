@@ -41,7 +41,20 @@ const API = {
   },
   addtodos:{
     url: `${backendDomain}/api/user/addtodos`,
-  }
+  },
+  fetchtodos:{
+    url: `${backendDomain}/api/user/fetchtodos`,
+  },
+  deletetodos:{
+    url: `${backendDomain}/api/user/deletetodos`,
+  },
+  toggleTodoComplete:{
+    url: `${backendDomain}/api/user/toggleTodoComplete`,
+  },
+  toggleTheme:{
+    url: `${backendDomain}/api/user/toggleTheme`,
+  },
+  
 };
 
 export default API;

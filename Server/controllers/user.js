@@ -5,8 +5,12 @@ import {
 } from "../models/user.js";
 import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
+import { v4 as uuidv4 } from 'uuid';
 
-// LearnerUserController-registration
+
+
+// --------------------------User-registration-------------------------------------------
+
 export async function registerLearnerController(request, response) {
   try {
     const {
@@ -96,8 +100,6 @@ export async function registerLearnerController(request, response) {
     });
   }
 }
-
-// needExpertUserController-registration
 
 export async function registerEducatorController(request, response) {
   try {
@@ -325,7 +327,8 @@ export async function registerAdminController(request, response) {
   }
 }
 
-// loginController-For-All
+
+// -----------------------oginController-For-All---------------------------------------------
 
 export async function signin(request, response) {
   try {
@@ -391,8 +394,8 @@ export async function signin(request, response) {
 
     const cookiesOption = {
       httpOnly: true,
-      sameSite: "Strict",
-      secure: process.env.NODE_ENV === "production",
+      sameSite: "Lax",
+      secure: false,
     };
 
     response.cookie("accessToken", accessToken, cookiesOption);
@@ -422,6 +425,7 @@ export async function signin(request, response) {
           payoutMethod: user.payoutMethod,
           upiID: user.upiId,
           Approved: user.Approved,
+          theme: user.theme,
           _id: user._id,
         },
         role: user.role,
@@ -486,6 +490,9 @@ export async function updateUserDetails(request, response) {
   }
 }
 
+
+
+// -----------------------------search------------------------------------------------
 export async function searchEducator(req, res) {
   try {
     const {searchKey} = req.query;
@@ -517,21 +524,94 @@ if(educators){
 }
 
 
+
+
+// ------------------------ToDos APIs --------------------------------------------------------
 export async function addtodos(req, res) {
-  const userId = req.cookies.user_id;
+  const token = req.cookies.accessToken;
   const { newtodo } = req.body;
 
-  console.log('User ID from cookie:', userId);
-  console.log('New ToDo:', newtodo);
-
-  if (!userId || !newtodo) {
-    return res.status(400).json({ message: "Missing user ID or todo" });
+  if (!token || !newtodo?.trim()) {
+    return res.status(400).json({ message: "Missing token or todo" });
   }
 
   try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const userId = decoded.id;
+
+    const todoItem = {
+      text: newtodo.trim(),
+      completed: false
+    };
+
     const learner = await LearnerUserModel.findByIdAndUpdate(
       userId,
-      { $push: { todos: newtodo } }, // appending to todos array
+      { $push: { todos: todoItem } }, 
+      { new: true, runValidators: true }
+    );
+
+    if (!learner) {
+      return res.status(404).json({ message: "Learner not found" });
+    }
+
+    res.status(200).json({
+      message: "Todo added successfully",
+      data: learner.todos,
+      success: true,
+      error: false
+    });
+  } catch (error) {
+    console.error("Error updating todos:", error);
+    res.status(500).json({ 
+      message: "Server error",
+      error: error.message,
+      success: false 
+    });
+  }
+}
+
+export async function fetchtodos(req, res) {
+  const token = req.cookies.accessToken;
+  
+  if (!token) {
+    return res.status(400).json({ message: "Missing token or todo" });
+  }
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const userId = decoded.id
+    const alltodos = await LearnerUserModel.findById(userId).select('todos')
+   
+    res.status(200).json({
+      message:'fetched all todos successfuly',
+      data:alltodos,
+      error:false,
+      success:true
+    })
+  } catch (error) {
+    res.status(500).json({
+      message:'failed to fetch all todos',
+      error:true,
+      success:false,
+      error
+    })
+  }
+}
+
+export async function deletetodos(req, res) {
+  const token = req.cookies.accessToken;
+  const { todoid } = req.body;
+
+  if (!token || !todoid) {
+    return res.status(400).json({ message: "Missing token or todo ID" });
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const userId = decoded.id;
+
+    const learner = await LearnerUserModel.findByIdAndUpdate(
+      userId,
+      { $pull: { todos: { _id: todoid } } }, // <- remove by matching _id
       { new: true }
     );
 
@@ -539,10 +619,110 @@ export async function addtodos(req, res) {
       return res.status(404).json({ message: "Learner not found" });
     }
 
-    console.log('Updated learner:', learner);
-    res.status(200).json(learner);
+    res.status(200).json({ 
+      message: "Todo deleted successfully", 
+      todos: learner.todos,
+      success: true,
+      error: false
+    });
   } catch (error) {
-    console.error("Error updating todos:", error);
-    res.status(500).json({ message: "Server error" });
+    console.error("Error deleting todo:", error);
+    res.status(500).json({ 
+      message: "Server error", 
+      error: error.message,
+      success: false
+    });
   }
 }
+
+export async function toggleTodoComplete(req, res) {
+  const token = req.cookies.accessToken;
+  const { todoid } = req.body;
+
+  if (!token || !todoid) {
+    return res.status(400).json({ message: "Missing token or todo ID" });
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const userId = decoded.id;
+
+    const learner = await LearnerUserModel.findById(userId);
+    if (!learner) {
+      return res.status(404).json({ message: "Learner not found" });
+    }
+
+    const todoIndex = learner.todos.findIndex(t => t._id.toString() === todoid);
+    if (todoIndex === -1) {
+      return res.status(404).json({ message: "Todo not found" });
+    }
+
+    // Toggle the completed field
+    learner.todos[todoIndex].completed = !learner.todos[todoIndex].completed;
+
+    // Save the updated learner document
+    await learner.save();
+
+    res.status(200).json({
+      message: "Todo completion toggled successfully",
+      data: learner.todos,
+      success: true,
+      error: false
+    });
+  } catch (error) {
+    console.error("Error toggling todo:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+}
+
+// ---------------------ToggleTheme---------------------------------------------------------------
+
+export const toggleTheme = async (req, res) => {
+  try {
+    // Get token from cookies
+    const token = req.cookies.accessToken;
+    if (!token) {
+      return res.status(401).json({ message: "Access token missing" });
+    }
+
+    // Verify and decode token
+    const decoded = jwt.verify(token, process.env.JWT_SECRET); 
+    const { role, id } = decoded;
+
+
+    if (!role || !id) {
+      return res.status(400).json({ message: "Invalid token payload" });
+    }
+
+    let UserModel;
+
+    // Pick the correct model based on role
+    if (role === "learner") {
+      UserModel = LearnerUserModel;
+    } else if (role === "educator") {
+      UserModel = EducatorUserModel;
+    } else if (role === "admin") {
+      UserModel = AdminModel;
+    } else {
+      return res.status(400).json({ message: "Invalid role" });
+    }
+
+    // Find the user
+    const user = await UserModel.findById(id);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Toggle theme
+    const newTheme = user.theme === "light" ? "dark" : "light";
+    user.theme = newTheme;
+    await user.save();
+
+    return res.status(200).json({ message: `Theme updated to ${newTheme}`, theme: newTheme });
+
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Something went wrong" });
+  }
+};

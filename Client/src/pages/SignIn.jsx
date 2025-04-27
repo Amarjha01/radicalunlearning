@@ -33,7 +33,10 @@ const SignIn = () => {
       isSubmitting(true);
       const response = await axios.post(
         API.signIn.url,
-        data
+        data,
+        {
+          withCredentials: true 
+        }
       );
       
 if(response?.data?.success == true){

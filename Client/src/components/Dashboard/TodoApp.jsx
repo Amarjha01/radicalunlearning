@@ -3,114 +3,97 @@ import axios from 'axios';
 import { FaTrash, FaCheck, FaPlus } from 'react-icons/fa';
 import API from '../../common/apis/ServerBaseURL';
 
-// Mock API endpoint for demonstration purposes
-const API_URL = 'https://jsonplaceholder.typicode.com/todos';
 
 
 
 export default function TodoApp() {
-  const [todos, setTodos] = useState([
-    // Dummy data
-    { id: 1, title: 'Complete React project', completed: false },
-    { id: 2, title: 'Learn Tailwind CSS', completed: true }
-  ]);
+  const [todos, setTodos] = useState([]);
+  console.log(todos);
+  
   const [newTodo, setNewTodo] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+   console.log('set todo', newTodo);
 
 
-  const addtodos = async (todos) => {
+const addtodo = async (e) => {
+  e.preventDefault(); // Prevent form submission reload
+
+  if (!newTodo.trim()) {
+    setError("Todo cannot be empty.");
+    return;
+  }
+
+  try {
+    setIsLoading(true);
+    setError(null);
+
+    const response = await axios.post(API.addtodos.url, { newtodo: newTodo.trim() }, {
+      withCredentials: true
+    });
+
+    if (response.status === 200) {
+      await fetchtodos();
+      setNewTodo(''); // Clear input
+    }
+  } catch (error) {
+    console.error("Error in addtodos:", error);
+    setError("Failed to add todo. Please try again.");
+  } finally {
+    setIsLoading(false);
+  }
+};
+
+  
+const fetchtodos = async () =>{
+  const response = await axios.get(API.fetchtodos.url,{
+    withCredentials:true
+  })
+  console.log('todos resp', response);
+  if(response.status === 200){
+    setTodos(response.data.data.todos)
+  }
+}
+  useEffect(() => {
+    fetchtodos()
+  }, []);
+
+
+  const deleteTodo = async (todoid) => {
     try {
-      const response = await axios.post(API.addtodos.url, { newtodo: todos }, {
+      const response = await axios.delete(API.deletetodos.url, {
+        data: { todoid },           
+        withCredentials: true      
+      });
+
+  
+      if (response.status === 200) {
+        setTodos(response.data.todos);
+      }
+    } catch (err) {
+      console.error("Failed to delete todo:", err);
+    }
+  };
+  
+  const toggleComplete = async (todoid) => {
+    console.log('log toggle', todoid);
+    
+    try {
+      const response = await axios.put(API.toggleTodoComplete.url, {
+        todoid: todoid
+      }, {
         withCredentials: true
       });
-      console.log("Response:", response.data);
-    } catch (error) {
-      console.error("Error in addtodos:", error);
+  
+      if (response.status === 200) {
+        fetchtodos(); // Re-fetch updated todos
+      }
+    } catch (err) {
+      console.error("Failed to toggle todo:", err);
     }
   };
   
 
-  // Fetch todos (simulated with dummy data)
-  useEffect(() => {
-    console.log('Todo component mounted');
-    // In a real app, we would fetch todos here
-    // fetchTodos();
-  }, []);
-
-  // const fetchTodos = async () => {
-  //   try {
-  //     setIsLoading(true);
-  //     const response = await axios.get(API_URL);
-  //     setTodos(response.data.slice(0, 5)); 
-  //     setIsLoading(false);
-  //   } catch (err) {
-  //     setError('Failed to fetch todos');
-  //     setIsLoading(false);
-  //     console.error(err);
-  //   }
-  // };
-
-  const addTodo = async (e) => {
-    e.preventDefault();
-    if (!newTodo.trim()) return;
-    
-    try {
-      setIsLoading(true);
-      // In a real app, we would save to the server
-      const response = await axios.post(API_URL, {
-        title: newTodo,
-        completed: false
-      });
-      
-      
-      setTodos([
-        ...todos, 
-        { id: Date.now(), title: newTodo, completed: false }
-      ]);
-      
-      setNewTodo('');
-      setIsLoading(false);
-      console.log('Todo added (simulated)', response.data);
-    } catch (err) {
-      setError('Failed to add todo');
-      setIsLoading(false);
-      console.error(err);
-    }
-  };
-
-  // const toggleComplete = async (id) => {
-  //   try {
-  //     const todoToToggle = todos.find(todo => todo.id === id);
-  //     await axios.put(`${API_URL}/${id}`, {
-  //       ...todoToToggle,
-  //       completed: !todoToToggle.completed
-  //     });
-      
-    
-  //     setTodos(todos.map(todo => 
-  //       todo.id === id ? { ...todo, completed: !todo.completed } : todo
-  //     ));
-      
-  //     console.log(`Todo ${id} toggled (simulated)`);
-  //   } catch (err) {
-  //     setError('Failed to update todo');
-  //     console.error(err);
-  //   }
-  // };
-
-  // const deleteTodo = async (id) => {
-  //   try {
-  //     await axios.delete(`${API_URL}/${id}`);
-      
-  //     // Remove locally
-  //     setTodos(todos.filter(todo => todo.id !== id));
-  //     console.log(`Todo ${id} deleted (simulated)`);
-  //   } catch (err) {
-  //     setError('Failed to delete todo');
-  //     console.error(err);
-  //   }
-  // };
 
   return (
     <div className="max-w-md mx-auto p-4 bg-white rounded-lg shadow-lg">
@@ -122,7 +105,7 @@ export default function TodoApp() {
         </div>
       )}
       
-      <form onSubmit={addTodo} className="flex mb-6">
+      <form onSubmit={addtodo} className="flex mb-6">
         <input
           type="text"
           value={newTodo}
@@ -134,51 +117,54 @@ export default function TodoApp() {
           type="submit" 
           className="bg-blue-500 text-white p-2 rounded-r-md hover:bg-blue-600 flex items-center justify-center"
           disabled={isLoading}
-          onClick={addtodos}
         >
           <FaPlus className="mr-1" /> Add
         </button>
       </form>
-      
-      {isLoading ? (
-        <div className="text-center p-4">Loading...</div>
-      ) : (
-        <ul className="space-y-2">
-          {todos.map(todo => (
-            <li 
-              key={todo.id} 
-              className={`flex items-center justify-between p-3 border rounded-md transition-all ${
-                todo.completed ? 'bg-green-50 border-green-200' : 'bg-gray-50 border-gray-200'
-              }`}
-            >
-              <div className="flex items-center">
-                <button
-                  onClick={() => toggleComplete(todo.id)}
-                  className={`mr-3 w-6 h-6 rounded-full flex items-center justify-center ${
-                    todo.completed ? 'bg-green-500 text-white' : 'bg-gray-200'
-                  }`}
-                >
-                  {todo.completed && <FaCheck size={12} />}
-                </button>
-                <span className={`${todo.completed ? 'line-through text-gray-500' : 'text-gray-800'}`}>
-                  {todo.title}
-                </span>
-              </div>
-              <button
-                onClick={() => deleteTodo(todo.id)}
-                className="text-red-500 hover:text-red-700 transition-colors"
-                aria-label="Delete task"
-              >
-                <FaTrash />
-              </button>
-            </li>
-          ))}
-          
-          {todos.length === 0 && (
-            <div className="text-center p-4 text-gray-500">No tasks yet. Add one above!</div>
-          )}
-        </ul>
-      )}
+
+
+      {todos.map((todo, index) => (
+  <li 
+    key={index}
+    className="flex items-center justify-between p-4 mb-3 bg-white rounded-lg shadow-md border-l-4 border-blue-500 hover:shadow-lg transition-all duration-200"
+  >
+    <div className="flex items-center">
+      <span className="flex items-center justify-center w-8 h-8 mr-4 text-sm font-bold text-blue-500 bg-blue-100 rounded-full">
+        {index + 1}
+      </span>
+      <span className={`text-gray-800 font-medium ${todo?.completed ? 'line-through text-gray-400' : ''}`}>
+        {todo?.text}
+      </span>
+    </div>
+    
+    <div className="flex space-x-2">
+      <button
+        onClick={() => toggleComplete(todo?._id)}
+        className={`p-2 rounded-full ${todo?.completed ? 'bg-green-100 text-green-600' : 'bg-gray-100 text-gray-600'} hover:opacity-80 transition-colors`}
+        aria-label={todo?.completed ? "Mark as incomplete" : "Mark as complete"}
+      >
+        <FaCheck size={14} />
+      </button>
+      <button
+        onClick={() => deleteTodo(todo?._id)}
+        className="p-2 bg-red-100 text-red-600 rounded-full hover:bg-red-200 transition-colors"
+        aria-label="Delete task"
+      >
+        <FaTrash size={14} />
+      </button>
+    </div>
+  </li>
+))}
+
+{todos.length === 0 && (
+  <div className="flex flex-col items-center justify-center p-8 text-center bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
+    <svg className="w-16 h-16 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+    </svg>
+    <p className="text-gray-500 font-medium">No tasks yet. Add one above!</p>
+  </div>
+)}
+
       
       <div className="mt-4 text-sm text-gray-500 text-center">
         {todos.length > 0 && (

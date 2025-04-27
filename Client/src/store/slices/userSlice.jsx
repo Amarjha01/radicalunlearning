@@ -2,22 +2,21 @@ import { createSlice } from "@reduxjs/toolkit";
 
 export const userSlice = createSlice({
   name: 'user',
-  initialState: {}, // Start with an object instead of an array
+  initialState: {}, 
   reducers: {
     userinfo(state, action) {
-      return action.payload; // Replace the state entirely with new user data
+      return action.payload;
     },
-    
-    clearUser(state){
-       return {}; 
-        },
-    
-    isActive(state, action) {
-      // Add logic if needed
+    clearUser(state) {
+      return {};
+    },
+    updateTheme(state, action) {
+      if (state.userData && state.userData.user) {
+        state.userData.user.theme = action.payload; // Update only theme
+      }
     },
   }
 });
 
-export const { userinfo } = userSlice.actions;
-export const { clearUser } = userSlice.actions;
+export const { userinfo, clearUser, updateTheme } = userSlice.actions;
 export default userSlice.reducer;

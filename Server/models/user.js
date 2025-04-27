@@ -1,84 +1,93 @@
 import mongoose from "mongoose";
 
 const Lerner_userSchema = new mongoose.Schema({
-    name: {
-        type: String,
-        required: [true, "Provide name"],
-    },
-    email: {
-        type: String,
-        required: [true, "Provide email"],
-        unique: true,
-    },
-    role: {
-        type: String,
-        required: true,
-    },
-    roleType: {
-        type: String,
-        required: true,
-    },
-    country: {
-        type: String,
-        required: true,
-    },
-    language: {
-        type: String,
-        required: true,
-    },
-    dob: {
-        type: Date,
-        required: true,
-    },
-    subjects: {
-        type: [String],
-        required: true,
-    },
-    todos: {
-        type: [String],
-    },
-    needExpert: {
-        type: String,
-    },
-    needCoach: {
-        type: String,
-    },
-    bio: {
-        type: String,
-        required: true,
-    },
-    terms1: {
-        type: Boolean,
-        required: true,
-    },
-    terms2: {
-        type: Boolean,
-        required: true,
-    },
-    terms3: {
-        type: Boolean,
-        required: true,
-    },
-    password: {
-        type: String,
-        required: true,
-    },
-    otp: {
-        type: Number,
-        default : 0
-    },
-    suspended: {
-        type: String,
-        enum: ['YES', 'NO'],
-        default: 'NO',
-    },
-    
-      unlockededucators:{
-      type:[String]
-      }
+  name: {
+    type: String,
+    required: [true, "Provide name"],
+  },
+  email: {
+    type: String,
+    required: [true, "Provide email"],
+    unique: true,
+  },
+  role: {
+    type: String,
+    required: true,
+  },
+  roleType: {
+    type: String,
+    required: true,
+  },
+  country: {
+    type: String,
+    required: true,
+  },
+  language: {
+    type: String,
+    required: true,
+  },
+  dob: {
+    type: Date,
+    required: true,
+  },
+  subjects: {
+    type: [String],
+    required: true,
+  },
+  todos: [
+    {
+      text: { type: String, required: true },
+      completed: { type: Boolean, default: false }
+    }
+  ],
+  
+  needExpert: {
+    type: String,
+  },
+  needCoach: {
+    type: String,
+  },
+  bio: {
+    type: String,
+    required: true,
+  },
+  terms1: {
+    type: Boolean,
+    required: true,
+  },
+  terms2: {
+    type: Boolean,
+    required: true,
+  },
+  terms3: {
+    type: Boolean,
+    required: true,
+  },
+  password: {
+    type: String,
+    required: true,
+  },
+  otp: {
+    type: Number,
+    default: 0
+  },
+  suspended: {
+    type: String,
+    enum: ['YES', 'NO'],
+    default: 'NO',
+  },
+  unlockededucators: {
+    type: [String]
+  },
+  theme:{
+    type:String,
+    enum:['light' , 'dark'],
+    default:'light'
+  }
 }, {
-    timestamps: true
+  timestamps: true
 });
+
 
 export const LearnerUserModel = mongoose.model("User-learners", Lerner_userSchema);
 
@@ -198,6 +207,11 @@ documentUrl: {
     enum: ['YES', 'NO'],
     default: 'NO',
   },
+  theme:{
+    type:String,
+    enum:['light' , 'dark'],
+    default:'light'
+  }
 }, {
   timestamps: true,
 });
@@ -222,10 +236,15 @@ const Admin = new mongoose.Schema({
         required : true
         // default : "USER"
     },
+    theme:{
+      type:String,
+      enum:['light' , 'dark'],
+      default:'light'
+    },
     password : {
         type : String,
         required : true
-    },
+    }
 })
 
 export const AdminModel = mongoose.model("Admins", Admin)
