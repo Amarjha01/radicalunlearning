@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { registerLearnerController , registerEducatorController , signin , updateUserDetails, registerAdminController, searchEducator, addtodos, fetchtodos, deletetodos, toggleTodoComplete, toggleTheme } from "../controllers/user.js";
+import { createZoomMeeting } from "../utils/createZoomMeeting.js";
 
 const userRouter = Router();
 
@@ -14,5 +15,6 @@ userRouter.get('/fetchtodos', fetchtodos);
 userRouter.delete('/deletetodos', deletetodos);
 userRouter.put('/toggleTodoComplete', toggleTodoComplete);
 userRouter.post('/toggleTheme', toggleTheme);
+userRouter.post('/createZoomMeeting', createZoomMeeting);
 
 export default userRouter

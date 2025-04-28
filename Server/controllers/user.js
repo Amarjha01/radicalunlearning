@@ -2,6 +2,7 @@ import {
   LearnerUserModel,
   EducatorUserModel,
   AdminModel,
+  SessionModel
 } from "../models/user.js";
 import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
@@ -718,11 +719,35 @@ export const toggleTheme = async (req, res) => {
     const newTheme = user.theme === "light" ? "dark" : "light";
     user.theme = newTheme;
     await user.save();
+console.log('all done');
 
     return res.status(200).json({ message: `Theme updated to ${newTheme}`, theme: newTheme });
 
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Something went wrong" });
+  }
+};
+
+export const createSession = async (req, res) => {
+  const { learnerId, educatorId, scheduledAt, topic, zoomMeetingId, zoomJoinUrl, zoomStartUrl } = req.body;
+
+  try {
+    const session = new SessionModel({
+      learnerId,
+      educatorId,
+      scheduledAt,
+      topic,
+      zoomMeetingId,
+      zoomJoinUrl,
+      zoomStartUrl,
+    });
+
+    await session.save();
+
+    res.status(201).json({ message: "Session created successfully", session });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Failed to create session" });
   }
 };

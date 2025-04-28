@@ -8,15 +8,15 @@ import cookieParser from 'cookie-parser';
 dotenv.config();
 
 // 2. Import your routes
-import DataBaseConfig from './config/dataBase/DataBaseConfig.js'
-import userRouter from './routes/user.js'
-import adminRouter from './routes/admin.js'
-import verificationRouter from './routes/verification.js'
+import DataBaseConfig from './config/dataBase/DataBaseConfig.js';
+import userRouter from './routes/user.js';
+import adminRouter from './routes/admin.js';
+import verificationRouter from './routes/verification.js';
 
 // 3. App and Server creation
 const app = express();
-app.use(cookieParser()); 
-const server = createServer(app);  // 🔥 create a real HTTP server
+app.use(cookieParser());
+const server = createServer(app); // create a real HTTP server
 const io = new Server(server, {
   cors: {
     origin: ["http://localhost:5173", "http://localhost:4173", "https://dev.radical-unlearning.com"],
@@ -37,21 +37,24 @@ app.use('/api/user', userRouter);
 app.use('/api/admin', adminRouter);
 app.use('/api/verify', verificationRouter);
 
-// 6. Your WebRTC Rooms logic (socket.io)
-const rooms = {};
+// 6. WebRTC Rooms logic (socket.io)
+const rooms = {}; // { roomId: [{ socketId, email }] }
 
 io.on("connection", (socket) => {
-  console.log("New client connected: ", socket.id);
+  console.log("New client connected:", socket.id);
 
-  socket.on("join room", (roomID) => {
+  socket.on("join room", ({ roomID, email }) => {
+    console.log(`User ${email} joined room ${roomID}`);
+
     if (rooms[roomID]) {
-      rooms[roomID].push(socket.id);
+      rooms[roomID].push({ socketId: socket.id, email });
     } else {
-      rooms[roomID] = [socket.id];
+      rooms[roomID] = [{ socketId: socket.id, email }];
     }
 
-    const otherUsers = rooms[roomID].filter(id => id !== socket.id);
-    socket.emit("all users", otherUsers);
+    const otherUsers = rooms[roomID].filter(user => user.socketId !== socket.id);
+
+    socket.emit("all users", otherUsers.map(user => user.socketId));
 
     socket.on("sending signal", (payload) => {
       io.to(payload.userToSignal).emit("user joined", {
@@ -69,10 +72,24 @@ io.on("connection", (socket) => {
   });
 
   socket.on("disconnect", () => {
+    console.log("Client disconnected:", socket.id);
+
     for (const roomID in rooms) {
-      rooms[roomID] = rooms[roomID].filter(id => id !== socket.id);
-      if (rooms[roomID].length === 0) {
-        delete rooms[roomID];
+      const userList = rooms[roomID];
+      const user = userList.find(u => u.socketId === socket.id);
+
+      if (user) {
+        // Notify others in the room that user has left (optional nice feature)
+        socket.to(roomID).emit("user left", { socketId: socket.id, email: user.email });
+
+        // Remove the user from room
+        rooms[roomID] = userList.filter(u => u.socketId !== socket.id);
+
+        if (rooms[roomID].length === 0) {
+          delete rooms[roomID];
+        }
+
+        break; // Done, exit loop
       }
     }
   });

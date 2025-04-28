@@ -232,9 +232,7 @@ const Admin = new mongoose.Schema({
     },
     role : {
         type : String,
-        enum : ['ADMIN',"LEARNER","EDUCATOR"],
         required : true
-        // default : "USER"
     },
     theme:{
       type:String,
@@ -248,3 +246,52 @@ const Admin = new mongoose.Schema({
 })
 
 export const AdminModel = mongoose.model("Admins", Admin)
+
+
+// models/SessionModel.js
+
+const sessionSchema = new mongoose.Schema({
+  topic: {
+    type: String,
+    required: true,
+  },
+  learnerId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User-learners',
+    required: true,
+  },
+  educatorId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User-educators',
+    required: true,
+  },
+  scheduledAt: {
+    type: Date,
+    required: true,
+  },
+  zoomMeetingId: {
+    type: String,
+    required: true,
+  },
+  zoomJoinUrl: {
+    type: String,
+    required: true,
+  },
+  zoomStartUrl: {
+    type: String,
+    required: true,
+  },
+  status: {
+    type: String,
+    enum: ['scheduled', 'completed', 'cancelled'],
+    default: 'scheduled',
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  }
+}, {
+  timestamps: true
+});
+
+export const SessionModel = mongoose.model("Sessions", sessionSchema);
