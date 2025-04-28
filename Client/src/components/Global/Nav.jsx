@@ -18,7 +18,7 @@ const Nav = () => {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user);
 
-  const currentTheme = user?.userData?.user?.theme || 'light'; // Get from Redux
+  const currentTheme = user?.userData?.user?.theme || 'dark'; // Get from Redux
   const [theme, setTheme] = useState(currentTheme); // Local UI theme
 
   const handleToggleTheme = async () => {
@@ -42,6 +42,7 @@ const Nav = () => {
       // setTheme(theme);
     }
   };
+console.log(theme);
 
   useEffect(() => {
     if (user && user.userData) {
@@ -84,47 +85,48 @@ const Nav = () => {
   return (
     <div className="relative w-full text-white flex justify-between items-center px-5 z-50">
       {/* Logo */}
-      <Link to="/" className="text-md md:text-xl lg:text-2xl font-semibold uppercase anta-regular cursor-pointer z-20">
+      <Link to="/" className={`text-md md:text-xl lg:text-2xl font-semibold uppercase anta-regular cursor-pointer z-20 ${theme === 'dark' ? 'text-white' : 'text-[#575757]'}`}>
         Radical Unlearning
       </Link>
 
       {/* Desktop Navbar */}
       <div className="absolute w-full hidden lg:flex justify-center items-center">
-        <ul className="flex">
-          {navRoutes.map((path, idx) => (
-            <li key={path}>
-              <NavLink
-                to={path}
-                className={({ isActive }) =>
-                  isActive
-                    ? "text-white border-b-2 border-white px-3 py-2 rounded-xl"
-                    : "text-gray-300 hover:text-white px-3 py-2"
-                }
-              >
-                {["Home", "About Us", "Contact Us"][idx]}
-              </NavLink>
-            </li>
-          ))}
-          {isUser && (
-            <li>
-              <NavLink
-                to={`/dashboard/${user?.userData?.user?.role?.toLowerCase()}`}
-                className={({ isActive }) =>
-                  isActive
-                    ? "text-white border-b-2 border-white px-3 py-2 rounded-xl"
-                    : "text-gray-300 hover:text-white px-3 py-2"
-                }
-              >
-                Dashboard
-              </NavLink>
-            </li>
-          )}
-        </ul>
-      </div>
+  <ul className="flex">
+    {navRoutes.map((path, idx) => (
+      <li key={path}>
+        <NavLink
+          to={path}
+          className={({ isActive }) =>
+            isActive
+              ? `border-b-2 ${theme === 'dark' ? 'border-white text-white' : 'border-[#D0E1D4] text-[#575757]'} px-3 py-2 rounded-xl`
+              : `${theme === 'dark' ? 'text-gray-300' : 'text-[#575757] hover:text-white'} px-3 py-2`
+          }
+        >
+          {["Home", "About Us", "Contact Us"][idx]}
+        </NavLink>
+      </li>
+    ))}
+    {isUser && (
+      <li>
+        <NavLink
+          to={`/dashboard/${user?.userData?.user?.role?.toLowerCase()}`}
+          className={({ isActive }) =>
+            isActive
+              ? `border-b-2 ${theme === 'dark' ? 'border-white text-white' : 'border-[#D0E1D4] text-[#575757]'} px-3 py-2 rounded-xl`
+              : `${theme === 'dark' ? 'text-gray-300' : 'text-[#575757] hover:text-white'} px-3 py-2`
+          }
+        >
+          Dashboard
+        </NavLink>
+      </li>
+    )}
+  </ul>
+</div>
+
 
       {/* Glowing Circle */}
       <div className="absolute w-full h-auto -z-20 flex justify-center items-center">
-        <div className="bg-gradient-to-r from-blue-500 to-purple-600 h-56 w-56 rounded-full filter-1" />
+        <div className={`h-56 w-56 rounded-full filter-1 bg-gradient-to-r ${theme === 'dark' ? 'from-blue-500 to-purple-600' : 'from-[#FAD0C4] to-[#D0E1D4]'}`} />
       </div>
 
       {/* CTA & Hamburger */}
@@ -135,20 +137,29 @@ const Nav = () => {
         >
           <div className={`bg-white dark:bg-black w-4 h-4 rounded-full shadow-md transform transition-transform duration-300 ${theme === 'dark' ? 'translate-x-6' : ''}`} />
         </button>
-
         <div className="relative button-2 p-0.5 rounded-4xl cursor-pointer">
-          {isUser ? (
-            <button onClick={handleLogout} className="bg-black rounded-4xl px-6 py-2 border-2 border-gray-700 cursor-pointer">
-              LogOut
-            </button>
-          ) : (
-            <Link to="/signin">
-              <button className="bg-black rounded-4xl px-6 py-2 border-2 border-gray-700 cursor-pointer">
-                Join Now
-              </button>
-            </Link>
-          )}
-        </div>
+  {isUser ? (
+    <button
+      onClick={handleLogout}
+      className={`${
+        theme === 'dark' ? 'bg-black text-white border-gray-700' : 'bg-[#FAD0C4] text-[#D0E1D4] border-[#D0E1D4] text-black'
+      } rounded-4xl px-6 py-2 border-2 cursor-pointer`}
+    >
+      LogOut
+    </button>
+  ) : (
+    <Link to="/signin">
+      <button
+        className={`${
+          theme === 'dark' ? 'bg-black text-white border-gray-700' : 'bg-[#FAD0C4] text-[#D0E1D4] border-[#D0E1D4]'
+        } rounded-4xl px-6 py-2 border-2 cursor-pointer`}
+      >
+        Join Now
+      </button>
+    </Link>
+  )}
+</div>
+
 
         <div className="block lg:hidden">
           {isOpen ? (

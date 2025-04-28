@@ -1,32 +1,35 @@
 import { useForm } from "react-hook-form";
 import axios from "axios";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { FaUserAlt } from "react-icons/fa";
 import { RiLockPasswordFill } from "react-icons/ri";
-import { IoMdEye } from "react-icons/io";
-import { IoMdEyeOff } from "react-icons/io";
+import { IoMdEye, IoMdEyeOff } from "react-icons/io";
 import API from "../common/apis/ServerBaseURL.jsx";
 import { useDispatch } from 'react-redux';
 import { userinfo } from "../store/slices/userSlice.jsx";
 import { useNavigate } from "react-router-dom";
-
+import NotificationSystem from "../notification/NotificationSystem.jsx";
 
 const SignIn = () => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const [submitting, isSubmitting] = useState(false);
-  const [showPass, setShowPass] = useState(false)
+  const [showPass, setShowPass] = useState(false);
+  const [notification, setNotification] = useState(null); // State for notification
 
-  const handleShowPass = ()=>{
+  const handleShowPass = () => {
     setShowPass(!showPass);
-  }
+  };
+
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
+
   const [errorMessage, setErrorMessage] = useState("");
+  const [notificationTimeout, setNotificationTimeout] = useState(null);
 
   const onSubmit = async (data) => {
     try {
@@ -35,31 +38,62 @@ const SignIn = () => {
         API.signIn.url,
         data,
         {
-          withCredentials: true 
+          withCredentials: true,
         }
       );
-      
-if(response?.data?.success == true){
-  const responseData = response.data;
-  console.log( response)
-  const userData = responseData.userData;
-  const statePayload = {
-    userData
-  };
-  dispatch(userinfo(statePayload));
-  alert("Login Successful!");
-  navigate("/");
- 
-}
-  } catch (error) {
 
+      if (response?.data?.success === true) {
+        const responseData = response.data;
+        const userData = responseData.userData;
+        const statePayload = {
+          userData,
+        };
+        dispatch(userinfo(statePayload));
+
+        // Trigger success notification
+        setNotification({
+          type: "success",
+          message: "You have logged in successfully!",
+        });
+
+        // Set a 5-second timeout for navigation
+        const timeout = setTimeout(() => {
+          navigate("/");
+        }, 1000);
+
+        setNotificationTimeout(timeout); // Store the timeout ID to clear it if needed
+      }
+    } catch (error) {
       setErrorMessage(error.response?.data?.message || "Login failed.");
-      console.log("errror: ", error);
+      console.log("error: ", error);
+
+      // Trigger error notification
+      setNotification({
+        type: "error",
+        message: error.response?.data?.message || "Login failed.",
+        duration: 5000,
+      });
     }
   };
 
+  const handleDismissNotification = () => {
+    if (notificationTimeout) {
+      clearTimeout(notificationTimeout); // Clear the timeout if the notification is dismissed
+    }
+    navigate("/"); // Immediately navigate when notification is dismissed
+  };
+
+  useEffect(() => {
+    // Clean up timeout if the component is unmounted before navigation
+    return () => {
+      if (notificationTimeout) {
+        clearTimeout(notificationTimeout);
+      }
+    };
+  }, [notificationTimeout]);
+
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 py-10  text-white font-sans">
+    <div className="min-h-screen flex items-center justify-center px-4 py-10 text-white font-sans">
       <div className="relative w-full max-w-md bg-[#111827] p-8 rounded-2xl border border-white/10 shadow-lg glow-hover">
         <div className="absolute -top-5 -left-5 w-20 h-20 bg-gradient-to-br from-blue-500 via-purple-600 to-pink-500 blur-2xl rounded-full -z-10 opacity-50" />
         <h2 className="text-3xl anta-regular text-center mb-6">Sign In</h2>
@@ -69,7 +103,7 @@ if(response?.data?.success == true){
         )}
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-          {/* role */}
+          {/* Role */}
           <div>
             <div className="flex items-center gap-2 bg-[#1f2937] p-3 rounded-lg border border-gray-600 focus-within:border-blue-500">
               <FaUserAlt className="text-gray-400" />
@@ -89,6 +123,7 @@ if(response?.data?.success == true){
               <p className="text-red-400 text-sm">{errors.role.message}</p>
             )}
           </div>
+
           {/* Email */}
           <div>
             <div className="flex items-center gap-2 bg-[#1f2937] p-3 rounded-lg border border-gray-600 focus-within:border-blue-500">
@@ -116,7 +151,7 @@ if(response?.data?.success == true){
             <div className="flex items-center gap-2 bg-[#1f2937] p-3 rounded-lg border border-gray-600 focus-within:border-blue-500">
               <RiLockPasswordFill className="text-gray-400" />
               <input
-                type={`${showPass ? 'string' : 'password'}`}
+                type={`${showPass ? "string" : "password"}`}
                 placeholder="Password"
                 {...register("password", {
                   required: "Password is required",
@@ -131,17 +166,17 @@ if(response?.data?.success == true){
                   validate: (value) => {
                     const hasScriptTag = /<script.*?>.*?<\/script>/i.test(value);
                     return !hasScriptTag || "No script tags allowed!";
-                  }
+                  },
                 })}
                 className="bg-transparent outline-none text-white w-full"
               />
-               <button
-      type="button"
-      onClick={handleShowPass}
-      className="text-xl text-gray-400 focus:outline-none cursor-pointer"
-    >
-      {showPass ?  <IoMdEye /> : <IoMdEyeOff />}
-    </button>
+              <button
+                type="button"
+                onClick={handleShowPass}
+                className="text-xl text-gray-400 focus:outline-none cursor-pointer"
+              >
+                {showPass ? <IoMdEye /> : <IoMdEyeOff />}
+              </button>
             </div>
             {errors.password && (
               <p className="text-red-400 text-sm">{errors.password.message}</p>
@@ -168,6 +203,16 @@ if(response?.data?.success == true){
           </Link>
         </p>
       </div>
+
+      {/* Display Notifications */}
+      {notification && (
+        <NotificationSystem
+          type={notification.type}
+          message={notification.message}
+          duration={notification.duration}
+          onDismiss={handleDismissNotification} // Add dismiss functionality
+        />
+      )}
     </div>
   );
 };

@@ -27,6 +27,7 @@ import GroupChat from "../../components/Chat/GroupChat.jsx";
 import { MdHome } from "react-icons/md";
 import { CiChat1 } from "react-icons/ci";
 import { Link } from "react-router-dom";
+import VideoCall from '../../p2p/VideoCall.jsx'
 // Dummy data for scheduled sessions
 const dummyScheduledSessions = [
   {
@@ -225,6 +226,17 @@ export default function EducatorDashboard() {
                 <User className="mr-3 h-5 w-5" />
                 <span>Profile</span>
               </button>
+              <button
+                onClick={() => setActiveTab("Video Confrencing")}
+                className={`flex items-center px-3 py-2 w-full text-left rounded-md text-sm font-medium ${
+                  activeTab === "Video Confrencing"
+                    ? "bg-indigo-100 text-indigo-600 dark:bg-indigo-900 dark:text-indigo-200"
+                    : "text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
+                }`}
+              >
+                <User className="mr-3 h-5 w-5" />
+                <span>Video Confrencing</span>
+              </button>
 
               <button
                 onClick={() => setActiveTab("communityChat")}
@@ -318,6 +330,20 @@ export default function EducatorDashboard() {
                   </button>
                   <button 
                     onClick={() => {
+                      setActiveTab("Video Confrencing");
+                      setMobileMenuOpen(false);
+                    }}
+                    className={`flex items-center px-3 py-2 w-full text-left rounded-md text-sm font-medium ${
+                      activeTab === "profile" 
+                      ? "bg-indigo-100 text-indigo-600 dark:bg-indigo-900 dark:text-indigo-200" 
+                      : "text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
+                    }`}
+                  >
+                    <User className="mr-3 h-5 w-5" />
+                    <span>Video Confrencing</span>
+                  </button>
+                  <button 
+                    onClick={() => {
                       setActiveTab("communityChat");
                       setMobileMenuOpen(false);
                     }}
@@ -375,6 +401,7 @@ export default function EducatorDashboard() {
           <h1 className="text-2xl font-bold text-gray-800 dark:text-white">
             {activeTab === "dashboard" && "My Scheduled Sessions"}
             {activeTab === "profile" && "My Profile"}
+            {activeTab === "Video Confrencing" && "Video Confrencing"}
             {activeTab === "payment" && "Payment Settings"}
           </h1>
 
@@ -460,6 +487,7 @@ export default function EducatorDashboard() {
           <h1 className="text-xl font-bold text-gray-800 dark:text-white">
             {activeTab === "dashboard" && "My Scheduled Sessions"}
             {activeTab === "profile" && "My Profile"}
+            {activeTab === "Video Confrencing" && "Video Confrencing"}
             {activeTab === "payment" && "Payment Settings"}
           </h1>
         </div>
@@ -955,6 +983,13 @@ export default function EducatorDashboard() {
             </div>
           </div>
         )}
+
+         {/* video confrencing */}
+        {activeTab === "Video Confrencing" && (
+          <VideoCall />
+        )
+
+        }
 
 
 {activeTab === "communityChat" && (

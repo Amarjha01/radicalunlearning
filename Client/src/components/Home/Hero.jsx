@@ -15,6 +15,8 @@ const Hero = () => {
   const [userProfile , setUserProfile] = useState({})
   const user = useSelector((state) => state.user);
 
+
+
   useEffect(() => {
     if (user?.userData?.user) {
       setUserProfile(user.userData.user);
@@ -81,88 +83,87 @@ const Hero = () => {
   };
 
   return (
-    <div className={`flex flex-col items-center justify-center gap-16 ${isLightTheme ? "bg-[#fdf6f0] text-gray-800" : ""}`}>
-      
-      {/* Animated Heading */}
-      <div className={`my-5 text-sm lg:text-4xl 2xl:text-6xl codystar-regular ${isLightTheme ? "text-gray-700" : "text-white"} text-center overflow-hidden`}>
-        <div ref={textRef} className="inline-block">
-          {text.split("").map((char, index) => (
-            <span
-              key={index}
-              className="inline-block whitespace-pre"
-              style={{ display: "inline-block" }}
-            >
-              {char}
-            </span>
-          ))}
-        </div>
-      </div>
-
-      {/* Animated Button Section */}
-      <div className="w-full flex justify-center items-center mt-4">
-        <div className="w-[60%] flex justify-around items-center">
-          <IoIosArrowRoundForward
-            size={36}
-            className={`${isLightTheme ? "text-gray-600" : "text-white"} rotate-180 cursor-pointer hover:scale-110 transition`}
-            onClick={goPrev}
-          />
-
-          <div
-            ref={buttonRef}
-            className="button-1 p-0.5 rounded-full transition-all duration-300 cursor-pointer"
+    <div className="flex flex-col items-center justify-center gap-16">
+    {/* Animated Heading */}
+    <div className={ `my-5 text-sm lg:text-4xl 2xl:text-6xl codystar-regular text-center overflow-hidden ${userProfile.theme === 'dark' ? 'text-white' : 'text-black'}`}>
+      <div ref={textRef} className="inline-block">
+        {text.split("").map((char, index) => (
+          <span
+            key={index}
+            className="inline-block whitespace-pre"
+            style={{ display: "inline-block" }}
           >
-            <button className={`px-6 py-2 ${isLightTheme ? "bg-[#ffe4c4] text-gray-800" : "bg-white text-black"} rounded-full shadow-lg transition-all duration-300 min-w-[120px] cursor-pointer`}>
-              {btnLabels[currentIndex]}
-            </button>
-          </div>
+            {char}
+          </span>
+        ))}
+      </div>
+    </div>
 
-          <IoIosArrowRoundForward
-            size={36}
-            className={`${isLightTheme ? "text-gray-600" : "text-white"} cursor-pointer hover:scale-110 transition`}
-            onClick={goNext}
+    {/* Animated Button Section */}
+    <div className="w-full flex justify-center items-center mt-4">
+      <div className="w-[60%] flex justify-around items-center">
+        {/* Prev Arrow */}
+        <IoIosArrowRoundForward
+          size={36}
+          className="rotate-180 text-white cursor-pointer hover:scale-110 transition"
+          onClick={goPrev}
+        />
+
+        {/* Animated Button Label */}
+        <div
+          ref={buttonRef}
+          className="button-1 p-0.5 rounded-full transition-all duration-300 cursor-pointer"
+        >
+          <button className="px-6 py-2 bg-white text-black rounded-full shadow-lg transition-all duration-300 min-w-[120px] cursor-pointer">
+            {btnLabels[currentIndex]}
+          </button>
+        </div>
+
+        {/* Next Arrow */}
+        <IoIosArrowRoundForward
+          size={36}
+          className="text-white cursor-pointer hover:scale-110 transition"
+          onClick={goNext}
+        />
+      </div>
+    </div>
+
+    {/* Main Content with Smooth Scrolling */}
+    <div className="relative w-full flex flex-col gap-5 items-center py-10 after">
+      <div className="w-full text-center lufga-regular lg:text-2xl px-2">
+        <p>
+          Track your journey, reflect on progress, and showcase growth — all in one dynamic dashboard
+        </p>
+      </div>
+      <div className="relative w-[80%] h-auto p-0.5 button-1 rounded-4xl">
+        <div className="relative bg-[#000000] w-full h-auto z-20 p-5 flex justify-center items-center rounded-4xl">
+          <div className="w-full h-60 lg:h-[80%] bottom-0 absolute bg-gradient-to-b from-transparent to-black z-30 rounded-b-4xl"></div>
+          <img
+            src="dashboard.svg"
+            alt=""
+            className="h-full w-full rounded-4xl"
           />
         </div>
-      </div>
-
-      {/* Main Content with Smooth Scrolling */}
-      <div className="relative w-full flex flex-col gap-5 items-center py-10 after">
-        <div className="w-full text-center lufga-regular lg:text-2xl px-2">
-          <p className={`${isLightTheme ? "text-gray-600" : ""}`}>
-            Track your journey, reflect on progress, and showcase growth — all in one dynamic dashboard
-          </p>
-        </div>
-
-        <div className="relative w-[80%] h-auto p-0.5 button-1 rounded-4xl">
-          <div className={`relative ${isLightTheme ? "bg-[#f5f5dc]" : "bg-[#000000]"} w-full h-auto z-20 p-5 flex justify-center items-center rounded-4xl`}>
-            <div className={`w-full h-60 lg:h-[80%] bottom-0 absolute ${isLightTheme ? "bg-gradient-to-b from-transparent to-[#fef6e4]" : "bg-gradient-to-b from-transparent to-black"} z-30 rounded-b-4xl`} />
-            <img
-              src="dashboard.svg"
-              alt=""
-              className="h-full w-full rounded-4xl"
-            />
-          </div>
-
-          <div className="flex justify-center items-end absolute bottom-0 left-0 z-30 w-full h-full bg-gradient-to-b from-transparent to-[#fef6e4] px-1">
-            <div className="w-[100%] h-auto overflow-x-hidden">
-              <div className="w-[100%] h-20 flex items-center gap-5 scroll-smooth animate-scroll"> 
-                {slideTest.map((ele, index) => (
-                  <div key={index} className="h-fit w-fit">
-                    <ul>
-                      <li className="md:px-5 md:py-1 px-1 py-0 text-sm font-semibold rounded-4xl bg-white shadow-md border">
-                        <span className={`bg-clip-text text-transparent ${isLightTheme ? "bg-gradient-to-r from-pink-400 via-yellow-400 to-green-400" : "bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"}`}>
-                          {ele}
-                        </span>
-                      </li>
-                    </ul>
-                  </div>
-                ))}
+        <div className="flex justify-center items-end absolute bottom-0 left-0 z-30 w-full h-full bg-gradient-to-b from-transparent to-[#020817] px-1">
+<div className="w-[100%] h-auto overflow-x-hidden  ">
+<div className="w-[100%] h-20 flex items-center gap-5 scroll-smooth animate-scroll"> 
+            {slideTest.map((ele, index) => (
+              <div key={index} className="h-fit w-fit ">
+                <ul className="">
+                  <li className="md:px-5 md:py-1 px-1 py-0 text-sm font-semibold rounded-4xl bg-white shadow-md border">
+                    <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500">
+                      {ele}
+                    </span>
+                  </li>
+                </ul>
               </div>
-            </div>
+            ))}
           </div>
+</div>
         </div>
       </div>
-
     </div>
+  </div>
   );
 };
 

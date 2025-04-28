@@ -110,36 +110,22 @@ const Notification = ({ id, type, message, onClose, duration = 5000 }) => {
 };
 
 // Notification Container/Manager
-export default function NotificationSystem() {
+export default function NotificationSystem({ type, message, duration = 5000 }) {
   const [notifications, setNotifications] = useState([]);
 
-  // Add a new notification
-  const addNotification = (type, message, duration = 5000) => {
-    const id = Date.now();
-    setNotifications(prev => [...prev, { id, type, message, duration }]);
-    return id;
-  };
+  useEffect(() => {
+    if (type && message) {
+      const id = Date.now();
+      setNotifications(prev => [...prev, { id, type, message, duration }]);
 
-  // Remove a notification
-  const removeNotification = (id) => {
-    setNotifications(prev => prev.filter(notification => notification.id !== id));
-  };
+      const timer = setTimeout(() => {
+        setNotifications(prev => prev.filter(notification => notification.id !== id));
+      }, duration);
 
-  // For demo purposes - adding example notifications
-  const showExampleNotification = (type) => {
-    const messages = {
-      success: "Operation completed successfully!",
-      error: "Something went wrong. Please try again.",
-      unauthorized: "You don't have permission to access this resource.",
-      info: "System maintenance scheduled for tonight.",
-      network: "Your connection has been restored.",
-      security: "Your account has unusual login activity."
-    };
-    
-    addNotification(type, messages[type]);
-  };
+      return () => clearTimeout(timer);
+    }
+  }, [type, message, duration]);
 
-  // Add global CSS for animations
   useEffect(() => {
     const style = document.createElement('style');
     style.textContent = `
@@ -163,49 +149,6 @@ export default function NotificationSystem() {
 
   return (
     <div className="flex flex-col items-center">
-      {/* Demo controls - you can remove this in production */}
-      <div className="mb-12 w-full max-w-md p-6 bg-gray-800/70 backdrop-blur-md rounded-xl shadow-xl border border-gray-700">
-        <h2 className="text-white text-xl font-bold mb-4 text-center">Notification Demo</h2>
-        <div className="grid grid-cols-2 gap-3">
-          <button 
-            onClick={() => showExampleNotification('success')}
-            className="bg-green-900/50 hover:bg-green-800/70 text-green-400 py-2 px-4 rounded-md text-sm font-medium transition-colors"
-          >
-            Success
-          </button>
-          <button 
-            onClick={() => showExampleNotification('error')}
-            className="bg-red-900/50 hover:bg-red-800/70 text-red-400 py-2 px-4 rounded-md text-sm font-medium transition-colors"
-          >
-            Error
-          </button>
-          <button 
-            onClick={() => showExampleNotification('unauthorized')}
-            className="bg-yellow-900/50 hover:bg-yellow-800/70 text-yellow-400 py-2 px-4 rounded-md text-sm font-medium transition-colors"
-          >
-            Unauthorized
-          </button>
-          <button 
-            onClick={() => showExampleNotification('info')}
-            className="bg-blue-900/50 hover:bg-blue-800/70 text-blue-400 py-2 px-4 rounded-md text-sm font-medium transition-colors"
-          >
-            Info
-          </button>
-          <button 
-            onClick={() => showExampleNotification('network')}
-            className="bg-purple-900/50 hover:bg-purple-800/70 text-purple-400 py-2 px-4 rounded-md text-sm font-medium transition-colors"
-          >
-            Network
-          </button>
-          <button 
-            onClick={() => showExampleNotification('security')}
-            className="bg-cyan-900/50 hover:bg-cyan-800/70 text-cyan-400 py-2 px-4 rounded-md text-sm font-medium transition-colors"
-          >
-            Security
-          </button>
-        </div>
-      </div>
-      
       {/* Notification container - fixed position */}
       <div className="fixed top-4 right-4 z-50 flex flex-col space-y-3 w-80 max-w-full">
         {notifications.map(({ id, type, message, duration }) => (
@@ -215,7 +158,7 @@ export default function NotificationSystem() {
             type={type}
             message={message}
             duration={duration}
-            onClose={removeNotification}
+            onClose={(id) => setNotifications(prev => prev.filter(notification => notification.id !== id))}
           />
         ))}
       </div>

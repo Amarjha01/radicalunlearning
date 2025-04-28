@@ -97,7 +97,7 @@ const fetchtodos = async () =>{
 
   return (
     <div className="max-w-md mx-auto p-4 bg-white rounded-lg shadow-lg">
-      <h1 className="text-2xl font-bold text-center mb-6 text-blue-600">My Todo List</h1>
+      <h1 className="text-2xl font-bold text-center mb-6 text-blue-600">My Goals</h1>
       
       {error && (
         <div className="bg-red-100 text-red-700 p-3 rounded-md mb-4">

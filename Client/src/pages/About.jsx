@@ -2,21 +2,11 @@ import React from "react";
 import CircularText from './CircularText';
 import VimeoPlayer from '../components/About/Video.jsx'
 import VideoCall from '../p2p/VideoCall.jsx'
-import NotificationSystem from "../notification/NotificationSystem.jsx";
+// import NotificationSystem from "../notification/NotificationSystem.jsx";
 const About = () => {
   return (
     
     <section className="min-h-screen w-full  text-white px-6 md:px-20 py-20 flex flex-col items-center justify-center">
-      {/* Glowing Main Title */}
-      
-      {/* <CircularText
-  text="RADICAL*UNLEARNING*"
-  onHover="speedUp"
-  spinDuration={20}
-  className="custom-class"
-/> */}
-{/* <VideoCall /> */}
-<NotificationSystem />
       <h1 className="text-4xl md:text-5xl font-bold text-center mb-10 bg-gradient-to-r from-[#4facfe] via-[#6f57ff] to-[#00f2fe] bg-clip-text text-transparent orbitron-regular tracking-widest">
         🚀 About Us
       </h1>
@@ -127,7 +117,12 @@ const About = () => {
   </h2>
 
   <div className="w-full max-w-4xl">
-    <VimeoPlayer />
+  <video  className="w-full" autoPlay loop playsInline>
+        <source
+          src="/RadicalUnlearningIntro.mp4"
+          type="video/mp4"
+        />
+      </video>
   </div>
 
   <p className="mt-6 max-w-xl text-center text-gray-300 italic text-base leading-relaxed">

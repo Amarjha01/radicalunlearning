@@ -54,6 +54,9 @@ const API = {
   toggleTheme:{
     url: `${backendDomain}/api/user/toggleTheme`,
   },
+  createZoomMeeting:{
+    url: `${backendDomain}/api/user/createZoomMeeting`,
+  },
   
 };
 
