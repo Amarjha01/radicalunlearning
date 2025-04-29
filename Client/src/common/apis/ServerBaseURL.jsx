@@ -2,6 +2,8 @@ const backendDomain = "http://localhost:3000";
 // const backendDomain = "https://api.radical-unlearning.com/";
 
 const API = {
+
+  // -----------------APIs for all role---------------------------------
   registerLearner: { 
     url: `${backendDomain}/api/user/register-learner`,
     method: 'POST',
@@ -14,7 +16,7 @@ const API = {
     url: `${backendDomain}/api/user/signin`,
     method: 'POST',
   },
-  // APIs for Admin dashboard 
+  // ------------------------APIs for Admin dashboard---------------------------
   educatorsData: { 
     url: `${backendDomain}/api/admin/get-all-educator-data`,
     method: 'POST',
@@ -35,7 +37,7 @@ const API = {
     url: `${backendDomain}/api/admin/deleteUser`,
     method: 'POST',
   },
-  // APIs for learner
+  // --------------------APIs for learner------------------
   searchEducator:{
     url: `${backendDomain}/api/user/searchEducator`,
   },
@@ -56,6 +58,12 @@ const API = {
   },
   createZoomMeeting:{
     url: `${backendDomain}/api/user/createZoomMeeting`,
+  },
+
+
+  // -------------payment------------------------
+  createCheckoutSession:{
+    url: `${backendDomain}/api/pay/createCheckoutSession`,
   },
   
 };

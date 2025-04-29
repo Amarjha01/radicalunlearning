@@ -83,6 +83,10 @@ const Lerner_userSchema = new mongoose.Schema({
     type:String,
     enum:['light' , 'dark'],
     default:'light'
+  },
+  totalSessions: {
+    type: Number,
+    default: 0
   }
 }, {
   timestamps: true
@@ -134,6 +138,13 @@ const Educator_userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  sessionfee: {
+    type: String,
+  },
+  wallet: {
+    type: Number,
+    default:0
+  },
   payoutMethod: {
     type: String,
     required: true,
@@ -169,6 +180,10 @@ documentUrl: {
   videoUrl: {
     type: String, 
     required: true,
+  },
+  profileUrl: {
+    type: String, 
+    // required: true,
   },
   password: {
     type: String,
@@ -211,6 +226,10 @@ documentUrl: {
     type:String,
     enum:['light' , 'dark'],
     default:'light'
+  },
+  totalSessions: {
+    type: Number,
+    default: 0
   }
 }, {
   timestamps: true,

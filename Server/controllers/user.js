@@ -501,7 +501,7 @@ export async function searchEducator(req, res) {
 
 const educators = await EducatorUserModel.find({
   subjects: { $regex: searchKey, $options: 'i' }
-}).select('name  country  bio _id subjects' );
+}).select('name  country  bio _id subjects documentUrl videoUrl' );
 console.log(educators);
 
 if(educators){
@@ -729,6 +729,10 @@ console.log('all done');
   }
 };
 
+
+
+
+// ----------------------CreateSession------------------------------------------------------------
 export const createSession = async (req, res) => {
   const { learnerId, educatorId, scheduledAt, topic, zoomMeetingId, zoomJoinUrl, zoomStartUrl } = req.body;
 
@@ -751,3 +755,46 @@ export const createSession = async (req, res) => {
     res.status(500).json({ message: "Failed to create session" });
   }
 };
+
+
+export async function getEducatorSessions(req, res) {
+  const token = req.cookies.accessToken;
+  if (!token) return res.status(401).json({ message: "Unauthorized" });
+
+  const { id: educatorId } = jwt.verify(token, process.env.JWT_SECRET);
+
+  try {
+    const now = new Date();
+
+    const sessions = await SessionModel.find({ educatorId }).populate("learnerId", "name");
+
+    const upcoming = sessions.filter(s => new Date(s.scheduledAt) > now);
+    const previous = sessions.filter(s => new Date(s.scheduledAt) <= now);
+
+    res.json({ upcoming, previous });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to fetch educator sessions" });
+  }
+}
+
+export async function getLearnerSessions(req, res) {
+  const token = req.cookies.accessToken;
+  if (!token) return res.status(401).json({ message: "Unauthorized" });
+
+  const { id: learnerId } = jwt.verify(token, process.env.JWT_SECRET);
+
+  try {
+    const now = new Date();
+
+    const sessions = await SessionModel.find({ learnerId }).populate("educatorId", "name");
+
+    const upcoming = sessions.filter(s => new Date(s.scheduledAt) > now);
+    const previous = sessions.filter(s => new Date(s.scheduledAt) <= now);
+
+    res.json({ upcoming, previous });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to fetch learner sessions" });
+  }
+}

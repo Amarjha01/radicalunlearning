@@ -16,6 +16,7 @@ import {
   ArrowRight,
   ChevronRight
 } from 'lucide-react';
+import { FaGraduationCap, FaGlobeAmericas, FaUserTie, FaFileAlt, FaVideo, FaBookOpen } from 'react-icons/fa';
 import { IoVideocam } from "react-icons/io5";
 import GroupChat from "../../components/Chat/GroupChat.jsx";
 import { MdHome } from "react-icons/md";
@@ -26,6 +27,12 @@ import { CiLock } from "react-icons/ci";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import axios from 'axios';
+
+import { loadStripe } from '@stripe/stripe-js';
+const stripePromise = loadStripe('pk_test_51REr3D4Pm8bi1bka0tMXqVjPNPyEbfMEb97yP1sMgquLKLusTHjAtatfqPxEl6txhc8F5X8uN94FV3tWyUUA9MWF005QM2JElh');
+
+
+
 import API from '../../common/apis/ServerBaseURL.jsx';
 import VideoCall from '../../p2p/VideoCall.jsx'
 import TodoApp from '../../components/Dashboard/TodoApp.jsx';
@@ -164,6 +171,7 @@ const OverviewTab = ({ darkMode }) => {
   
   // Filter in-progress goals
   const inProgressGoals = dummyGoals.filter(goal => goal.status === "In Progress").slice(0, 2);
+
   
   return (
     <div>
@@ -307,10 +315,11 @@ const OverviewTab = ({ darkMode }) => {
 };
 
 // Search educator
-const SearchTab = ({ darkMode }) => {
+const SearchTab = ({ darkMode  , userData}) => {
   const [searchKey, setSearchKey] = useState('');
   const [allEducator, setAllEducator] = useState([]);
-  console.log(allEducator);
+console.log(allEducator);
+
 
   const searcheducator = async () => {
     try {
@@ -328,9 +337,27 @@ const SearchTab = ({ darkMode }) => {
     }
   };
 
-const handlePay = (_id , amount) =>{
 
-}
+
+  const handlePay = async (educatorId, amount) => {
+    try {
+      const res = await axios.post(API.createCheckoutSession.url, {
+        learnerName: userData.name,
+        amount,
+        educatorId,
+        topic: "Algebra basics" 
+      }, {
+        withCredentials: true
+      });
+  
+      const stripe = await stripePromise;
+      await stripe.redirectToCheckout({ sessionId: res.data.sessionId });
+  
+    } catch (error) {
+      console.error("Payment error", error);
+    }
+  };
+  
 
   return (
     <div className="w-full h-auto flex flex-col">
@@ -353,31 +380,118 @@ const handlePay = (_id , amount) =>{
       </div>
 
       {/* Displaying Educator List */}
-      <div className="mt-6">
-        {allEducator.length > 0 ? (
-          allEducator.map((educator) => (
-            <div key={educator.id} className="mb-4 p-4 border rounded-lg shadow-md bg-white text-start">
-              <h3 className="text-xl font-semibold ">Name: {educator.name}</h3>
-              <p className="text-gray-500">Country: {educator.country}</p>
-              <p className="text-gray-700 mt-2">Bio: {educator.bio}</p>
-              <span className="flex items-center">{"Topic:   "}
-                {
-                  educator.subjects.map((subjects , index) =>(
-                    <p className="text-gray-700"> {subjects},</p>
-                  ))
-                }
-              </span>
-              <p className="text-gray-700 mt-2">$ 513</p>
-              <span onClick={()=>{handlePay(educator._id, 513)}} className=' flex  justify-center items-center cursor-pointer'>
-        <CiLock className=' text-red-700' />
-      <button className='cursor-pointer'>Pay to Unlock full view</button>
-      </span>
+      <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {allEducator.length > 0 ? (
+        allEducator.map((educator) => (
+          <div 
+            key={educator.id} 
+            className="relative overflow-hidden rounded-xl bg-white shadow-lg transition-all duration-300 hover:shadow-xl border border-gray-100"
+          >
+            {/* Header with gradient overlay */}
+            <div className="relative h-32 bg-gradient-to-r from-blue-500 to-purple-600">
+              <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/40"></div>
+              <div className="absolute bottom-0 left-0 w-full p-4 flex items-end">
+                <div className="flex-shrink-0 mr-4">
+                  <div className="rounded-full h-16 w-16 overflow-hidden border-2 border-white shadow-md bg-white flex items-center justify-center">
+                    <img 
+                      src="https://amarjha.tech/assets/MyImg-BjWvYtsb.svg" 
+                      alt={educator.name}
+                      className="h-12 w-12 object-cover"
+                    />
+                  </div>
+                </div>
+                <div className="flex-grow">
+                  <h3 className="text-lg font-bold text-white truncate">{educator.name}</h3>
+                  <div className="flex items-center text-gray-200 text-sm">
+                    <FaGlobeAmericas className="mr-1" />
+                    <span>{educator.country}</span>
+                  </div>
+                </div>
+              </div>
             </div>
-          ))
-        ) : (
-          <p>No educators found</p>
-        )}
-      </div>
+
+            {/* Content */}
+            <div className="p-5">
+              <div className="mb-4">
+                <div className="flex items-center mb-1">
+                  <FaUserTie className="text-gray-500 mr-2" />
+                  <span className="text-sm font-medium text-gray-500">Bio</span>
+                </div>
+                <p className="text-gray-700 text-sm line-clamp-3">{educator.bio}</p>
+              </div>
+
+              {/* Subjects/Topics */}
+              <div className="mb-4">
+                <div className="flex items-center mb-2">
+                  <FaBookOpen className="text-gray-500 mr-2" />
+                  <span className="text-sm font-medium text-gray-500">Topics</span>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {educator.subjects.map((subject, index) => (
+                    <span 
+                      key={index} 
+                      className="px-2 py-1 bg-blue-50 text-blue-700 text-xs font-medium rounded-full"
+                    >
+                      {subject}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              {/* Action buttons */}
+              <div className="grid grid-cols-2 gap-3 mb-4">
+                <a 
+                  href={educator.documentUrl} 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="flex items-center justify-center px-3 py-2 bg-gray-50 hover:bg-gray-100 rounded-lg text-sm font-medium text-gray-700 transition-colors"
+                >
+                  <FaFileAlt className="mr-2 text-blue-600" />
+                  View Certificates
+                </a>
+                <a 
+                  href={educator.videoUrl} 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="flex items-center justify-center px-3 py-2 bg-gray-50 hover:bg-gray-100 rounded-lg text-sm font-medium text-gray-700 transition-colors"
+                >
+                  <FaVideo className="mr-2 text-blue-600" />
+                  Watch Video
+                </a>
+              </div>
+
+              {/* Price and booking */}
+              <div className="mt-4 pt-4 border-t border-gray-100">
+                <div className="flex justify-between items-center mb-3">
+                  <div className="flex items-center">
+                    <FaGraduationCap className="text-gray-500 mr-2" />
+                    <span className="text-sm font-medium text-gray-500">Session Fee</span>
+                  </div>
+                  <span className="text-lg font-bold text-blue-600">$513</span>
+                </div>
+                
+                <button 
+                  onClick={() => handlePay(educator._id, 513)} 
+                  className="w-full py-3 px-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-medium rounded-lg flex items-center justify-center transition-all hover:from-blue-700 hover:to-purple-700"
+                >
+                  <CiLock className="mr-2 text-lg" />
+                  Pay to Book Session
+                </button>
+              </div>
+            </div>
+          </div>
+        ))
+      ) : (
+        <div className="col-span-full flex items-center justify-center p-12 rounded-lg bg-gray-50">
+          <div className="text-center">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 mb-4">
+              <FaGraduationCap className="text-2xl text-gray-400" />
+            </div>
+            <p className="text-gray-500 font-medium">No educators found</p>
+          </div>
+        </div>
+      )}
+    </div>
   
     </div>
   );
