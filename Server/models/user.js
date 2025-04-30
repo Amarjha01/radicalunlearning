@@ -314,3 +314,13 @@ const sessionSchema = new mongoose.Schema({
 });
 
 export const SessionModel = mongoose.model("Sessions", sessionSchema);
+
+const paymentSchema = new mongoose.Schema({
+  learnerId: { type: mongoose.Schema.Types.ObjectId, ref: 'User-learners', required: true },
+  educatorId: { type: mongoose.Schema.Types.ObjectId, ref: 'User-educators', required: true },
+  topic: String,
+  paymentStatus: { type: String, default: 'completed' },
+  stripeSessionId: String,
+  createdAt: { type: Date, default: Date.now },
+});
+export const PaymentRecord = mongoose.model("PaymentRecord", paymentSchema);

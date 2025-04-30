@@ -15,6 +15,7 @@ import EduSignUp from '../components/login&signup/EduSignUp.jsx'
 import Contact from '../pages/Contact.jsx'
 import User from '../pages/User.jsx'
 import TopBar from '../components/Dashboard/admin/TopBar.jsx';
+import SchedulePage from '../pages/SchedulePage/SchedulePage.jsx';
 const routes = createBrowserRouter(
     [
         {
@@ -84,6 +85,13 @@ const routes = createBrowserRouter(
             <ProtectedRoute role="learner">
               <LearnerDashboard />
             </ProtectedRoute>
+          )
+        },
+        {
+          path: 'schedule',
+          element: (
+              <SchedulePage />
+
           )
         }
         

@@ -733,28 +733,28 @@ console.log('all done');
 
 
 // ----------------------CreateSession------------------------------------------------------------
-export const createSession = async (req, res) => {
-  const { learnerId, educatorId, scheduledAt, topic, zoomMeetingId, zoomJoinUrl, zoomStartUrl } = req.body;
+// export const createSession = async (req, res) => {
+//   const { learnerId, educatorId, scheduledAt, topic, zoomMeetingId, zoomJoinUrl, zoomStartUrl } = req.body;
 
-  try {
-    const session = new SessionModel({
-      learnerId,
-      educatorId,
-      scheduledAt,
-      topic,
-      zoomMeetingId,
-      zoomJoinUrl,
-      zoomStartUrl,
-    });
+//   try {
+//     const session = new SessionModel({
+//       learnerId,
+//       educatorId,
+//       scheduledAt,
+//       topic,
+//       zoomMeetingId,
+//       zoomJoinUrl,
+//       zoomStartUrl,
+//     });
 
-    await session.save();
+//     await session.save();
 
-    res.status(201).json({ message: "Session created successfully", session });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Failed to create session" });
-  }
-};
+//     res.status(201).json({ message: "Session created successfully", session });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ message: "Failed to create session" });
+//   }
+// };
 
 
 export async function getEducatorSessions(req, res) {

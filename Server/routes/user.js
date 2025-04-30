@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { registerLearnerController , registerEducatorController , signin , updateUserDetails, registerAdminController, searchEducator, addtodos, fetchtodos, deletetodos, toggleTodoComplete, toggleTheme, getEducatorSessions, createSession, getLearnerSessions } from "../controllers/user.js";
+import { registerLearnerController , registerEducatorController , signin , updateUserDetails, registerAdminController, searchEducator, addtodos, fetchtodos, deletetodos, toggleTodoComplete, toggleTheme, getEducatorSessions, getLearnerSessions } from "../controllers/user.js";
 import { createZoomMeeting } from "../utils/createZoomMeeting.js";
 
 const userRouter = Router();
@@ -16,7 +16,6 @@ userRouter.delete('/deletetodos', deletetodos);
 userRouter.put('/toggleTodoComplete', toggleTodoComplete);
 userRouter.post('/toggleTheme', toggleTheme);
 userRouter.post('/createZoomMeeting', createZoomMeeting);
-userRouter.post('/createSession', createSession);
 userRouter.get('/getEducatorSessions', getEducatorSessions);
 userRouter.get('/getLearnerSessions', getLearnerSessions);
 

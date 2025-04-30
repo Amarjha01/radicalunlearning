@@ -65,6 +65,9 @@ const API = {
   createCheckoutSession:{
     url: `${backendDomain}/api/pay/createCheckoutSession`,
   },
+  finalizesession:{
+    url: `${backendDomain}/api/pay/finalizesession`,
+  },
   
 };
 
