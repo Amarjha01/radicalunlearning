@@ -660,7 +660,8 @@ const SessionsTab = ({ darkMode, sessions }) => {
   };
   
   return (
-    <div>
+<>
+<div>
       <h1 className="text-2xl font-bold mb-6">Upcoming Sessions</h1>
       
       {/* Sessions List */}
@@ -677,16 +678,16 @@ const SessionsTab = ({ darkMode, sessions }) => {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-              {sessions.map(session => (
-                <tr key={session.id}>
+              {sessions?.upcoming?.map(session => (
+                <tr key={session._id}>
                   <td className="px-6 py-4">
-                    <div className="font-medium">{session.title}</div>
+                    <div className="font-medium">{session.topic}</div>
                   </td>
                   <td className="px-6 py-4 text-sm">
-                    {session.educatorName}
+                    {session.educatorId.name}
                   </td>
                   <td className="px-6 py-4 text-sm">
-                    {formatDateTime(session.dateTime)}
+                    {formatDateTime(session.scheduledAt)}
                   </td>
                   <td className="px-6 py-4">
                     <span className="px-2 py-1 text-xs rounded-full bg-green-100 text-green-600 dark:bg-green-900 dark:text-green-300">
@@ -696,7 +697,7 @@ const SessionsTab = ({ darkMode, sessions }) => {
                   <td className="px-6 py-4">
                     <div className="flex space-x-2">
                       <a 
-                        href={session.joinLink}
+                        href={session.zoomJoinUrl}
                         className="px-3 py-1 text-xs bg-blue-600 hover:bg-blue-700 text-white rounded-md"
                       >
                         Join
@@ -788,15 +789,50 @@ const SessionsTab = ({ darkMode, sessions }) => {
         </div>
       )}
     </div>
+    <div>
+      <h1 className="text-2xl font-bold mb-6">Previous Sessions</h1>
+      
+      {/* Sessions List */}
+      <div className={`rounded-lg shadow-sm overflow-hidden ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead className={`text-left ${darkMode ? 'bg-gray-700' : 'bg-gray-50'}`}>
+              <tr>
+                <th className="px-6 py-3 text-sm font-medium">Session</th>
+                <th className="px-6 py-3 text-sm font-medium">Educator</th>
+                <th className="px-6 py-3 text-sm font-medium">Date & Time</th>
+                <th className="px-6 py-3 text-sm font-medium">Status</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+              {sessions?.previous?.map(session => (
+                <tr key={session._id}>
+                  <td className="px-6 py-4">
+                    <div className="font-medium">{session.topic}</div>
+                  </td>
+                  <td className="px-6 py-4 text-sm">
+                    {session.educatorId.name}
+                  </td>
+                  <td className="px-6 py-4 text-sm">
+                    {formatDateTime(session.scheduledAt)}
+                  </td>
+                  <td className="px-6 py-4">
+                    <span className="px-2 py-1 text-xs rounded-full bg-green-100 text-green-600 dark:bg-green-900 dark:text-green-300">
+                      {session.status}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+</>
   );
 };
 
-const VideoCallTab = () =>{
-return(
-  <VideoCall />
-)
-  
-}
+
 
 const ChatTab = ({darkMode}) =>{
 return(
@@ -1212,7 +1248,29 @@ const LearnerDashboard = () => {
   const [darkMode, setDarkMode] = useState(false);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const [profileData, setProfileData] = useState({});
+  const [sessions, setSessions] = useState({ previous: [], upcoming: [] });
+console.log(sessions);
 
+  useEffect(() => {
+    const getLearnerSessions = async () => {
+      try {
+        const response = await axios.get(API.getLearnerSessions.url, {
+          withCredentials: true,
+        });
+  
+        if (response.status === 200) {
+          setSessions(response.data); // Will set { previous: [...], upcoming: [...] }
+        }
+      } catch (error) {
+        console.error("Error fetching sessions", error);
+      }
+    };
+  
+    if (activeTab === "Sessions") {
+      getLearnerSessions();
+    }
+  }, [activeTab]);
+  
 
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user);
@@ -1273,7 +1331,6 @@ const LearnerDashboard = () => {
               { name: 'My Goals', icon: <Award size={18} /> },
               { name: 'Portfolio', icon: <Folder size={18} /> },
               { name: 'Sessions', icon: <Calendar size={18} /> },
-              { name: 'video', icon: <IoVideocam size={18} /> },
               { name: 'communityChat', icon: <CiChat1 size={18} /> },
               { name: 'Settings', icon: <Settings size={18} /> },
             ].map((item) => (
@@ -1321,8 +1378,7 @@ const LearnerDashboard = () => {
           {activeTab === 'Search Educator' && <SearchTab darkMode={darkMode} userData={profileData} />}
           {activeTab === 'My Goals' && <GoalsTab darkMode={darkMode} goals={dummyGoals} userData={profileData} />}
           {activeTab === 'Portfolio' && <PortfolioTab darkMode={darkMode} portfolio={dummyPortfolio} userData={profileData} />}
-          {activeTab === 'Sessions' && <SessionsTab darkMode={darkMode} sessions={dummySessions} userData={profileData} />}
-          {activeTab === 'video' && <VideoCallTab />}
+          {activeTab === 'Sessions' && <SessionsTab darkMode={darkMode} sessions={sessions} userData={profileData} />}
           {activeTab === 'communityChat' && <ChatTab darkMode={darkMode}  />}
           {activeTab === 'Settings' && <SettingsTab darkMode={darkMode} user={dummyUser} userData={profileData} />}
         </div>

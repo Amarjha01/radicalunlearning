@@ -49,7 +49,7 @@ function SchedulePage() {
         console.log("Session finalized:", response);
         if(response.status === 201){
           setIsLoading(false);
-          return <Navigate to={'/'} />
+          return <Navigate to={'/dashboard/learner'} />
         }
         
       } catch (error) {

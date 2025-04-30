@@ -6,17 +6,12 @@
     initial-value: 0deg;
     inherits: false;
   }
-  /* .button-1{
-    background-image: conic-gradient(from var(--angle), #FF5733, #FFC300, #DAF7A6, #900C3F , #FF5733);
-    background-image: conic-gradient(from var(--angle), #9f02ff , #1399fd);
-    animation: 1s spin linear infinite;
-  } */
-  .button-2{
+  .button-{
     background-image: conic-gradient(from var(--angle), #000000, #000000, #000000, #000000 , #ffffff);
     animation: 3s spin linear infinite;
   }
 
-  .button-1{
+  .button-{
     background-image: conic-gradient(from var(--angle), #9f02ff , #1399fd , #C68EFD);
     animation: 5s spin linear infinite;
   }

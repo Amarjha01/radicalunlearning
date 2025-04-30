@@ -780,6 +780,7 @@ export async function getEducatorSessions(req, res) {
 
 export async function getLearnerSessions(req, res) {
   const token = req.cookies.accessToken;
+  
   if (!token) return res.status(401).json({ message: "Unauthorized" });
 
   const { id: learnerId } = jwt.verify(token, process.env.JWT_SECRET);

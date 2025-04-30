@@ -56,8 +56,11 @@ const API = {
   toggleTheme:{
     url: `${backendDomain}/api/user/toggleTheme`,
   },
-  createZoomMeeting:{
-    url: `${backendDomain}/api/user/createZoomMeeting`,
+  getLearnerSessions:{
+    url: `${backendDomain}/api/user/getLearnerSessions`,
+  },
+  getEducatorSessions:{
+    url: `${backendDomain}/api/user/getEducatorSessions`,
   },
 
 

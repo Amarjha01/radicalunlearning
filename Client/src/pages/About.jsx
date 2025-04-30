@@ -2,11 +2,16 @@ import React from "react";
 import CircularText from './CircularText';
 import VimeoPlayer from '../components/About/Video.jsx'
 import VideoCall from '../p2p/VideoCall.jsx'
+import '../components/Global/global.css'
 // import NotificationSystem from "../notification/NotificationSystem.jsx";
 const About = () => {
   return (
     
-    <section className="min-h-screen w-full  text-white px-6 md:px-20 py-20 flex flex-col items-center justify-center">
+    <section className=" min-h-screen w-full  text-white px-6 md:px-20 py-20 flex flex-col items-center justify-center">
+
+      <div className=" px-10 py-4 button-1">
+        button
+      </div>
       <h1 className="text-4xl md:text-5xl font-bold text-center mb-10 bg-gradient-to-r from-[#4facfe] via-[#6f57ff] to-[#00f2fe] bg-clip-text text-transparent orbitron-regular tracking-widest">
         🚀 About Us
       </h1>

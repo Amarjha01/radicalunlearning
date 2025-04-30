@@ -137,7 +137,7 @@ console.log(theme);
         >
           <div className={`bg-white dark:bg-black w-4 h-4 rounded-full shadow-md transform transition-transform duration-300 ${theme === 'dark' ? 'translate-x-6' : ''}`} />
         </button>
-        <div className="relative  p-0.5 rounded-4xl cursor-pointer">
+        <div className="relative button-2 p-0.5 rounded-4xl cursor-pointer">
   {isUser ? (
     <button
       onClick={handleLogout}
