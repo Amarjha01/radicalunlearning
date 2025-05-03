@@ -85,7 +85,7 @@ const Hero = () => {
   return (
     <div className="flex flex-col items-center justify-center gap-16">
     {/* Animated Heading */}
-    <div className={ `my-5 text-sm lg:text-4xl 2xl:text-6xl codystar-regular text-center overflow-hidden ${userProfile.theme === 'dark' ? 'text-white' : 'text-black'}`}>
+    <div className={ `my-5 text-sm lg:text-4xl 2xl:text-6xl codystar-regular text-center overflow-hidden ${userProfile.theme === 'light' ? 'text-black' : 'text-white'}`}>
       <div ref={textRef} className="inline-block">
         {text.split("").map((char, index) => (
           <span
@@ -112,7 +112,7 @@ const Hero = () => {
         {/* Animated Button Label */}
         <div
           ref={buttonRef}
-          className="button-1 p-0.5 rounded-full transition-all duration-300 cursor-pointer"
+          className="button-1 button p-0.5 rounded-full transition-all duration-300 cursor-pointer"
         >
           <button className="px-6 py-2 bg-white text-black rounded-full shadow-lg transition-all duration-300 min-w-[120px] cursor-pointer">
             {btnLabels[currentIndex]}
@@ -135,7 +135,7 @@ const Hero = () => {
           Track your journey, reflect on progress, and showcase growth — all in one dynamic dashboard
         </p>
       </div>
-      <div className="relative w-[80%] h-auto p-0.5 button-1 rounded-4xl">
+      <div className="relative w-[80%] h-auto p-0.5 button-1 button rounded-4xl">
         <div className="relative bg-[#000000] w-full h-auto z-20 p-5 flex justify-center items-center rounded-4xl">
           <div className="w-full h-60 lg:h-[80%] bottom-0 absolute bg-gradient-to-b from-transparent to-black z-30 rounded-b-4xl"></div>
           <img

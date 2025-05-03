@@ -136,3 +136,48 @@ export const getEducatorDataDetails = async(req, res) =>{
         })
     }
 }
+
+// processWithdrawRequest
+export async function processWithdrawRequest(req, res) {
+    const { requestId, action } = req.body; // action = "approve" or "reject"
+  
+    const request = await WithdrawelRequestModel.findById(requestId);
+    if (!request || request.status !== 'pending') {
+      return res.status(404).json({ message: 'Request not found or already processed' });
+    }
+  
+    const educator = await EducatorUserModel.findById(request.educator);
+    if (!educator) {
+      return res.status(404).json({ message: 'Educator not found' });
+    }
+  
+    if (action === 'approve') {
+      // Debit wallet
+      if (educator.wallet < request.amount) {
+        return res.status(400).json({ message: 'Wallet balance is insufficient' });
+      }
+  
+      educator.wallet -= request.amount;
+      await educator.save();
+  
+      await WalletTransactionModel.create({
+        educator: educator._id,
+        type: 'debit',
+        reason: 'withdrawal',
+        amount: request.amount
+      });
+  
+      request.status = 'paid';
+      request.processedAt = new Date();
+      await request.save();
+  
+      // Later, you can integrate actual payment API like Razorpay/PayPal here
+  
+      return res.json({ message: 'Withdrawal approved and processed' });
+    } else {
+      request.status = 'rejected';
+      await request.save();
+      return res.json({ message: 'Withdrawal rejected' });
+    }
+  }
+  

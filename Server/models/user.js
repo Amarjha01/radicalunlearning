@@ -1,5 +1,37 @@
 import mongoose from "mongoose";
 
+
+// -------------------Admin-----------------------------------
+const Admin = new mongoose.Schema({
+  name : {
+      type : String,
+      required : [true,"Provide name"],
+      required : true
+  },
+  email : {
+      type : String,
+      required : [true,"Provide name"],
+      required : true
+  },
+  role : {
+      type : String,
+      required : true
+  },
+  theme:{
+    type:String,
+    enum:['light' , 'dark'],
+    default:'light'
+  },
+  password : {
+      type : String,
+      required : true
+  }
+})
+
+export const AdminModel = mongoose.model("Admins", Admin)
+
+
+// ------------------------learner-----------------------------------------------------
 const Lerner_userSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -96,7 +128,7 @@ const Lerner_userSchema = new mongoose.Schema({
 export const LearnerUserModel = mongoose.model("User-learners", Lerner_userSchema);
 
 
-
+// -------------------------educator---------------------------------------------
 const Educator_userSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -143,8 +175,13 @@ const Educator_userSchema = new mongoose.Schema({
   },
   wallet: {
     type: Number,
-    default:0
+    default: 0,
   },
+  currency: {
+    type: String,
+    default: "USD",
+  },
+  
   payoutMethod: {
     type: String,
     required: true,
@@ -238,36 +275,10 @@ documentUrl: {
 export const EducatorUserModel = mongoose.model("User-educators", Educator_userSchema);
 
 
-const Admin = new mongoose.Schema({
-    name : {
-        type : String,
-        required : [true,"Provide name"],
-        required : true
-    },
-    email : {
-        type : String,
-        required : [true,"Provide name"],
-        required : true
-    },
-    role : {
-        type : String,
-        required : true
-    },
-    theme:{
-      type:String,
-      enum:['light' , 'dark'],
-      default:'light'
-    },
-    password : {
-        type : String,
-        required : true
-    }
-})
-
-export const AdminModel = mongoose.model("Admins", Admin)
 
 
-// models/SessionModel.js
+
+//--------------------------------SessionModel-----------------------------------------
 
 const sessionSchema = new mongoose.Schema({
   topic: {
@@ -315,6 +326,9 @@ const sessionSchema = new mongoose.Schema({
 
 export const SessionModel = mongoose.model("Sessions", sessionSchema);
 
+
+
+// -----------------paymentSchema---------------------------------------------------
 const paymentSchema = new mongoose.Schema({
   learnerId: { type: mongoose.Schema.Types.ObjectId, ref: 'User-learners', required: true },
   educatorId: { type: mongoose.Schema.Types.ObjectId, ref: 'User-educators', required: true },
@@ -324,3 +338,66 @@ const paymentSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now },
 });
 export const PaymentRecord = mongoose.model("PaymentRecord", paymentSchema);
+
+
+// --------------------------------------WithdrawelRequestSchema----------------------------------
+const WithdrawelRequestSchema = new mongoose.Schema({
+  educator: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User-educators",
+    required: true,
+  },
+  amount: {
+    type: Number,
+    required: true,
+  },
+  currency: {
+    type: String,
+    default: "USD",
+  },
+  status: {
+    type: String,
+    enum: ["pending", "approved", "rejected", "paid"],
+    default: "pending",
+  },
+  requestedAt: {
+    type: Date,
+    default: Date.now,
+  },
+  processedAt: Date,
+}, {
+  timestamps: true,
+});
+export const WithdrawelRequestModel = mongoose.model("WithdrawelRequest", WithdrawelRequestSchema);
+
+
+// ----------------------------WalletTransactionSchema---------------------------------------------------
+const WalletTransactionSchema = new mongoose.Schema({
+  educator: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User-educators",
+    required: true,
+  },
+  type: {
+    type: String,
+    enum: ['credit', 'debit'],
+    required: true
+  },
+  reason: {
+    type: String,
+    enum: ['session', 'refund', 'withdrawal', 'bonus'],
+  },  
+  amount: {
+    type: Number,
+    required: true,
+  },
+  currency: {
+    type: String,
+    default: "USD",
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+});
+export const WalletTransactionModel = mongoose.model("WalletTransaction", WalletTransactionSchema);

@@ -1,8 +1,12 @@
+import { useState } from 'react';
 import { FaInstagram, FaFacebookF, FaYoutube, FaEnvelope, FaPhoneAlt, FaRobot } from 'react-icons/fa';
+import AIChat from '../ChatBot/Aichat';
 
 const Footer= () =>  {
+  const [openChatBot , setOpenChatBot] = useState(false)
   return (
     <footer className="anta-regular text-white px-8 py-10 rounded-t-2xl">
+      <AIChat />
       <div className="flex flex-col lg:flex-row justify-between items-center gap-8">
         <div className="text-center lg:text-left space-y-2">
           <h3 className="text-xl font-semibold">Radical Unlearning</h3>
@@ -30,11 +34,11 @@ const Footer= () =>  {
           </div>
           <div className="flex items-center gap-3 justify-center lg:justify-start">
             <FaEnvelope />
-            <a href="mailto:support@example.com" className="hover:underline">help@radicalunlearning.com</a>
+            <a href="mailto:help@radicalunlearning.com" className="hover:underline">help@radicalunlearning.com</a>
           </div>
           <div className="flex items-center gap-3 justify-center lg:justify-start">
             <FaRobot />
-            <span>Help with Chat Bot</span>
+            <span >Help with Chat Bot</span>
           </div>
         </div>
       </div>

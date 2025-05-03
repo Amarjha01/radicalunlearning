@@ -2,12 +2,11 @@ import {
   LearnerUserModel,
   EducatorUserModel,
   AdminModel,
-  SessionModel
+  SessionModel,
+  WithdrawelRequestModel
 } from "../models/user.js";
 import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
-import { v4 as uuidv4 } from 'uuid';
-
 
 
 // --------------------------User-registration-------------------------------------------
@@ -329,7 +328,7 @@ export async function registerAdminController(request, response) {
 }
 
 
-// -----------------------oginController-For-All---------------------------------------------
+// -----------------------Controller-For-All---------------------------------------------
 
 export async function signin(request, response) {
   try {
@@ -442,48 +441,67 @@ export async function signin(request, response) {
   }
 }
 
-export async function updateUserDetails(request, response) {
+export async function updateUserDetails(req, res) {
   try {
-    const role = request.body.role.toUpperCase();
-    const { name, email, mobile, _id } = request.body;
+    const token = req.cookies.accessToken;
+    console.log(token);
 
-    let hashPassword = "";
-
-    if (password) {
-      const salt = await bcryptjs.genSalt(10);
-      hashPassword = await bcryptjs.hash(password, salt);
+    if (!token) {
+      return res.status(400).json({ message: "Missing token or todo" });
     }
 
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const userId = decoded.id;
+    const role = decoded.role.toUpperCase();
+
+    let updateUser;
+
     if (role === "LEARNER") {
-      const updateUser = await LearnerUserModel.updateOne(
-        { _id: id },
+      const { name, email, country, language, bio } = req.body;
+      updateUser = await LearnerUserModel.updateOne(
+        { _id: userId },
         {
-          ...(name && { name: name }),
-          ...(email && { email: email }),
-          ...(mobile && { mobile: mobile }),
-          ...(password && { password: hashPassword }),
+          ...(name && { name }),
+          ...(email && { email }),
+          ...(country && { country }),
+          ...(language && { language }),
+          ...(bio && { bio }),
         }
       );
     } else if (role === "EDUCATOR") {
-      const updateUser = await EducatorUserModel.updateOne(
+      const {
+        name,
+        email,
+        subrole,
+        country,
+        language,
+        bio,
+        experience,
+        serviceType,
+      } = req.body;
+
+      updateUser = await EducatorUserModel.updateOne(
         { _id: userId },
         {
-          ...(name && { name: name }),
-          ...(email && { email: email }),
-          ...(mobile && { mobile: mobile }),
-          ...(password && { password: hashPassword }),
+          ...(name && { name }),
+          ...(email && { email }),
+          ...(subrole && { subrole }),
+          ...(country && { country }),
+          ...(language && { language }),
+          ...(bio && { bio }),
+          ...(experience && { experience }),
         }
       );
     }
 
-    return response.json({
+    return res.json({
       message: "Updated successfully",
       error: false,
       success: true,
       data: updateUser,
     });
   } catch (error) {
-    return response.status(500).json({
+    return res.status(500).json({
       message: error.message || error,
       error: true,
       success: false,
@@ -491,6 +509,36 @@ export async function updateUserDetails(request, response) {
   }
 }
 
+export async function signout(request, response) {
+  console.log('sign out');
+  
+  try {
+    // Clear both access and refresh tokens
+    response.clearCookie("accessToken", {
+      httpOnly: true,
+      sameSite: "Lax",
+      secure: false, // set to true if using HTTPS
+    });
+
+    response.clearCookie("refreshToken", {
+      httpOnly: true,
+      sameSite: "Lax",
+      secure: false,
+    });
+
+    return response.status(200).json({
+      message: "Logout successful",
+      success: true,
+    });
+  } catch (error) {
+    console.error("Logout error:", error);
+    return response.status(500).json({
+      message: "Logout failed",
+      error: error.message,
+      success: false,
+    });
+  }
+}
 
 
 // -----------------------------search------------------------------------------------
@@ -523,8 +571,6 @@ if(educators){
     
   }
 }
-
-
 
 
 // ------------------------ToDos APIs --------------------------------------------------------
@@ -729,34 +775,6 @@ console.log('all done');
   }
 };
 
-
-
-
-// ----------------------CreateSession------------------------------------------------------------
-// export const createSession = async (req, res) => {
-//   const { learnerId, educatorId, scheduledAt, topic, zoomMeetingId, zoomJoinUrl, zoomStartUrl } = req.body;
-
-//   try {
-//     const session = new SessionModel({
-//       learnerId,
-//       educatorId,
-//       scheduledAt,
-//       topic,
-//       zoomMeetingId,
-//       zoomJoinUrl,
-//       zoomStartUrl,
-//     });
-
-//     await session.save();
-
-//     res.status(201).json({ message: "Session created successfully", session });
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ message: "Failed to create session" });
-//   }
-// };
-
-
 export async function getEducatorSessions(req, res) {
   const token = req.cookies.accessToken;
   if (!token) return res.status(401).json({ message: "Unauthorized" });
@@ -797,5 +815,39 @@ export async function getLearnerSessions(req, res) {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Failed to fetch learner sessions" });
+  }
+}
+
+// -------------------------EducatorWallet-----------------------------------------------------
+
+export async function WithdrawelRequest(req , res) {
+  try {
+    const token = req.cookies.accessToken
+console.log(token);
+
+    if(!token){
+      return res.status(401).json({
+        message:"Unauthorised access. Try again or contact to Help@radical-unlearning.com"
+      })
+    }
+
+    const {id} = jwt.verify(token , process.env.JWT_SECRET);
+
+    const user = await EducatorUserModel.findById(id).select('wallet');
+    const { amount } = req.body;
+if (user.wallet < amount) {
+  return res.status(400).json({ message: "Insufficient wallet balance" });
+}
+
+await WithdrawelRequestModel.create({
+  educator: id,
+  amount,
+});
+
+    
+
+    
+  } catch (error) {
+    
   }
 }

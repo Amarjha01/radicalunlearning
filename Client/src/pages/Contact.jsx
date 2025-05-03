@@ -2,7 +2,8 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { FaEnvelope, FaUserAlt, FaRegCommentDots } from "react-icons/fa";
 import { MdSubject } from "react-icons/md";
-
+import axios from 'axios'
+import API from '../common/apis/ServerBaseURL.jsx'
 const ContactUs = () => {
   const {
     register,
@@ -11,8 +12,17 @@ const ContactUs = () => {
     formState: { errors, isSubmitSuccessful },
   } = useForm();
 
-  const onSubmit = (data) => {
-    console.log("Form Data:", data);
+  const onSubmit =  async (data) => {
+    console.log(data);
+    
+    try {
+      const response = await axios.post(API.querymail.url, data);
+      console.log(response);
+      
+    } catch (error) {
+      console.log(error);
+      
+    }
     reset();
   };
 

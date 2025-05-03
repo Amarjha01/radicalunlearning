@@ -16,6 +16,14 @@ const API = {
     url: `${backendDomain}/api/user/signin`,
     method: 'POST',
   },
+  signout: { 
+    url: `${backendDomain}/api/user/signout`,
+    method: 'POST',
+  },
+  updateUserDetails: { 
+    url: `${backendDomain}/api/user/updateUserDetails`,
+  },
+
   // ------------------------APIs for Admin dashboard---------------------------
   educatorsData: { 
     url: `${backendDomain}/api/admin/get-all-educator-data`,
@@ -37,6 +45,7 @@ const API = {
     url: `${backendDomain}/api/admin/deleteUser`,
     method: 'POST',
   },
+
   // --------------------APIs for learner------------------
   searchEducator:{
     url: `${backendDomain}/api/user/searchEducator`,
@@ -59,8 +68,13 @@ const API = {
   getLearnerSessions:{
     url: `${backendDomain}/api/user/getLearnerSessions`,
   },
+
+  // --------------------APIs for educator------------------
   getEducatorSessions:{
     url: `${backendDomain}/api/user/getEducatorSessions`,
+  },
+  WithdrawelRequest:{
+    url: `${backendDomain}/api/user/WithdrawelRequest`,
   },
 
 
@@ -72,6 +86,16 @@ const API = {
     url: `${backendDomain}/api/pay/finalizesession`,
   },
   
+
+  // ----------------AI-CHATBOAT-------------------------
+  askai:{
+    url: `${backendDomain}/api/ai/ask-ai`,
+  },
+
+  // ----------------mail--------------------------------------
+  querymail:{
+    url: `${backendDomain}/api/mail/querymail`
+  }
 };
 
 export default API;

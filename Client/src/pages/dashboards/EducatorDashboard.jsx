@@ -18,6 +18,8 @@ import {
   Search,
   X,
 } from "lucide-react";
+import { IoWalletOutline } from "react-icons/io5";
+import {FaUserEdit } from 'react-icons/fa';
 import axios from "axios";
 import API from "../../common/apis/ServerBaseURL.jsx";
 import { useSelector } from "react-redux";
@@ -27,87 +29,7 @@ import GroupChat from "../../components/Chat/GroupChat.jsx";
 import { MdHome } from "react-icons/md";
 import { CiChat1 } from "react-icons/ci";
 import { Link } from "react-router-dom";
-import VideoCall from '../../p2p/VideoCall.jsx'
-// Dummy data for scheduled sessions
-const dummyScheduledSessions = [
-  {
-    id: 1,
-    title: "Advanced Mathematics Tutoring",
-    date: "2025-04-16",
-    time: "14:00",
-    learnerName: "Rahul Singh",
-    duration: "60 min",
-    status: "Confirmed",
-  },
-  {
-    id: 2,
-    title: "Physics Problem Solving",
-    date: "2025-04-17",
-    time: "16:30",
-    learnerName: "Priya Patel",
-    duration: "90 min",
-    status: "Confirmed",
-  },
-  {
-    id: 3,
-    title: "Mathematics Exam Preparation",
-    date: "2025-04-18",
-    time: "10:00",
-    learnerName: "Alex Johnson",
-    duration: "120 min",
-    status: "Pending",
-  },
-  {
-    id: 4,
-    title: "Physics Concept Review",
-    date: "2025-04-15",
-    time: "13:00",
-    learnerName: "Sarah Williams",
-    duration: "60 min",
-    status: "Completed",
-  },
-  {
-    id: 5,
-    title: "Mathematics Quiz Preparation",
-    date: "2025-04-19",
-    time: "11:00",
-    learnerName: "Michael Brown",
-    duration: "45 min",
-    status: "Confirmed",
-  },
-];
-
-// Dummy data for educator profile
-const dummyEducatorProfile = {
-  name: "AMAR KUMAR JHA",
-  email: "amarjha880@gmail.com",
-  role: "educator",
-  subrole: "Expert",
-  country: "India",
-  language: "Korean",
-  bio: "Experienced mathematics and physics educator with over 8 years of teaching experience. Specialized in helping students prepare for competitive exams and building strong foundational knowledge.",
-  experience:
-    "8+ years of teaching experience in mathematics and physics at various levels. Worked with students from diverse backgrounds and learning needs.",
-  subjects: ["Math", "Physics"],
-  serviceType: "Paid",
-  payoutMethod: "bank",
-  bankAccount: "123123123123",
-  ifscCode: "PUNB101213",
-  password: "********",
-  avatar: "/api/placeholder/150/150",
-};
-
-// Available subject options
-const subjectOptions = [
-  "Math",
-  "Physics",
-  "Chemistry",
-  "Biology",
-  "Computer Science",
-  "English",
-  "History",
-  "Geography",
-];
+import EducatorWallet from "../../components/Dashboard/Educator/EducatorWallet.jsx";
 
 // Main Component
 export default function EducatorDashboard() {
@@ -116,7 +38,7 @@ export default function EducatorDashboard() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [viewMode, setViewMode] = useState("list"); // list or calendar
   const [profileData, setProfileData] = useState({});
-  const [sessions, setSessions] = useState(dummyScheduledSessions);
+  const [sessions, setSessions] = useState({previous:[],upcoming:[]});
   const [isChangePasswordOpen, setIsChangePasswordOpen] = useState(false);
   
   const dispatch = useDispatch();
@@ -129,6 +51,23 @@ export default function EducatorDashboard() {
     }
   }, ); 
   
+  useEffect(()=>{
+    const getEducatorSessions = async () =>{
+      try {
+        const response = await axios.get(API.getEducatorSessions.url, {
+          withCredentials:true
+        })
+        
+        if(response.status===200){
+          setSessions(response.data)
+          console.log('today');
+        }
+      } catch (error) {
+        
+      }
+    }
+    getEducatorSessions()
+  },[])
 
   const handleLogout = () => {
     dispatch(clearUser());
@@ -141,10 +80,6 @@ export default function EducatorDashboard() {
     confirmPassword: "",
   });
 
-  // Filter for upcoming sessions (not completed)
-  const upcomingSessions = sessions.filter(
-    (session) => session.status !== "Completed"
-  );
 
 
 
@@ -176,8 +111,13 @@ export default function EducatorDashboard() {
   const handleProfileUpdate = () =>{
     console.log(profileData);
     alert("Currently We are not able to update your profile");
-    
   }
+
+  
+
+
+
+
   return (
     <div className="w-[100vw] min-h-screen flex max-w-[1680px] mx-auto bg-green-500">
       {/* sidebar desktop */}
@@ -226,20 +166,9 @@ export default function EducatorDashboard() {
                 <User className="mr-3 h-5 w-5" />
                 <span>Profile</span>
               </button>
-              <button
-                onClick={() => setActiveTab("Video Confrencing")}
-                className={`flex items-center px-3 py-2 w-full text-left rounded-md text-sm font-medium ${
-                  activeTab === "Video Confrencing"
-                    ? "bg-indigo-100 text-indigo-600 dark:bg-indigo-900 dark:text-indigo-200"
-                    : "text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
-                }`}
-              >
-                <User className="mr-3 h-5 w-5" />
-                <span>Video Confrencing</span>
-              </button>
 
               <button
-                onClick={() => setActiveTab("communityChat")}
+                onClick={() => setActiveTab("Community Chat")}
                 className={`flex items-center px-3 py-2 w-full text-left rounded-md text-sm font-medium ${
                   activeTab === "communityChat"
                     ? "bg-indigo-100 text-indigo-600 dark:bg-indigo-900 dark:text-indigo-200"
@@ -247,7 +176,7 @@ export default function EducatorDashboard() {
                 }`}
               >
                 <CiChat1 className="mr-3 h-5 w-5" />
-                <span>communityChat</span>
+                <span>Community Chat</span>
               </button>
 
               <button
@@ -261,14 +190,22 @@ export default function EducatorDashboard() {
                 <DollarSign className="mr-3 h-5 w-5" />
                 <span>Payment Settings</span>
               </button>
+
+              <button
+                onClick={() => setActiveTab("Wallet")}
+                className={`flex items-center px-3 py-2 w-full text-left rounded-md text-sm font-medium ${
+                  activeTab === "Wallet"
+                    ? "bg-indigo-100 text-indigo-600 dark:bg-indigo-900 dark:text-indigo-200"
+                    : "text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
+                }`}
+              >
+                <IoWalletOutline className="mr-3 h-5 w-5" />
+                <span>Wallet</span>
+              </button>
             </nav>
 
             <div className="px-4 py-6 border-t border-gray-200 dark:border-gray-700">
               <div className="flex items-center justify-between mb-4">
-                <button className="flex items-center text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400">
-                  <Eye className="h-5 w-5 mr-2" />
-                  <span>View as learner</span>
-                </button>
               </div>
               <button className="flex items-center w-full px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-red-600 dark:hover:text-red-400">
                 <LogOut className="h-5 w-5 mr-2" />
@@ -330,20 +267,6 @@ export default function EducatorDashboard() {
                   </button>
                   <button 
                     onClick={() => {
-                      setActiveTab("Video Confrencing");
-                      setMobileMenuOpen(false);
-                    }}
-                    className={`flex items-center px-3 py-2 w-full text-left rounded-md text-sm font-medium ${
-                      activeTab === "profile" 
-                      ? "bg-indigo-100 text-indigo-600 dark:bg-indigo-900 dark:text-indigo-200" 
-                      : "text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
-                    }`}
-                  >
-                    <User className="mr-3 h-5 w-5" />
-                    <span>Video Confrencing</span>
-                  </button>
-                  <button 
-                    onClick={() => {
                       setActiveTab("communityChat");
                       setMobileMenuOpen(false);
                     }}
@@ -370,6 +293,20 @@ export default function EducatorDashboard() {
                   >
                     <DollarSign className="mr-3 h-5 w-5" />
                     <span>Payment Settings</span>
+                  </button>
+                  <button 
+                    onClick={() => {
+                      setActiveTab("Wallet");
+                      setMobileMenuOpen(false);
+                    }}
+                    className={`flex items-center px-3 py-2 w-full text-left rounded-md text-sm font-medium ${
+                      activeTab === "payment" 
+                      ? "bg-indigo-100 text-indigo-600 dark:bg-indigo-900 dark:text-indigo-200" 
+                      : "text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
+                    }`}
+                  >
+                    <IoWalletOutline className="mr-3 h-5 w-5" />
+                    <span>Wallet</span>
                   </button>
                 </nav>
                 
@@ -401,7 +338,6 @@ export default function EducatorDashboard() {
           <h1 className="text-2xl font-bold text-gray-800 dark:text-white">
             {activeTab === "dashboard" && "My Scheduled Sessions"}
             {activeTab === "profile" && "My Profile"}
-            {activeTab === "Video Confrencing" && "Video Confrencing"}
             {activeTab === "payment" && "Payment Settings"}
           </h1>
 
@@ -487,7 +423,6 @@ export default function EducatorDashboard() {
           <h1 className="text-xl font-bold text-gray-800 dark:text-white">
             {activeTab === "dashboard" && "My Scheduled Sessions"}
             {activeTab === "profile" && "My Profile"}
-            {activeTab === "Video Confrencing" && "Video Confrencing"}
             {activeTab === "payment" && "Payment Settings"}
           </h1>
         </div>
@@ -558,12 +493,6 @@ export default function EducatorDashboard() {
                           scope="col"
                           className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"
                         >
-                          Duration
-                        </th>
-                        <th
-                          scope="col"
-                          className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"
-                        >
                           Status
                         </th>
                         <th
@@ -575,16 +504,16 @@ export default function EducatorDashboard() {
                       </tr>
                     </thead>
                     <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                      {sessions.map((session) => (
-                        <tr key={session.id}>
+                      {sessions?.upcoming?.map((session) => (
+                        <tr key={session._id}>
                           <td className="px-6 py-4 whitespace-nowrap">
                             <div className="text-sm font-medium text-gray-900 dark:text-white">
-                              {session.title}
+                              {session.topic}
                             </div>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
                             <div className="text-sm text-gray-900 dark:text-white">
-                              {new Date(session.date).toLocaleDateString(
+                              {new Date(session.scheduledAt).toLocaleDateString(
                                 "en-US",
                                 {
                                   weekday: "short",
@@ -599,12 +528,7 @@ export default function EducatorDashboard() {
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
                             <div className="text-sm text-gray-900 dark:text-white">
-                              {session.learnerName}
-                            </div>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="text-sm text-gray-900 dark:text-white">
-                              {session.duration}
+                              {session.learnerId.name}
                             </div>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
@@ -626,6 +550,9 @@ export default function EducatorDashboard() {
                             {session.status !== "Completed" &&
                               session.status !== "Cancelled" && (
                                 <div className="flex space-x-2">
+                                 <a href={session.zoomStartUrl} className="px-4 py-2 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 transition-colors cursor-pointer">
+                               Join
+                                 </a>
                                   <button
                                     className="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300"
                                     onClick={() =>
@@ -668,7 +595,7 @@ export default function EducatorDashboard() {
             {/* Upcoming Sessions Overview */}
             <div className="bg-white dark:bg-gray-800 shadow-md rounded-lg p-4">
               <h2 className="text-lg font-medium text-gray-900 dark:text-white mb-4">
-                Quick Overview
+                 
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="bg-indigo-50 dark:bg-indigo-900/20 p-4 rounded-md">
@@ -678,7 +605,7 @@ export default function EducatorDashboard() {
                         Today's Sessions
                       </p>
                       <p className="text-2xl font-bold text-indigo-800 dark:text-indigo-200">
-                        1
+                        
                       </p>
                     </div>
                     <Calendar className="h-8 w-8 text-indigo-600 dark:text-indigo-400" />
@@ -972,30 +899,30 @@ export default function EducatorDashboard() {
                       />
                     </div>
                   </div>
+              <div className=" flex justify-end  item-center gap-5">
+              <FaUserEdit className=" text-4xl cursor-pointer text-white" />
                   <button onSubmit={()=>{handleProfileUpdate(profileData)}}
                     type="submit"
-                    className="px-6 py-2 bg-indigo-600 text-white rounded-md font-medium hover:bg-indigo-700"
+                    disabled= {true}
+                    className="px-6 py-2 bg-gray-500 cursor-not-allowed text-white rounded-md font-medium "
                   >
                     Save Profile
                   </button>
+              </div>
                 </form>
               </div>
             </div>
           </div>
         )}
 
-         {/* video confrencing */}
-        {activeTab === "Video Confrencing" && (
-          <VideoCall />
-        )
 
-        }
-
-
-{activeTab === "communityChat" && (
+{activeTab === "Community Chat" && (
           <div className=" w-[50%]">
             <GroupChat  className='w-[50%]'/>
           </div>
+        )}
+        {activeTab === "Wallet" &&(
+         <EducatorWallet />
         )}
       </div>
     </div>

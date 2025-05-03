@@ -145,8 +145,6 @@ export async function handleStripeWebhook(req, res) {
 }
 
 
-
-
 export async function finalizeSessionAfterPayment(req, res) {
   const { sessionId, scheduledAt } = req.body;
 
@@ -174,7 +172,17 @@ export async function finalizeSessionAfterPayment(req, res) {
       zoomStartUrl: zoomData.zoomStartUrl,
       status: 'scheduled',
     });
-
+    await EducatorUserModel.findByIdAndUpdate(record.educatorId, {
+      $inc: { wallet: amountToCredit }
+    });
+    
+    await WalletTransactionModel.create({
+      educator: record.educatorId,
+      type: 'credit',
+      reason: 'session',
+      amount: amountToCredit,
+    });
+    
     // ✅ Clean up temp payment record
     await PaymentRecord.deleteOne({ _id: record._id });
 
@@ -186,26 +194,3 @@ export async function finalizeSessionAfterPayment(req, res) {
 }
 
 
-
-
-
-
-
-// try {
-//   const zoomData = await createZoomMeeting({ topic, scheduledAt });
-
-//   await SessionModel.create({
-//     topic,
-//     learnerId,
-//     educatorId,
-//     scheduledAt: new Date(scheduledAt),
-//     zoomMeetingId: zoomData.zoomMeetingId,
-//     zoomJoinUrl: zoomData.zoomJoinUrl,
-//     zoomStartUrl: zoomData.zoomStartUrl,
-//     status: 'scheduled',
-//   });
-
-//   console.log("✅ Zoom session stored in DB");
-// } catch (err) {
-//   console.error("❌ Failed to save session:", err.message);
-// }

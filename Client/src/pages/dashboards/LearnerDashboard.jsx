@@ -16,7 +16,8 @@ import {
   ArrowRight,
   ChevronRight
 } from 'lucide-react';
-import { FaGraduationCap, FaGlobeAmericas, FaUserTie, FaFileAlt, FaVideo, FaBookOpen } from 'react-icons/fa';
+
+import { FaGraduationCap, FaGlobeAmericas, FaUserTie, FaFileAlt, FaVideo, FaBookOpen , FaUserEdit } from 'react-icons/fa';
 import { IoVideocam } from "react-icons/io5";
 import GroupChat from "../../components/Chat/GroupChat.jsx";
 import { MdHome } from "react-icons/md";
@@ -36,6 +37,7 @@ const stripePromise = loadStripe('pk_test_51REr3D4Pm8bi1bka0tMXqVjPNPyEbfMEb97yP
 import API from '../../common/apis/ServerBaseURL.jsx';
 import VideoCall from '../../p2p/VideoCall.jsx'
 import TodoApp from '../../components/Dashboard/TodoApp.jsx';
+import { Link } from 'react-router-dom';
 // Dummy data for development
 const dummyUser = {
   name: "Alex Thompson",
@@ -48,107 +50,13 @@ const dummyUser = {
   avatarUrl: "/api/placeholder/150/150",
 };
 
-const dummyGoals = [
-  {
-    id: 1,
-    title: "Complete React Masterclass",
-    startDate: "2025-03-15",
-    targetDate: "2025-04-30",
-    completion: 65,
-    status: "In Progress"
-  },
-  {
-    id: 2,
-    title: "Build 5 UX Case Studies",
-    startDate: "2025-02-01",
-    targetDate: "2025-05-01",
-    completion: 40,
-    status: "In Progress"
-  },
-  {
-    id: 3,
-    title: "Learn Python Basics",
-    startDate: "2025-01-10",
-    targetDate: "2025-03-10",
-    completion: 100,
-    status: "Completed"
-  }
-];
 
-const dummyPortfolio = [
-  {
-    id: 1,
-    title: "Personal Website Redesign",
-    description: "Redesigned my personal website with a focus on accessibility and modern design principles.",
-    skillsLearned: ["React", "Tailwind CSS", "Responsive Design"],
-    link: "https://github.com/example"
-  },
-  {
-    id: 2,
-    title: "Machine Learning Image Classifier",
-    description: "Built an image classification system using TensorFlow and Python.",
-    skillsLearned: ["Python", "TensorFlow", "Machine Learning"],
-    link: "https://github.com/example"
-  },
-  {
-    id: 3,
-    title: "E-commerce UI Prototype",
-    description: "Created a high-fidelity prototype for an e-commerce platform.",
-    skillsLearned: ["Figma", "UI Design", "User Testing"],
-    link: "https://figma.com/example"
-  }
-];
 
-const dummySessions = [
-  {
-    id: 1,
-    title: "Weekly Progress Review",
-    educatorName: "Dr. Sarah Johnson",
-    dateTime: "2025-04-25T14:00:00",
-    status: "Scheduled", 
-    joinLink: "#"
-  },
-  {
-    id: 2,
-    title: "UX Design Workshop",
-    educatorName: "Michael Chen",
-    dateTime: "2025-04-27T10:30:00",
-    status: "Scheduled",
-    joinLink: "#"
-  },
-  {
-    id: 3,
-    title: "Career Guidance Session",
-    educatorName: "Priya Patel",
-    dateTime: "2025-05-02T16:00:00",
-    status: "Scheduled",
-    joinLink: "#"
-  }
-];
 
-const dummyCommunityFeed = [
-  {
-    id: 1,
-    userName: "Sophia Lee",
-    avatar: "/api/placeholder/40/40",
-    content: "Just completed my first AI project! Check it out in my portfolio.",
-    timestamp: "2 hours ago"
-  },
-  {
-    id: 2,
-    userName: "Ryan Garcia",
-    avatar: "/api/placeholder/40/40",
-    content: "Looking for study partners for the upcoming Web Security course. Anyone interested?",
-    timestamp: "Yesterday"
-  },
-  {
-    id: 3,
-    userName: "Emma Wilson",
-    avatar: "/api/placeholder/40/40",
-    content: "Shared a new resource on blockchain development in the Resource Hub.",
-    timestamp: "2 days ago"
-  }
-];
+
+
+
+
 
 // Format date for display
 const formatDate = (dateString) => {
@@ -165,13 +73,29 @@ const formatDateTime = (dateTimeString) => {
 };
 
 // Overview Tab Component
-const OverviewTab = ({ darkMode }) => {
-  // Filter upcoming sessions (next 3)
-  const upcomingSessions = dummySessions.slice(0, 2);
+const OverviewTab = ({ darkMode , sessions}) => {
+ 
+  const [todos , setTodos] = useState([]);
   
-  // Filter in-progress goals
-  const inProgressGoals = dummyGoals.filter(goal => goal.status === "In Progress").slice(0, 2);
+  const fetchtodos = async () => {
+    try {
+      const response = await axios.get(API.fetchtodos.url, {
+        withCredentials: true
+      });
+      
+      if (response.status === 200) {
+        setTodos(response.data.data.todos);
+        
+      }
+    } catch (error) {
+      console.error("Error fetching todos:", error);
+      setError("Failed to load todos.");
+    }
+  };
 
+  useEffect(() => {
+    fetchtodos();
+  }, []);
   
   return (
     <div>
@@ -184,9 +108,9 @@ const OverviewTab = ({ darkMode }) => {
             <h3 className="text-lg font-semibold">Learning Goals</h3>
             <Award className="text-blue-500" size={20} />
           </div>
-          <p className="text-3xl font-bold">{dummyGoals.length}</p>
+          <p className="text-3xl font-bold">{todos.length}</p>
           <p className="text-sm text-gray-500 dark:text-gray-400">
-            {dummyGoals.filter(g => g.status === "Completed").length} completed
+            {todos.filter(g => g.completed === true).length} completed
           </p>
         </div>
         
@@ -195,7 +119,7 @@ const OverviewTab = ({ darkMode }) => {
             <h3 className="text-lg font-semibold">Portfolio Items</h3>
             <Folder className="text-indigo-500" size={20} />
           </div>
-          <p className="text-3xl font-bold">{dummyPortfolio.length}</p>
+          <p className="text-3xl font-bold">comming soon</p>
           <p className="text-sm text-gray-500 dark:text-gray-400">Projects showcased</p>
         </div>
         
@@ -204,7 +128,7 @@ const OverviewTab = ({ darkMode }) => {
             <h3 className="text-lg font-semibold">Upcoming Sessions</h3>
             <Calendar className="text-green-500" size={20} />
           </div>
-          <p className="text-3xl font-bold">{dummySessions.length}</p>
+          <p className="text-3xl font-bold">{sessions.upcoming.length}</p>
           <p className="text-sm text-gray-500 dark:text-gray-400">In the next 30 days</p>
         </div>
       </div>
@@ -221,91 +145,24 @@ const OverviewTab = ({ darkMode }) => {
           </button>
         </div>
         <div className="space-y-4">
-          {upcomingSessions.map(session => (
+          {sessions?.upcoming?.map(session => (
             <div 
-              key={session.id} 
+              key={session._id} 
               className={`p-4 border rounded-lg flex justify-between items-center ${
                 darkMode ? 'border-gray-700' : 'border-gray-200'
               }`}
             >
               <div>
-                <h3 className="font-medium">{session.title}</h3>
+                <h3 className="font-medium">{session.topic}</h3>
                 <p className="text-sm text-gray-500 dark:text-gray-400">
-                  {session.educatorName} · {formatDateTime(session.dateTime)}
+                  {session.educatorName} · {formatDateTime(session.scheduledAt)}
                 </p>
               </div>
-              <button className="px-3 py-1 text-sm bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-300 rounded-md">
+            <a href={session.zoomJoinUrl}>
+            <button className="px-3 py-1 text-sm bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-300 rounded-md cursor-pointer">
                 Join
               </button>
-            </div>
-          ))}
-        </div>
-      </div>
-      
-      {/* In Progress Goals */}
-      <div className={`p-6 rounded-lg shadow-sm mb-8 ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-semibold">Current Goals</h2>
-          <button 
-            onClick={() => {}} 
-            className="text-blue-500 hover:text-blue-600 text-sm flex items-center"
-          >
-            View All <ChevronRight size={16} />
-          </button>
-        </div>
-        <div className="space-y-4">
-          {inProgressGoals.map(goal => (
-            <div 
-              key={goal.id} 
-              className={`p-4 border rounded-lg ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}
-            >
-              <div className="flex justify-between items-center mb-2">
-                <h3 className="font-medium">{goal.title}</h3>
-                <span className="px-2 py-1 text-xs bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-300 rounded-full">
-                  {goal.status}
-                </span>
-              </div>
-              <div className="mb-2">
-                <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 mb-1">
-                  <span>Progress</span>
-                  <span>{goal.completion}%</span>
-                </div>
-                <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                  <div 
-                    className="bg-blue-500 h-2 rounded-full" 
-                    style={{ width: `${goal.completion}%` }}
-                  ></div>
-                </div>
-              </div>
-              <div className="text-xs text-gray-500 dark:text-gray-400">
-                Target: {formatDate(goal.targetDate)}
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-      
-      {/* Community Feed */}
-      <div className={`p-6 rounded-lg shadow-sm ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
-        <h2 className="text-xl font-semibold mb-4">Community Feed</h2>
-        <div className="space-y-4">
-          {dummyCommunityFeed.map(post => (
-            <div 
-              key={post.id} 
-              className={`p-4 border rounded-lg ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}
-            >
-              <div className="flex items-center mb-2">
-                <img 
-                  src={post.avatar} 
-                  alt={post.userName}
-                  className="w-8 h-8 rounded-full mr-2"
-                />
-                <div className="flex-1">
-                  <h4 className="font-medium">{post.userName}</h4>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">{post.timestamp}</p>
-                </div>
-              </div>
-              <p className="text-sm">{post.content}</p>
+            </a>
             </div>
           ))}
         </div>
@@ -499,7 +356,7 @@ console.log(allEducator);
 
 
 // Goals Tab Component
-const GoalsTab = ({ darkMode, goals }) => {
+const GoalsTab = ({ }) => {
   const [selectedGoal, setSelectedGoal] = useState(null);
   const [showAddForm, setShowAddForm] = useState(false);
   return (
@@ -509,145 +366,7 @@ const GoalsTab = ({ darkMode, goals }) => {
   );
 };
 
-// Portfolio Tab Component
-const PortfolioTab = ({ darkMode, portfolio }) => {
-  const [showAddForm, setShowAddForm] = useState(false);
-  
-  return (
-    <div>
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">My Portfolio</h1>
-        <button 
-          onClick={() => setShowAddForm(true)}
-          className="flex items-center bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md"
-        >
-          <Plus size={18} className="mr-1" /> Add Project
-        </button>
-      </div>
-      
-      {/* Portfolio Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {portfolio.map(project => (
-          <div 
-            key={project.id}
-            className={`p-6 rounded-lg shadow-sm ${darkMode ? 'bg-gray-800' : 'bg-white'}`}
-          >
-            <h3 className="font-semibold mb-2">{project.title}</h3>
-            <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
-              {project.description}
-            </p>
-            
-            <div className="mb-4">
-              <h4 className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400 mb-2">
-                Skills Learned
-              </h4>
-              <div className="flex flex-wrap gap-2">
-                {project.skillsLearned.map((skill, index) => (
-                  <span 
-                    key={index}
-                    className="px-2 py-1 text-xs bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-300 rounded-md"
-                  >
-                    {skill}
-                  </span>
-                ))}
-              </div>
-            </div>
-            
-            <div className="flex justify-between items-center">
-              <a 
-                href={project.link} 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="text-blue-500 hover:text-blue-600 text-sm flex items-center"
-              >
-                View Project <ArrowRight size={14} className="ml-1" />
-              </a>
-              <button 
-                className="text-gray-500 hover:text-gray-600 dark:text-gray-400 dark:hover:text-gray-300"
-              >
-                <Edit size={16} />
-              </button>
-            </div>
-          </div>
-        ))}
-      </div>
-      
-      {/* Add Project Form */}
-      {showAddForm && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className={`w-full max-w-md p-6 rounded-lg ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
-            <h2 className="text-xl font-semibold mb-4">Add New Project</h2>
-            <form>
-              <div className="mb-4">
-                <label className="block text-sm font-medium mb-1">Project Title</label>
-                <input 
-                  type="text" 
-                  className={`w-full p-2 rounded-md border ${
-                    darkMode ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-300'
-                  }`}
-                  placeholder="Enter project title" 
-                />
-              </div>
-              
-              <div className="mb-4">
-                <label className="block text-sm font-medium mb-1">Description</label>
-                <textarea 
-                  className={`w-full p-2 rounded-md border ${
-                    darkMode ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-300'
-                  }`}
-                  rows="3"
-                  placeholder="Describe your project" 
-                />
-              </div>
-              
-              <div className="mb-4">
-                <label className="block text-sm font-medium mb-1">Skills Learned</label>
-                <input 
-                  type="text" 
-                  className={`w-full p-2 rounded-md border ${
-                    darkMode ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-300'
-                  }`}
-                  placeholder="Enter skills (comma separated)" 
-                />
-              </div>
-              
-              <div className="mb-4">
-                <label className="block text-sm font-medium mb-1">Project Link (Optional)</label>
-                <input 
-                  type="url" 
-                  className={`w-full p-2 rounded-md border ${
-                    darkMode ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-300'
-                  }`}
-                  placeholder="https://..." 
-                />
-              </div>
-              
-              <div className="flex justify-end space-x-3 mt-6">
-                <button 
-                  type="button"
-                  onClick={() => setShowAddForm(false)}
-                  className={`px-4 py-2 rounded-md ${
-                    darkMode 
-                      ? 'bg-gray-700 hover:bg-gray-600' 
-                      : 'bg-gray-200 hover:bg-gray-300'
-                  }`}
-                >
-                  Cancel
-                </button>
-                <button 
-                  type="submit"
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md"
-                >
-                  Add Project
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-};
+
 
 // Sessions Tab Component
 const SessionsTab = ({ darkMode, sessions }) => {
@@ -842,21 +561,48 @@ return(
 }
 
 // Settings Tab Component
-const SettingsTab = ({ darkMode, user , userData}) => {
+
+const SettingsTab = ({ darkMode, userData }) => {
   const [activeSection, setActiveSection] = useState('profile');
-  
+  const [editProfile, setEditProfile] = useState(false);
+  const [changedData, setChangedData] = useState({});
+  const [loading, setLoading] = useState(false);
+
+  const handleProfileUpdate = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      // You might want to send `changedData` instead
+      const response = await axios.patch(
+        API.updateUserDetails.url,
+        changedData,
+        { withCredentials: true }
+      );
+
+      console.log('Update Success:', response.data);
+      setEditProfile(false); // lock editing again
+    } catch (error) {
+      console.error('Update failed:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleChange = (field, value) => {
+    setChangedData((prev) => ({ ...prev, [field]: value }));
+  };
+
   return (
     <div>
       <h1 className="text-2xl font-bold mb-6">Account Settings</h1>
-      
+
       {/* Settings Navigation */}
       <div className="flex mb-6 border-b border-gray-200 dark:border-gray-700">
         {[
           { id: 'profile', name: 'Profile' },
           { id: 'account', name: 'Account' },
-          { id: 'notifications', name: 'Notifications' },
-          { id: 'privacy', name: 'Privacy & Security' }
-        ].map(section => (
+        ].map((section) => (
           <button
             key={section.id}
             onClick={() => setActiveSection(section.id)}
@@ -870,16 +616,20 @@ const SettingsTab = ({ darkMode, user , userData}) => {
           </button>
         ))}
       </div>
-      
-      {/* Profile Settings */}
+
+      {/* Profile Section */}
       {activeSection === 'profile' && (
-        <div className={`p-6 rounded-lg shadow-sm ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
+        <div
+          className={`p-6 rounded-lg shadow-sm ${
+            darkMode ? 'bg-gray-800' : 'bg-white'
+          }`}
+        >
           <div className="flex flex-col md:flex-row">
-            {/* Avatar Section */}
+            {/* Avatar */}
             <div className="md:w-1/3 flex flex-col items-center mb-6 md:mb-0">
               <div className="w-32 h-32 rounded-full overflow-hidden mb-4">
-                <img 
-                  src='https://amarjha.tech/assets/MyImg-BjWvYtsb.svg'
+                <img
+                  src="https://amarjha.tech/assets/MyImg-BjWvYtsb.svg"
                   alt="Profile Avatar"
                   className="w-full h-full object-cover"
                 />
@@ -888,51 +638,67 @@ const SettingsTab = ({ darkMode, user , userData}) => {
                 Change Avatar
               </button>
             </div>
-            
+
             {/* Profile Form */}
             <div className="md:w-2/3">
-              <form>
+              <form onSubmit={handleProfileUpdate}>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                   <div>
                     <label className="block text-sm font-medium mb-1">Name</label>
-                    <input 
-                      type="text" 
+                    <input
+                      type="text"
                       className={`w-full p-2 rounded-md border ${
-                        darkMode ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-300'
+                        darkMode
+                          ? 'bg-gray-700 border-gray-600'
+                          : 'bg-white border-gray-300'
                       }`}
                       defaultValue={userData.name}
+                      disabled={!editProfile}
+                      onChange={(e) => handleChange('name', e.target.value)}
                     />
                   </div>
                   <div>
                     <label className="block text-sm font-medium mb-1">Email</label>
-                    <input 
-                      type="email" 
+                    <input
+                      type="email"
                       className={`w-full p-2 rounded-md border ${
-                        darkMode ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-300'
+                        darkMode
+                          ? 'bg-gray-700 border-gray-600'
+                          : 'bg-white border-gray-300'
                       }`}
                       defaultValue={userData.email}
+                      disabled={!editProfile}
+                      onChange={(e) => handleChange('email', e.target.value)}
                     />
                   </div>
                 </div>
-                
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                   <div>
                     <label className="block text-sm font-medium mb-1">Country</label>
-                    <input 
-                      type="text" 
+                    <input
+                      type="text"
                       className={`w-full p-2 rounded-md border ${
-                        darkMode ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-300'
+                        darkMode
+                          ? 'bg-gray-700 border-gray-600'
+                          : 'bg-white border-gray-300'
                       }`}
                       defaultValue={userData.country}
+                      disabled={!editProfile}
+                      onChange={(e) => handleChange('country', e.target.value)}
                     />
                   </div>
                   <div>
                     <label className="block text-sm font-medium mb-1">Language</label>
                     <select
                       className={`w-full p-2 rounded-md border ${
-                        darkMode ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-300'
+                        darkMode
+                          ? 'bg-gray-700 border-gray-600'
+                          : 'bg-white border-gray-300'
                       }`}
                       defaultValue={userData.language}
+                      disabled={!editProfile}
+                      onChange={(e) => handleChange('language', e.target.value)}
                     >
                       <option value="English">English</option>
                       <option value="Spanish">Spanish</option>
@@ -942,26 +708,38 @@ const SettingsTab = ({ darkMode, user , userData}) => {
                     </select>
                   </div>
                 </div>
-                
+
                 <div className="mb-4">
                   <label className="block text-sm font-medium mb-1">Bio</label>
-                  <textarea 
+                  <textarea
                     className={`w-full p-2 rounded-md border ${
-                      darkMode ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-300'
+                      darkMode
+                        ? 'bg-gray-700 border-gray-600'
+                        : 'bg-white border-gray-300'
                     }`}
                     rows="4"
                     defaultValue={userData.bio}
+                    disabled={!editProfile}
+                    onChange={(e) => handleChange('bio', e.target.value)}
                   />
                 </div>
-                
 
-                
-                <div className="flex justify-end">
-                  <button 
+                <div className="flex justify-end items-center gap-5">
+                  <FaUserEdit
+                    className="text-3xl cursor-pointer"
+                    onClick={() => setEditProfile(true)}
+                  />
+
+                  <button
                     type="submit"
-                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md"
+                    disabled={!editProfile || loading}
+                    className={`px-4 py-2 rounded-md text-white ${
+                      editProfile
+                        ? 'bg-blue-600 hover:bg-blue-700'
+                        : 'bg-gray-400 cursor-not-allowed'
+                    }`}
                   >
-                    Save Changes
+                    {loading ? 'Saving...' : 'Save Changes'}
                   </button>
                 </div>
               </form>
@@ -969,18 +747,28 @@ const SettingsTab = ({ darkMode, user , userData}) => {
           </div>
         </div>
       )}
-      
-      {/* Account Settings */}
+
+      {/* Account Section */}
       {activeSection === 'account' && (
-        <div className={`p-6 rounded-lg shadow-sm ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
+        <div
+          className={`p-6 rounded-lg shadow-sm ${
+            darkMode ? 'bg-gray-800' : 'bg-white'
+          }`}
+        >
           <h2 className="text-xl font-semibold mb-6">Account Information</h2>
-          
+
           <div className="mb-6">
             <h3 className="text-lg font-medium mb-4">Subscription</h3>
-            <div className={`p-4 rounded-md ${darkMode ? 'bg-gray-700' : 'bg-gray-100'}`}>
+            <div
+              className={`p-4 rounded-md ${
+                darkMode ? 'bg-gray-700' : 'bg-gray-100'
+              }`}
+            >
               <div className="flex justify-between items-center">
                 <div>
-                  <p className="font-medium">{user.subscriptionStatus} Plan</p>
+                  <p className="font-medium">
+                    {userData?.subscriptionStatus || 'Free'} Plan
+                  </p>
                   <p className="text-sm text-gray-500 dark:text-gray-400">
                     Renews on May 23, 2025
                   </p>
@@ -991,17 +779,19 @@ const SettingsTab = ({ darkMode, user , userData}) => {
               </div>
             </div>
           </div>
-          
+
           <div className="mb-6">
             <h3 className="text-lg font-medium mb-4">Password</h3>
             <form>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                 <div>
                   <label className="block text-sm font-medium mb-1">Current Password</label>
-                  <input 
-                    type="password" 
+                  <input
+                    type="password"
                     className={`w-full p-2 rounded-md border ${
-                      darkMode ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-300'
+                      darkMode
+                        ? 'bg-gray-700 border-gray-600'
+                        : 'bg-white border-gray-300'
                     }`}
                     placeholder="••••••••"
                   />
@@ -1009,20 +799,24 @@ const SettingsTab = ({ darkMode, user , userData}) => {
                 <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium mb-1">New Password</label>
-                    <input 
-                      type="password" 
+                    <input
+                      type="password"
                       className={`w-full p-2 rounded-md border ${
-                        darkMode ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-300'
+                        darkMode
+                          ? 'bg-gray-700 border-gray-600'
+                          : 'bg-white border-gray-300'
                       }`}
                       placeholder="New password"
                     />
                   </div>
                   <div>
                     <label className="block text-sm font-medium mb-1">Confirm New Password</label>
-                    <input 
-                      type="password" 
+                    <input
+                      type="password"
                       className={`w-full p-2 rounded-md border ${
-                        darkMode ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-300'
+                        darkMode
+                          ? 'bg-gray-700 border-gray-600'
+                          : 'bg-white border-gray-300'
                       }`}
                       placeholder="Confirm new password"
                     />
@@ -1030,7 +824,7 @@ const SettingsTab = ({ darkMode, user , userData}) => {
                 </div>
               </div>
               <div className="flex justify-end">
-                <button 
+                <button
                   type="submit"
                   className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md"
                 >
@@ -1039,13 +833,19 @@ const SettingsTab = ({ darkMode, user , userData}) => {
               </div>
             </form>
           </div>
-          
+
           <div>
             <h3 className="text-lg font-medium mb-4">Danger Zone</h3>
-            <div className={`p-4 rounded-md border border-red-300 ${darkMode ? 'bg-red-900 bg-opacity-20' : 'bg-red-50'}`}>
+            <div
+              className={`p-4 rounded-md border border-red-300 ${
+                darkMode ? 'bg-red-900 bg-opacity-20' : 'bg-red-50'
+              }`}
+            >
               <div className="flex justify-between items-center">
                 <div>
-                  <p className="font-medium text-red-600 dark:text-red-400">Delete Account</p>
+                  <p className="font-medium text-red-600 dark:text-red-400">
+                    Delete Account
+                  </p>
                   <p className="text-sm text-gray-500 dark:text-gray-400">
                     Once deleted, all your data will be permanently removed.
                   </p>
@@ -1058,185 +858,10 @@ const SettingsTab = ({ darkMode, user , userData}) => {
           </div>
         </div>
       )}
-      
-      {/* Notifications Settings */}
-      {activeSection === 'notifications' && (
-        <div className={`p-6 rounded-lg shadow-sm ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
-          <h2 className="text-xl font-semibold mb-6">Notification Preferences</h2>
-          
-          <div className="space-y-6">
-            <div>
-              <h3 className="text-lg font-medium mb-3">Email Notifications</h3>
-              <div className="space-y-3">
-                {[
-                  "Session reminders",
-                  "New messages",
-                  "Learning goal updates",
-                  "Community updates",
-                  "Platform news and features"
-                ].map((item) => (
-                  <div key={item} className="flex items-center justify-between">
-                    <label className="flex-1">{item}</label>
-                    <div className="relative inline-block w-12 h-6 rounded-full">
-                      <input 
-                        type="checkbox" 
-                        defaultChecked 
-                        className="sr-only peer"
-                      />
-                      <span className={`
-                        absolute inset-0 rounded-full cursor-pointer transition-colors
-                        peer-checked:bg-blue-600 ${darkMode ? 'bg-gray-600' : 'bg-gray-300'}
-                      `}></span>
-                      <span className={`
-                        absolute h-4 w-4 left-1 top-1 bg-white rounded-full transition-transform
-                        peer-checked:translate-x-6
-                      `}></span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-            
-            <div>
-              <h3 className="text-lg font-medium mb-3">Push Notifications</h3>
-              <div className="space-y-3">
-                {[
-                  "Session reminders",
-                  "New messages",
-                  "Learning goal deadlines",
-                  "Achievement unlocked"
-                ].map((item) => (
-                  <div key={item} className="flex items-center justify-between">
-                    <label className="flex-1">{item}</label>
-                    <div className="relative inline-block w-12 h-6 rounded-full">
-                      <input 
-                        type="checkbox" 
-                        defaultChecked 
-                        className="sr-only peer"
-                      />
-                      <span className={`
-                        absolute inset-0 rounded-full cursor-pointer transition-colors
-                        peer-checked:bg-blue-600 ${darkMode ? 'bg-gray-600' : 'bg-gray-300'}
-                      `}></span>
-                      <span className={`
-                        absolute h-4 w-4 left-1 top-1 bg-white rounded-full transition-transform
-                        peer-checked:translate-x-6
-                      `}></span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-            
-            <div className="flex justify-end">
-              <button 
-                type="submit"
-                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md"
-              >
-                Save Preferences
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-      
-      {/* Privacy & Security Settings */}
-      {activeSection === 'privacy' && (
-        <div className={`p-6 rounded-lg shadow-sm ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
-          <h2 className="text-xl font-semibold mb-6">Privacy & Security</h2>
-          
-          <div className="space-y-6">
-            <div>
-              <h3 className="text-lg font-medium mb-3">Privacy Options</h3>
-              <div className="space-y-3">
-                {[
-                  "Show my profile to other learners",
-                  "Share my learning goals publicly",
-                  "Allow my portfolio to be visible to non-members",
-                  "Include me in the community directory"
-                ].map((item) => (
-                  <div key={item} className="flex items-center justify-between">
-                    <label className="flex-1">{item}</label>
-                    <div className="relative inline-block w-12 h-6 rounded-full">
-                      <input 
-                        type="checkbox" 
-                        defaultChecked={item === "Show my profile to other learners"}
-                        className="sr-only peer"
-                      />
-                      <span className={`
-                        absolute inset-0 rounded-full cursor-pointer transition-colors
-                        peer-checked:bg-blue-600 ${darkMode ? 'bg-gray-600' : 'bg-gray-300'}
-                      `}></span>
-                      <span className={`
-                        absolute h-4 w-4 left-1 top-1 bg-white rounded-full transition-transform
-                        peer-checked:translate-x-6
-                      `}></span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-            
-            <div>
-              <h3 className="text-lg font-medium mb-3">Security</h3>
-              <div className="space-y-4">
-                <div>
-                  <div className="flex justify-between items-center mb-2">
-                    <p>Two-Factor Authentication</p>
-                    <div className="relative inline-block w-12 h-6 rounded-full">
-                      <input 
-                        type="checkbox" 
-                        className="sr-only peer"
-                      />
-                      <span className={`
-                        absolute inset-0 rounded-full cursor-pointer transition-colors
-                        peer-checked:bg-blue-600 ${darkMode ? 'bg-gray-600' : 'bg-gray-300'}
-                      `}></span>
-                      <span className={`
-                        absolute h-4 w-4 left-1 top-1 bg-white rounded-full transition-transform
-                        peer-checked:translate-x-6
-                      `}></span>
-                    </div>
-                  </div>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
-                    Secure your account by requiring a second form of authentication when logging in.
-                  </p>
-                </div>
-                
-                <div>
-                  <button className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-medium">
-                    Active Sessions &amp; Devices
-                  </button>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
-                    View and manage your active sessions and connected devices.
-                  </p>
-                </div>
-                
-                <div>
-                  <button className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-medium">
-                    Login History
-                  </button>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
-                    Review recent login attempts and activities.
-                  </p>
-                </div>
-              </div>
-            </div>
-            
-            <div className="flex justify-end">
-              <button 
-                type="submit"
-                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md"
-              >
-                Save Settings
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
+
 
 
 
@@ -1266,7 +891,7 @@ console.log(sessions);
       }
     };
   
-    if (activeTab === "Sessions") {
+    if (activeTab === "Sessions" || "Overview") {
       getLearnerSessions();
     }
   }, [activeTab]);
@@ -1284,6 +909,20 @@ console.log(sessions);
     setDarkMode(!darkMode);
   };
 
+  
+  const handleSignOut = async() => {
+    try {
+      const response = await axios.post(API.signout.url , {
+        withCredentials:true
+      })
+      if(response.status ===200){
+        dispatch(clearUser());
+      }
+    } catch (error) {
+      
+    }
+    
+  };
   return (
     <div className={`min-h-screen ${darkMode ? 'bg-gray-900 text-white' : 'bg-gray-50 text-gray-800'}`}>
       {/* Mobile Sidebar Toggle */}
@@ -1307,7 +946,9 @@ console.log(sessions);
         `}>
           {/* Logo */}
           <div className="p-4 flex justify-center md:justify-start">
-            <h2 className="text-xl font-bold text-blue-600">RadicalUnlearning</h2>
+            <Link to={'/'}>
+            <h2 className="text-xl font-bold text-blue-600 cursor-pointer">RadicalUnlearning</h2>
+            </Link>
           </div>
 
           {/* User Profile Card */}
@@ -1329,7 +970,6 @@ console.log(sessions);
               { name: 'Overview', icon: <Home size={18} /> },
               { name: 'Search Educator', icon: <TbUserSearch size={18} /> },
               { name: 'My Goals', icon: <Award size={18} /> },
-              { name: 'Portfolio', icon: <Folder size={18} /> },
               { name: 'Sessions', icon: <Calendar size={18} /> },
               { name: 'communityChat', icon: <CiChat1 size={18} /> },
               { name: 'Settings', icon: <Settings size={18} /> },
@@ -1365,19 +1005,18 @@ console.log(sessions);
                 {darkMode ? 'Light Mode' : 'Dark Mode'}
               </button>
             </div>
-            <button className="flex items-center text-red-500 hover:text-red-600 px-3 py-2 rounded-md w-full">
+            <button onClick={()=>{handleSignOut()}} className="flex items-center text-red-500 hover:text-red-600 px-3 py-2 rounded-md w-full cursor-pointer">
               <LogOut size={18} className="mr-2" />
-              Logout
+              signOut
             </button>
           </div>
         </div>
 
         {/* Main Content */}
         <div className="flex-1 overflow-x-hidden p-4 md:p-8 md:pl-[35vw] lg:pl-[23vw]">
-          {activeTab === 'Overview' && <OverviewTab darkMode={darkMode} userData={profileData} />}
+          {activeTab === 'Overview' && <OverviewTab darkMode={darkMode} sessions={sessions} userData={profileData} />}
           {activeTab === 'Search Educator' && <SearchTab darkMode={darkMode} userData={profileData} />}
-          {activeTab === 'My Goals' && <GoalsTab darkMode={darkMode} goals={dummyGoals} userData={profileData} />}
-          {activeTab === 'Portfolio' && <PortfolioTab darkMode={darkMode} portfolio={dummyPortfolio} userData={profileData} />}
+          {activeTab === 'My Goals' && <GoalsTab darkMode={darkMode} userData={profileData} />}
           {activeTab === 'Sessions' && <SessionsTab darkMode={darkMode} sessions={sessions} userData={profileData} />}
           {activeTab === 'communityChat' && <ChatTab darkMode={darkMode}  />}
           {activeTab === 'Settings' && <SettingsTab darkMode={darkMode} user={dummyUser} userData={profileData} />}

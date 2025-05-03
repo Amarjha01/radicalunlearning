@@ -1,29 +1,41 @@
 .nav-z{
     z-index: 50;
 }
-@property --angle{
-    syntax: "<angle>";
-    initial-value: 0deg;
-    inherits: false;
-  }
-  .button-{
-    background-image: conic-gradient(from var(--angle), #000000, #000000, #000000, #000000 , #ffffff);
-    animation: 3s spin linear infinite;
-  }
+.button {
+  position: relative;
+  overflow: hidden;
+  z-index: 0;
+}
 
-  .button-{
-    background-image: conic-gradient(from var(--angle), #9f02ff , #1399fd , #C68EFD);
-    animation: 5s spin linear infinite;
-  }
+.button::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-image: conic-gradient(#9f02ff, #1399fd, #C68EFD);
+  animation: spin 5s linear infinite;
+  transform-origin: center;
+  scale: 300%;
+}
 
-  @keyframes spin{
-    from{
-      --angle: 0deg;
-    }
-    to{
-      --angle: 360deg;
-    }
+.button-1::before {
+  background-image: conic-gradient(#9f02ff, #1399fd, #C68EFD);
+}
+
+.button-2::before {
+  background-image: conic-gradient(#000000, #000000, #000000, #000000, #ffffff);
+  animation-duration: 3s;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
   }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 /* using in navbar gradient */
   .filter-1{
     filter: blur(5rem);

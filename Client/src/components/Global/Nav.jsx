@@ -53,8 +53,18 @@ console.log(theme);
     }
   }, [user]);
 
-  const handleLogout = () => {
-    dispatch(clearUser());
+  const handleSignOut = async() => {
+    try {
+      const response = await axios.post(API.signout.url , {
+        withCredentials:true
+      })
+      if(response.status ===200){
+        dispatch(clearUser());
+      }
+    } catch (error) {
+      
+    }
+    
   };
 
   const handleMenu = () => {
@@ -137,15 +147,15 @@ console.log(theme);
         >
           <div className={`bg-white dark:bg-black w-4 h-4 rounded-full shadow-md transform transition-transform duration-300 ${theme === 'dark' ? 'translate-x-6' : ''}`} />
         </button>
-        <div className="relative button-2 p-0.5 rounded-4xl cursor-pointer">
+        <div className="relative button button-2 p-0.5 rounded-4xl cursor-pointer">
   {isUser ? (
     <button
-      onClick={handleLogout}
+      onClick={handleSignOut}
       className={`${
         theme === 'dark' ? 'bg-black text-white border-gray-700' : 'bg-[#FAD0C4] text-[#D0E1D4] border-[#D0E1D4] text-black'
       } rounded-4xl px-6 py-2 border-2 cursor-pointer`}
     >
-      LogOut
+      signOut
     </button>
   ) : (
     <Link to="/signin">
