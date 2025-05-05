@@ -2,8 +2,10 @@ import React, { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import API from "../../common/apis/ServerBaseURL";
 import axios from 'axios';
-import { Navigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+
 function SchedulePage() {
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const sessionId = searchParams.get("sessionId");
   
@@ -47,9 +49,9 @@ function SchedulePage() {
         });
 
         console.log("Session finalized:", response);
-        if(response.status === 201){
+        if(response.status === 200){
           setIsLoading(false);
-          return <Navigate to={'/dashboard/learner'} />
+          navigate('/dashboard/learner');
         }
         
       } catch (error) {

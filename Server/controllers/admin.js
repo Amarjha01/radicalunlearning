@@ -1,5 +1,6 @@
-import { EducatorUserModel , LearnerUserModel} from "../models/user.js";
+import { EducatorUserModel , LearnerUserModel ,  WithdrawelRequestModel} from "../models/user.js";
 
+import jwt from 'jsonwebtoken'
 // get all educator data
 export  const getAllEducatorData = async (req, resp) => {
 
@@ -178,6 +179,18 @@ export async function processWithdrawRequest(req, res) {
       request.status = 'rejected';
       await request.save();
       return res.json({ message: 'Withdrawal rejected' });
+    }
+  }
+  
+//   view  withdrawel requests
+export async function getWithdrawelRequests(req, res) {
+    try {
+      const pendingRequests = await WithdrawelRequestModel.find({ status: 'pending' })
+      .populate('educator', 'name email payoutMethod');
+      res.status(200).json(pendingRequests);
+    } catch (error) {
+      console.error('Error fetching pending withdrawal requests:', error);
+      res.status(500).json({ message: 'Internal server error' });
     }
   }
   

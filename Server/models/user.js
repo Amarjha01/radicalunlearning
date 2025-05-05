@@ -335,6 +335,7 @@ const paymentSchema = new mongoose.Schema({
   topic: String,
   paymentStatus: { type: String, default: 'completed' },
   stripeSessionId: String,
+  amountPaid:Number,
   createdAt: { type: Date, default: Date.now },
 });
 export const PaymentRecord = mongoose.model("PaymentRecord", paymentSchema);
@@ -371,7 +372,7 @@ const WithdrawelRequestSchema = new mongoose.Schema({
 export const WithdrawelRequestModel = mongoose.model("WithdrawelRequest", WithdrawelRequestSchema);
 
 
-// ----------------------------WalletTransactionSchema---------------------------------------------------
+// ----------------------------WalletTransactions History---------------------------------------------------
 const WalletTransactionSchema = new mongoose.Schema({
   educator: {
     type: mongoose.Schema.Types.ObjectId,

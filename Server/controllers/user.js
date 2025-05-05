@@ -821,9 +821,10 @@ export async function getLearnerSessions(req, res) {
 // -------------------------EducatorWallet-----------------------------------------------------
 
 export async function WithdrawelRequest(req , res) {
+  console.log('WithdrawelRequest initiated');
+  
   try {
-    const token = req.cookies.accessToken
-console.log(token);
+    const token = req.cookies.accessToken;
 
     if(!token){
       return res.status(401).json({
@@ -837,6 +838,7 @@ console.log(token);
     const { amount } = req.body;
 if (user.wallet < amount) {
   return res.status(400).json({ message: "Insufficient wallet balance" });
+  
 }
 
 await WithdrawelRequestModel.create({
@@ -844,10 +846,10 @@ await WithdrawelRequestModel.create({
   amount,
 });
 
-    
-
+return res.status(200).json({message:"Withdrawel request submitted successfully."})
     
   } catch (error) {
-    
+    console.error(error); 
+    return res.status(500).json({ message: "Internal server error. Please try again later." });
   }
 }

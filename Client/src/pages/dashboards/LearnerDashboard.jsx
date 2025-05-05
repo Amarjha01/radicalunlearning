@@ -116,15 +116,6 @@ const OverviewTab = ({ darkMode , sessions}) => {
         
         <div className={`p-6 rounded-lg shadow-sm ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
           <div className="flex justify-between items-center mb-2">
-            <h3 className="text-lg font-semibold">Portfolio Items</h3>
-            <Folder className="text-indigo-500" size={20} />
-          </div>
-          <p className="text-3xl font-bold">comming soon</p>
-          <p className="text-sm text-gray-500 dark:text-gray-400">Projects showcased</p>
-        </div>
-        
-        <div className={`p-6 rounded-lg shadow-sm ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
-          <div className="flex justify-between items-center mb-2">
             <h3 className="text-lg font-semibold">Upcoming Sessions</h3>
             <Calendar className="text-green-500" size={20} />
           </div>
@@ -175,7 +166,7 @@ const OverviewTab = ({ darkMode , sessions}) => {
 const SearchTab = ({ darkMode  , userData}) => {
   const [searchKey, setSearchKey] = useState('');
   const [allEducator, setAllEducator] = useState([]);
-console.log(allEducator);
+
 
 
   const searcheducator = async () => {
@@ -202,7 +193,7 @@ console.log(allEducator);
         learnerName: userData.name,
         amount,
         educatorId,
-        topic: "Algebra basics" 
+        topic: searchKey 
       }, {
         withCredentials: true
       });
@@ -439,11 +430,6 @@ const SessionsTab = ({ darkMode, sessions }) => {
         </div>
       </div>
       
-      {/* Schedule New Session Button */}
-      <button className="mt-6 flex items-center bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md">
-        <Plus size={18} className="mr-1" /> Schedule New Session
-      </button>
-      
       {/* Reschedule Form Modal */}
       {showRescheduleForm && selectedSession && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
@@ -580,7 +566,6 @@ const SettingsTab = ({ darkMode, userData }) => {
         { withCredentials: true }
       );
 
-      console.log('Update Success:', response.data);
       setEditProfile(false); // lock editing again
     } catch (error) {
       console.error('Update failed:', error);
@@ -874,7 +859,6 @@ const LearnerDashboard = () => {
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const [profileData, setProfileData] = useState({});
   const [sessions, setSessions] = useState({ previous: [], upcoming: [] });
-console.log(sessions);
 
   useEffect(() => {
     const getLearnerSessions = async () => {
@@ -959,8 +943,7 @@ console.log(sessions);
               className="w-10 h-10 rounded-full mr-3"
             />
             <div className=' flex flex-col'>
-              <p className={`font-semibold ${darkMode ? 'text-white' : 'text-gray-800'}`}>{dummyUser.subscriptionStatus} Plan</p>
-              <p className="text-xs text-gray-500 dark:text-gray-300">{profileData.name}</p>
+              <p className="text-xs text-gray-500 dark:text-gray-300">{profileData?.name?.toUpperCase()}</p>
             </div>
           </div>
 
@@ -1019,7 +1002,7 @@ console.log(sessions);
           {activeTab === 'My Goals' && <GoalsTab darkMode={darkMode} userData={profileData} />}
           {activeTab === 'Sessions' && <SessionsTab darkMode={darkMode} sessions={sessions} userData={profileData} />}
           {activeTab === 'communityChat' && <ChatTab darkMode={darkMode}  />}
-          {activeTab === 'Settings' && <SettingsTab darkMode={darkMode} user={dummyUser} userData={profileData} />}
+          {activeTab === 'Settings' && <SettingsTab darkMode={darkMode}  userData={profileData} />}
         </div>
       </div>
     </div>

@@ -3,7 +3,9 @@ import {
     EducatorUserModel,
     AdminModel,
     SessionModel,
-    PaymentRecord
+    PaymentRecord,
+    WalletTransactionModel,
+    
   } from "../models/user.js";
   import jwt from "jsonwebtoken";
   import Stripe from 'stripe';
@@ -56,57 +58,6 @@ export async function createCheckoutSession(req , res) {
 }
 
 
-// export async function handleStripeWebhook(req, res) {
-//   if (req.method !== 'POST') {
-//     return res.status(405).send('Method Not Allowed');
-//   }
-
-//   let event;
-
-//   try {
-//     event = stripe.webhooks.constructEvent(
-//       req.body,
-//       req.headers['stripe-signature'],
-//       process.env.STRIPE_WEBHOOK_SECRET
-//     );
-//   } catch (err) {
-//     console.error('Webhook Error:', err.message);
-//     return res.status(400).send(`Webhook Error: ${err.message}`);
-//   }
-
-//   if (event.type === 'checkout.session.completed') {
-//     const session = event.data.object;
-//     const metadata = session.metadata;
-
-//     const { learnerId, educatorId, topic } = metadata;
-
-//     // Fake Zoom URLs for now — in production you’d generate via Zoom API
-//     const fakeMeetingId = Math.random().toString(36).substring(2, 10);
-//     const fakeJoinUrl = `https://zoom.us/j/${fakeMeetingId}`;
-//     const fakeStartUrl = `https://zoom.us/s/${fakeMeetingId}`;
-
-//     try {
-//       await SessionModel.create({
-//         topic,
-//         learnerId,
-//         educatorId,
-//         scheduledAt: new Date(), // can replace with real calendar time later
-//         zoomMeetingId: fakeMeetingId,
-//         zoomJoinUrl: fakeJoinUrl,
-//         zoomStartUrl: fakeStartUrl,
-//         status: 'scheduled',
-//       });
-
-//       console.log("✅ Session saved to DB");
-//     } catch (err) {
-//       console.error("❌ Failed to save session:", err);
-//     }
-//   }
-
-//   res.status(200).json({ received: true });
-// }
-
-
 export async function handleStripeWebhook(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).send('Method Not Allowed');
@@ -129,13 +80,14 @@ export async function handleStripeWebhook(req, res) {
     const session = event.data.object;
     const metadata = session.metadata;
   
-    const { learnerId, educatorId, topic, scheduledAt } = metadata;
+    const { learnerId, educatorId, topic} = metadata;
   
     await PaymentRecord.create({
       stripeSessionId: session.id,
       learnerId,
       educatorId,
       topic,
+      amountPaid: parseInt(session.amount_total), 
     });
     
   }
@@ -147,9 +99,11 @@ export async function handleStripeWebhook(req, res) {
 
 export async function finalizeSessionAfterPayment(req, res) {
   const { sessionId, scheduledAt } = req.body;
+console.log(sessionId);
 
   try {
     const record = await PaymentRecord.findOne({ stripeSessionId: sessionId });
+console.log(record);
 
     if (!record) {
       return res.status(404).json({ message: "Payment record not found" });
@@ -172,9 +126,13 @@ export async function finalizeSessionAfterPayment(req, res) {
       zoomStartUrl: zoomData.zoomStartUrl,
       status: 'scheduled',
     });
-    await EducatorUserModel.findByIdAndUpdate(record.educatorId, {
-      $inc: { wallet: amountToCredit }
-    });
+
+const amountToCredit = record.amountPaid; // ✅ Trusted from Stripe
+
+await EducatorUserModel.findByIdAndUpdate(record.educatorId, {
+  $inc: { wallet: amountToCredit }
+});
+
     
     await WalletTransactionModel.create({
       educator: record.educatorId,
@@ -186,7 +144,7 @@ export async function finalizeSessionAfterPayment(req, res) {
     // ✅ Clean up temp payment record
     await PaymentRecord.deleteOne({ _id: record._id });
 
-    res.status(201).json({ message: "Session scheduled", session });
+    res.status(200).json({ message: "Session scheduled", session });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Failed to schedule session" });

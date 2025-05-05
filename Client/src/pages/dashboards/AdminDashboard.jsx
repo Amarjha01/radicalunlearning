@@ -23,6 +23,9 @@ import {
   Trash2,
   Menu,
 } from "lucide-react";
+import { CreditCard, Clock, Filter,  MoreVertical, CheckCircle, XCircle } from 'lucide-react';
+import {  BarChart, Bar } from 'recharts';
+import { IoWalletOutline } from "react-icons/io5";
 import { MdHome } from "react-icons/md";
 import { CiChat1 } from "react-icons/ci";
 import axios from "axios";
@@ -54,6 +57,9 @@ export default function AdminDashboard() {
   const [subscriptionFee, setSubscriptionFee] = useState(49.99);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [educatorDetailedData, setEducatorDetailedData] = useState({});
+  const [withdrawalRequestsData , setWithdrawalRequestsData] = useState([])
+  console.log('lod', withdrawalRequestsData);
+  
   // Calculate stats
   const totalEducators = educators.length;
   const totalLearners = learners.length;
@@ -118,14 +124,13 @@ export default function AdminDashboard() {
   );
 
   const dispatch = useDispatch();
-
   const user = useSelector((state) => state.user);
 
   // fetching all educator data
   const fetchEducatorsData = async () => {
     try {
-      const response = await axios.post(API.educatorsData.url, {
-        _id: user.userData.user._id,
+      const response = await axios.post(API.educatorsData.url, {},{
+        withCredentials:true
       });
       console.log("response", user.userData.user._id);
 
@@ -146,11 +151,9 @@ export default function AdminDashboard() {
   const fetchEducatorsDetailedData = async (email) => {
     
     try {
-      const response = await axios.post(API.educatorsDetailedData.url, {
-        email: email,
-        _id: user.userData.user._id,
+      const response = await axios.post(API.educatorsDetailedData.url, {email: email,}, {
+        withCredentials:true
       });
-console.log('hi log', response);
 
       if (response.status === 200) {
         setEducatorDetailedData(response.data.data);
@@ -164,8 +167,9 @@ console.log('hi log', response);
   // fetching learner data
   const fetchLearnersData = async () => {
     try {
-      const response = await axios.post(API.learnersData.url, {
-        _id: user.userData.user._id,
+      const response = await axios.post(API.learnersData.url, {}, {
+        
+        withCredentials:true
       });
       if (response.status === 200) {
         setLearners(response.data.data);
@@ -184,9 +188,8 @@ console.log('hi log', response);
   const approveEducator = async (email) => {
     console.log(email);
     try {
-      const response = await axios.patch(API.approveEducator.url, {
-        email: email,
-        _id: user.userData.user._id,
+      const response = await axios.patch(API.approveEducator.url, {email: email} , {
+        withCredentials:true
       });
 
       if (response.status === 200) {
@@ -205,8 +208,8 @@ console.log('hi log', response);
         params: {
           email: email,
           role: role,
-          _id: user.userData.user._id,
         },
+        withCredentials:true
       });
 
       if (response.status === 200) {
@@ -219,6 +222,21 @@ console.log('hi log', response);
     }
   };
 
+  // getWithdrawelRequests
+const getWithdrawelRequests = async() =>{
+  try {
+    const response = await axios.get(API.fetchWithdrawelRequests.url,{
+      withCredentials:true
+    })
+    if(response.status === 200){
+      console.log(response);
+      setWithdrawalRequestsData(response.data)
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}
+    
   return (
 
     <div className=" w-[100vw] min-h-screen flex max-w-[1680px] mx-auto">
@@ -267,8 +285,18 @@ console.log('hi log', response);
               darkMode={darkMode}
             />
             <SidebarItem
+              icon={<IoWalletOutline size={20} />}
+              label="Withdrawel Requests"
+              active={activeView === "withdrawelRequests"}
+              onClick={() => {
+                setActiveView("withdrawelRequests") 
+                getWithdrawelRequests()
+              }}
+              darkMode={darkMode}
+            />
+            <SidebarItem
               icon={<CiChat1 size={20} />}
-              label="communityChat"
+              label="Community Chat"
               active={activeView === "communityChat"}
               onClick={() => setActiveView("communityChat")}
               darkMode={darkMode}
@@ -350,6 +378,16 @@ console.log('hi log', response);
                   active={activeView === "revenue"}
                   onClick={() => {
                     setActiveView("revenue");
+                    setMobileMenuOpen(false);
+                  }}
+                  darkMode={darkMode}
+                />
+                <SidebarItem
+                  icon={<IoWalletOutline size={20} />}
+                  label="Withdrawel Requests"
+                  active={activeView === "withdrawelRequests"}
+                  onClick={() => {
+                    setActiveView("withdrawelRequests");
                     setMobileMenuOpen(false);
                   }}
                   darkMode={darkMode}
@@ -487,6 +525,119 @@ console.log('hi log', response);
             </div>
           </div>
         )}
+
+{activeView === "withdrawelRequests" && (
+  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+    {/* Withdrawal Stats Summary */}
+    <StatCard
+      title="Pending Withdrawals"
+      value={withdrawalRequestsData.length}
+      icon={<Clock className="h-8 w-8 text-orange-500" />}
+      darkMode={darkMode}
+    />
+    <StatCard
+      title="Processing Time"
+      value="24 hrs"
+      icon={<Clock className="h-8 w-8 text-blue-500" />}
+      darkMode={darkMode}
+    />
+    
+    {/* Withdrawal Requests Table */}
+    <div className="col-span-1 md:col-span-2 lg:col-span-4 bg-white dark:bg-gray-800 rounded-lg shadow mb-6">
+      <div className="flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700">
+        <h3 className="text-lg font-semibold dark:text-white">Withdrawal Requests</h3>
+        <div className="flex items-center gap-2">
+          <div className="relative">
+            <input
+              type="text"
+              placeholder="Search requests..."
+              className="pl-8 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+            />
+            <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-400" />
+          </div>
+          <button className="flex items-center gap-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200">
+            <Filter className="h-4 w-4" />
+            <span>Filter</span>
+            <ChevronDown className="h-4 w-4" />
+          </button>
+        </div>
+      </div>
+      
+      <div className="overflow-x-auto">
+        <table className="w-full">
+          <thead className={`text-xs uppercase ${darkMode ? 'bg-gray-700 text-gray-300' : 'bg-gray-100 text-gray-700'}`}>
+            <tr>
+              <th className="px-4 py-3 text-left">Request ID</th>
+              <th className="px-4 py-3 text-left">Educator Name</th>
+              <th className="px-4 py-3 text-left">Amount</th>
+              <th className="px-4 py-3 text-left">Request Date</th>
+              <th className="px-4 py-3 text-left">payoutMethod</th>
+              <th className="px-4 py-3 text-left">Status</th>
+              <th className="px-4 py-3 text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+            {withdrawalRequestsData?.map((request) => (
+              <tr key={request.id} className={`${darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-500'}`}>
+                <td className="px-4 py-3 text-sm dark:text-white">{request._id}</td>
+                <td className="px-4 py-3 text-sm dark:text-white">{request.educator.name}</td>
+                <td className="px-4 py-3 text-sm font-medium dark:text-white">${request.amount.toFixed(2)}</td>
+                <td className="px-4 py-3 text-sm dark:text-gray-300"> {new Date(request.createdAt).toLocaleDateString()}</td>
+                <td className="px-4 py-3 text-sm dark:text-gray-300">{request.educator.payoutMethod}</td>
+                <td className="px-4 py-3 text-sm">
+                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full  font-bold text-xl text-yellow-500 `}>
+                    {request.status.charAt(0).toUpperCase() + request.status.slice(1)}
+                  </span>
+                </td>
+                <td className="px-4 py-3 text-sm text-right">
+                  <div className="flex justify-end items-center gap-2">
+                    {request.status === 'pending' && (
+                      <>
+                        <button className="p-1 rounded-full text-green-600 hover:bg-green-100 dark:hover:bg-green-900">
+                          <CheckCircle className="h-5 w-5" />
+                        </button>
+                        <button className="p-1 rounded-full text-red-600 hover:bg-red-100 dark:hover:bg-red-900">
+                          <XCircle className="h-5 w-5" />
+                        </button>
+                      </>
+                    )}
+                    <button className="p-1 rounded-full text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700">
+                      <MoreVertical className="h-5 w-5" />
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      
+      <div className="flex justify-between items-center p-4 border-t border-gray-200 dark:border-gray-700">
+        <p className="text-sm text-gray-500 dark:text-gray-400">
+          Showing <span className="font-medium">5</span> of{" "}
+          <span className="font-medium">42</span> requests
+        </p>
+        <div className="flex items-center gap-2">
+          <button className="px-3 py-1 border border-gray-300 dark:border-gray-600 rounded text-sm bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200">
+            Previous
+          </button>
+          <button className="px-3 py-1 border border-gray-300 dark:border-gray-600 rounded text-sm bg-indigo-600 text-white">
+            1
+          </button>
+          <button className="px-3 py-1 border border-gray-300 dark:border-gray-600 rounded text-sm bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200">
+            2
+          </button>
+          <button className="px-3 py-1 border border-gray-300 dark:border-gray-600 rounded text-sm bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200">
+            3
+          </button>
+          <button className="px-3 py-1 border border-gray-300 dark:border-gray-600 rounded text-sm bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200">
+            Next
+          </button>
+        </div>
+      </div>
+    </div> 
+  </div>
+)}
 
         {/* educator view */}
 

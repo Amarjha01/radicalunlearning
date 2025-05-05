@@ -9,11 +9,12 @@ export default function EducatorWallet() {
   const [totalStudents, setTotalStudents] = useState(12);
   
 
-const handleRequestWithdraw = async() =>{
+const handleRequestWithdraw = async(amount) =>{
 try {
-  const response = await axios.post(API.WithdrawelRequest.url,{} ,{
+  const response = await axios.post(API.WithdrawelRequest.url,{amount} ,{
     withCredentials:true
   })
+  console.log(response);
   
 } catch (error) {
   console.log(error);
@@ -22,7 +23,7 @@ try {
 }
 
   return (
-    <div className="bg-gradient-to-br from-blue-900 to-purple-800 rounded-xl shadow-2xl p-6  mx-auto text-white">
+    <div className="bg-gradient-to-br from-blue-900 to-purple-800 rounded-xl shadow-2xl p-6  mx-auto text-white ">
       {/* Header */}
       <header className="flex justify-between items-center mb-6">
         <div>
@@ -67,7 +68,7 @@ try {
         </div>
         
         <div className="mt-5 flex gap-3">
-          <button onClick={()=>{handleRequestWithdraw()}} className="flex items-center justify-center gap-2 bg-blue-600 rounded-lg p-2 px-4 flex-1 hover:bg-blue-700 transition-colors cursor-pointer">
+          <button onClick={()=>{handleRequestWithdraw(50000)}} className="flex items-center justify-center gap-2 bg-blue-600 rounded-lg p-2 px-4 flex-1 hover:bg-blue-700 transition-colors cursor-pointer">
             <Calendar size={16} />
             <span>Withdraw</span>
           </button>

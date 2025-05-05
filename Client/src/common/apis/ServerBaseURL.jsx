@@ -45,6 +45,9 @@ const API = {
     url: `${backendDomain}/api/admin/deleteUser`,
     method: 'POST',
   },
+  fetchWithdrawelRequests: { 
+    url: `${backendDomain}/api/admin/getWithdrawelRequests`,
+  },
 
   // --------------------APIs for learner------------------
   searchEducator:{
