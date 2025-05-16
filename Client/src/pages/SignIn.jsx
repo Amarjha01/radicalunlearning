@@ -58,7 +58,7 @@ const SignIn = () => {
 
         // Set a 5-second timeout for navigation
         const timeout = setTimeout(() => {
-          navigate("/");
+          navigate(`/dashboard/${userData.role.toLowerCase()}`);
         }, 1000);
 
         setNotificationTimeout(timeout); // Store the timeout ID to clear it if needed
@@ -104,25 +104,28 @@ const SignIn = () => {
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
           {/* Role */}
-          <div>
-            <div className="flex items-center gap-2 bg-[#1f2937] p-3 rounded-lg border border-gray-600 focus-within:border-blue-500">
-              <FaUserAlt className="text-gray-400" />
-              <input
-                placeholder="Role ex- ADMIN , LEARNER , EDUCATOR"
-                {...register("role", {
-                  required: "Role is required",
-                  pattern: {
-                    value: /^(ADMIN|LEARNER|EDUCATOR)$/i,
-                    message: "Invalid role (must be admin, learner, or educator)",
-                  },
-                })}
-                className="bg-transparent outline-none text-white w-full"
-              />
-            </div>
-            {errors.role && (
-              <p className="text-red-400 text-sm">{errors.role.message}</p>
-            )}
-          </div>
+{/* Role Dropdown */}
+<div>
+  <div className="flex items-center gap-2 bg-[#1f2937] p-3 rounded-lg border border-gray-600 focus-within:border-blue-500">
+    <FaUserAlt className="text-gray-400" />
+    <select
+      {...register("role", { required: "Role is required" })}
+      className="bg-transparent outline-none text-white w-full"
+      defaultValue=""
+    >
+      <option value="" disabled className="text-gray-500">
+        Select Role
+      </option>
+      <option value="ADMIN" className="text-black">ADMIN</option>
+      <option value="LEARNER" className="text-black">LEARNER</option>
+      <option value="EDUCATOR" className="text-black">EDUCATOR</option>
+    </select>
+  </div>
+  {errors.role && (
+    <p className="text-red-400 text-sm">{errors.role.message}</p>
+  )}
+</div>
+
 
           {/* Email */}
           <div>

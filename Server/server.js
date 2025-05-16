@@ -14,6 +14,7 @@ import verificationRouter from './routes/verification.js';
 import paymentRouter from './routes/paymentGateway.js';
 import aiRouter from './routes/aiRouter.js';
 import mailRouter from './routes/mail.js';
+import { handleStripeWebhook } from './controllers/paymentGateway.js';
 // 3. App and Server creation
 const app = express();
 
@@ -25,10 +26,11 @@ app.use(cors({
   credentials: true,
   origin: ["http://localhost:5173", "http://localhost:4173", "https://dev.radical-unlearning.com"]
 }));
+app.post('/api/pay/webhook', express.raw({ type: 'application/json' }), handleStripeWebhook);
 
-app.use('/api/pay', paymentRouter);
 app.use(express.json());
 // 5. Routes
+app.use('/api/pay', paymentRouter);
 app.use('/api/user', userRouter);
 app.use('/api/admin', adminRouter);
 app.use('/api/verify', verificationRouter);

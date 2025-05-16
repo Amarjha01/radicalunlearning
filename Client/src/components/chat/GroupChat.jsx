@@ -17,7 +17,7 @@ console.log("chatgroup" , user);
   if (!user) return <p>Please sign in to join the chat.</p>;
 
   return (
-    <div className="flex flex-col h-[80vh] w-[75vw] shadow rounded-lg bg-[#0e142a] max-w-[1680px] mx-auto">
+    <div className="flex flex-col h-[80vh] w-[75vw] shadow rounded-lg max-w-[1680px] mx-auto">
       <div className="flex-1 p-4 overflow-y-auto space-y-2">
         {messages.map((msg) => (
           <MessageBubble key={msg.id} message={msg} currentUserId={user.email} />

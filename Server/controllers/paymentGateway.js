@@ -39,8 +39,8 @@ export async function createCheckoutSession(req , res) {
         },
       ],
       mode: 'payment',
-      success_url: 'http://localhost:5173/schedule?sessionId={CHECKOUT_SESSION_ID}',
-      cancel_url: 'http://localhost:5173/cancel',
+      success_url: `${process.env.SUCCESS_BASE_URL}/schedule?sessionId={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${process.env.SUCCESS_BASE_URL}/cancel`,
       metadata: {
         learnerName,
         learnerId,

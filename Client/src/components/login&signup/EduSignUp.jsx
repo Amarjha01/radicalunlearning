@@ -9,43 +9,57 @@ import { RiLockPasswordFill } from "react-icons/ri";
 import axios from "axios";
 import API from '../../common/apis/ServerBaseURL.jsx'
 const subjectOptions = [
-  { value: "Math", label: "Math" },
   { value: "Science", label: "Science" },
-  { value: "Programming", label: "Programming" },
-  { value: "Music", label: "Music" },
+  { value: "Technology", label: "Technology" },
+  { value: "Engineering", label: "Engineering" },
+  { value: "Mathematics", label: "Mathematics" },
   { value: "Art", label: "Art" },
-  { value: "Writing", label: "Writing" },
-  { value: "Language", label: "Language" },
-  { value: "Philosophy", label: "Philosophy" },
+  { value: "Humanities", label: "Humanities" },
+  { value: "Psychology", label: "Psychology" },
+  { value: "Social Sciences", label: "Social Sciences" },
+  { value: "Health Science", label: "Health Science" },
   { value: "Economics", label: "Economics" },
-  { value: "Health", label: "Health" },
+  { value: "Business", label: "Business" },
+  { value: "Software Development", label: "Software Development" },
+  { value: "Web Design", label: "Web Design" },
+  { value: "Finance", label: "Finance" },
+  { value: "Accounting", label: "Accounting" },
+  { value: "Event Planning", label: "Event Planning" },
+  { value: "Content Writing", label: "Content Writing" },
+  { value: "Creative Writing", label: "Creative Writing" },
+  { value: "Languages", label: "Languages" },
+  { value: "English Literature", label: "English Literature" },
+  { value: "Computer Science", label: "Computer Science" },
 ];
 
 
 
 // Add these arrays at the top of the documents
-const countryList = [
-  "United States",
-  "India",
-  "United Kingdom",
-  "Canada",
-  "Australia",
-  "Germany",
-  "France",
-  "Japan",
-  "Brazil",
-  "China",
-  "South Korea",
-  "Russia",
-  "Italy",
-  "Spain",
-  "Mexico",
-  "Netherlands",
-  "Turkey",
-  "Sweden",
-  "South Africa",
-  "UAE",
+ const countryList = [
+  "Afghanistan", "Albania", "Algeria", "Andorra", "Angola", "Antigua and Barbuda", "Argentina", "Armenia", "Australia",
+  "Austria", "Azerbaijan", "Bahamas", "Bahrain", "Bangladesh", "Barbados", "Belarus", "Belgium", "Belize", "Benin",
+  "Bhutan", "Bolivia", "Bosnia and Herzegovina", "Botswana", "Brazil", "Brunei", "Bulgaria", "Burkina Faso",
+  "Burundi", "Cambodia", "Cameroon", "Canada", "Cape Verde", "Central African Republic", "Chad", "Chile", "China",
+  "Colombia", "Comoros", "Costa Rica", "Croatia", "Cuba", "Cyprus", "Czech Republic", "Democratic Republic of the Congo",
+  "Denmark", "Djibouti", "Dominica", "Dominican Republic", "East Timor", "Ecuador", "Egypt", "El Salvador",
+  "Equatorial Guinea", "Eritrea", "Estonia", "Eswatini", "Ethiopia", "Fiji", "Finland", "France", "Gabon", "Gambia",
+  "Georgia", "Germany", "Ghana", "Greece", "Grenada", "Guatemala", "Guinea", "Guinea-Bissau", "Guyana", "Haiti",
+  "Honduras", "Hungary", "Iceland", "India", "Indonesia", "Iran", "Iraq", "Ireland", "Israel", "Italy", "Ivory Coast",
+  "Jamaica", "Japan", "Jordan", "Kazakhstan", "Kenya", "Kiribati", "Kuwait", "Kyrgyzstan", "Laos", "Latvia", "Lebanon",
+  "Lesotho", "Liberia", "Libya", "Liechtenstein", "Lithuania", "Luxembourg", "Madagascar", "Malawi", "Malaysia",
+  "Maldives", "Mali", "Malta", "Marshall Islands", "Mauritania", "Mauritius", "Mexico", "Micronesia", "Moldova",
+  "Monaco", "Mongolia", "Montenegro", "Morocco", "Mozambique", "Myanmar", "Namibia", "Nauru", "Nepal", "Netherlands",
+  "New Zealand", "Nicaragua", "Niger", "Nigeria", "North Korea", "North Macedonia", "Norway", "Oman", "Pakistan",
+  "Palau", "Panama", "Papua New Guinea", "Paraguay", "Peru", "Philippines", "Poland", "Portugal", "Qatar", "Republic of the Congo",
+  "Romania", "Russia", "Rwanda", "Saint Kitts and Nevis", "Saint Lucia", "Saint Vincent and the Grenadines",
+  "San Marino", "Sao Tome and Principe", "Saudi Arabia", "Senegal", "Serbia", "Seychelles", "Sierra Leone",
+  "Singapore", "Slovakia", "Slovenia", "Solomon Islands", "Somalia", "South Africa", "South Korea", "South Sudan",
+  "Spain", "Sri Lanka", "Sudan", "Suriname", "Sweden", "Switzerland", "Syria", "Tajikistan", "Tanzania", "Thailand",
+  "Togo", "Tonga", "Trinidad and Tobago", "Tunisia", "Turkey", "Turkmenistan", "Tuvalu", "Uganda", "Ukraine",
+  "United Arab Emirates", "United Kingdom", "United States", "Uruguay", "Uzbekistan", "Vanuatu", "Vatican City",
+  "Venezuela", "Vietnam", "Yemen", "Zambia", "Zimbabwe"
 ];
+
 
 const languageList = [
   "English",
@@ -179,10 +193,7 @@ const EduSignUp = () => {
       setLanguageError(false);
     }
   
-    if (!documentFile || !videoFile) {
-      alert("Please upload both PDF document and video.");
-      return;
-    }
+ 
   
     if (hasError) return;
   
@@ -195,8 +206,8 @@ const EduSignUp = () => {
       ]);
   
       if (!documentUrl || !videoUrl) {
-        alert("File upload failed. Please try again.");
-        return;
+         documentUrl = null;
+         videoUrl = null;
       }
   
       const payload = {
@@ -250,7 +261,7 @@ const EduSignUp = () => {
       </h2>
       <div>
         <label className="block font-medium text-sm w-full text-start text-white">
-          Full Name
+          Full name
         </label>
         <div className="flex items-center bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500 ">
           <input
@@ -284,7 +295,7 @@ const EduSignUp = () => {
 
       <div>
         <label className="block font-medium text-sm w-full text-start text-white">
-          Select Your Country:
+          Select your country:
         </label>
 
         <div className="anta-regular  flex items-center bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500 ">
@@ -311,33 +322,34 @@ const EduSignUp = () => {
         )}
       </div>
 
-      <div>
-        <label className="block font-medium text-sm w-full text-start text-white">
-          Select your Language:
-        </label>
-        <div className=" anta-regular flex items-center bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500 ">
-          <select
-            value={language}
-            onChange={(e) => {
-              setLanguage(e.target.value);
-              setLanguageError(false);
-            }}
-            className="w-full text-white bg-[#0e142a]  rounded outline-none py-1 cursor-pointer"
-          >
-            <option value="">Select Language</option>
-            {languageList.map((lang) => (
-              <option key={lang} value={lang}>
-                {lang}
-              </option>
-            ))}
-          </select>
-        </div>
-        {languageError && (
-          <span className="text-sm text-red-800">
-            Please select your language.
-          </span>
-        )}
-      </div>
+<div>
+  <label className="block font-medium text-sm w-full text-start text-white">
+    Select your language:
+  </label>
+  <div className="anta-regular flex items-center bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500">
+    <input
+      list="language-options"
+      value={language}
+      onChange={(e) => {
+        setLanguage(e.target.value);
+        setLanguageError(false);
+      }}
+      placeholder="Type or select a language"
+      className="w-full text-white bg-[#0e142a] rounded outline-none py-1 cursor-text"
+    />
+    <datalist id="language-options">
+      {languageList.map((lang) => (
+        <option key={lang} value={lang} />
+      ))}
+    </datalist>
+  </div>
+  {languageError && (
+    <span className="text-sm text-red-800">
+      Please select or enter your language.
+    </span>
+  )}
+</div>
+
 
       <div>
         <label className="block font-medium text-sm w-full text-start text-white">
@@ -426,7 +438,7 @@ const EduSignUp = () => {
       {(educatorType === "Expert" || educatorType === "Both") && (
         <div>
           <label className="block font-medium text-sm w-full text-start text-white">
-            Share Your Experience In Subjects You Choosen.
+            Please share your experience in teaching the subjects you have chosen.
           </label>
           <div className=" bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500 ">
             <textarea
@@ -446,7 +458,7 @@ const EduSignUp = () => {
 
 <div>
       <label className="block font-medium text-sm w-full text-start text-white">
-        Write About Yourself.
+        Please tell us about yourself - your background and what you’re looking for.
       </label>
       <div className="bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500 ">
         <textarea
@@ -492,6 +504,7 @@ const EduSignUp = () => {
         <label className="block font-medium text-sm w-full text-start text-white">
           Enter Your Payout Method
         </label>
+        <p className=" text-blue-600 text-sm">*Please specify the method by which you would like us to pay you, your session fees</p>
         <div className="flex items-center bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500 ">
           <select
             {...register("payoutMethod", { required: true })}
@@ -501,6 +514,7 @@ const EduSignUp = () => {
             <option  value="upi">UPI</option>
             <option value="bank">Bank Transfer</option>
             <option value="paypal">PayPal</option>
+            <option value="other">Other</option>
           </select>
         </div>
         {errors.payoutMethod && (
@@ -582,10 +596,29 @@ const EduSignUp = () => {
           )}
         </div>
       )}
-
+  {payoutMethod === "other" && (
+        <div className="mt-2">
+          <label className="block font-medium text-sm w-full text-start text-white">
+            Enter Your Payout details
+          </label>
+          <div className="flex items-center bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500 ">
+            <input
+              {...register("otherPayout", { required: true })}
+              className="w-full text-white bg-[#0e142a] outline-none   rounded py-2"
+              placeholder="Enter Your Payout details"
+            />
+          </div>
+          {errors.upiId && (
+            <p className="text-red-500 text-sm">Payout details is required.</p>
+          )}
+        </div>
+      )}
       
                 {/* Password */}
                 <div>
+                  <label className="block font-medium text-sm w-full text-start text-white">
+                   Create sign in password for this site
+                  </label>
                   <div className="flex items-center gap-2 bg-[#0e142a]  p-3 rounded-lg border border-[#1e2a48] focus-within:border-blue-500  ">
                     <RiLockPasswordFill className="text-gray-400" />
                     <input
@@ -634,7 +667,7 @@ const EduSignUp = () => {
                 "I am 18+ years old",
                 "I have cleared checks for teaching under 18 and have no criminal record",
                 "I confirm all information is accurate",
-                "I agree to respectful conduct and understand my access may be terminated for abuse",
+                "I agree to respectful conduct and understand my access will be terminated for abuse",
                 "I understand 10% of my fee will support Radical Unlearning. If paid outside, I will log it manually",
               ][num - 1]
             }
@@ -647,7 +680,7 @@ const EduSignUp = () => {
  {/* PDF Upload */}
  <div>
         <label className="block font-medium text-sm w-full text-start text-white">
-          Upload Documents pdf only (Max 20 MB )
+          Upload Documents pdf only (optional) (Max 20 MB )
         </label>
         <div className="flex items-center bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500">
           <input
@@ -665,7 +698,7 @@ const EduSignUp = () => {
       {/* Video Upload */}
       <div>
         <label className="block font-medium text-sm w-full text-start text-white">
-          Upload Introduction Video (MP4 only, Max 100 MB)
+          Upload Introduction Video (optional) (MP4 only, Max 100 MB)
         </label>
         <div className="flex items-center bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500">
           <input

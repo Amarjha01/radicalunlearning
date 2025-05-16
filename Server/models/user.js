@@ -160,11 +160,9 @@ const Educator_userSchema = new mongoose.Schema({
   },
   experience: {
     type: String,
-    required: true,
   },
   subjects: {
-    type: [String], // array of subjects like ['Math', 'Art']
-    required: true,
+    type: [String], 
   },
   serviceType: {
     type: String,
@@ -179,12 +177,11 @@ const Educator_userSchema = new mongoose.Schema({
   },
   currency: {
     type: String,
-    default: "USD",
+    default: "GBP",
   },
   
   payoutMethod: {
     type: String,
-    required: true,
   },
   upiId: {
     type: String,
@@ -210,13 +207,17 @@ const Educator_userSchema = new mongoose.Schema({
       return this.payoutMethod === 'paypal';
     },
   },
+  otherPayout: {
+    type: String,
+    required: function () {
+      return this.payoutMethod === 'other';
+    },
+  },
 documentUrl: {
     type: String, 
-    required: true,
   },
   videoUrl: {
     type: String, 
-    required: true,
   },
   profileUrl: {
     type: String, 

@@ -120,6 +120,7 @@ export async function registerEducatorController(request, response) {
       bankAccount,
       ifscCode,
       paypalEmail,
+      otherPayout,
       documentUrl,
       videoUrl,
       terms1,
@@ -198,6 +199,13 @@ export async function registerEducatorController(request, response) {
         success: false,
       });
     }
+    if (payoutMethod === "other" && !otherPayout) {
+      return response.status(400).json({
+        message: "Other payout method details are required",
+        error: true,
+        success: false,
+      });
+    }
 
     // Normalize email
     const normalizedEmail = email.toLowerCase();
@@ -234,6 +242,7 @@ export async function registerEducatorController(request, response) {
       bankAccount,
       ifscCode,
       paypalEmail,
+      otherPayout,
       documentUrl,
       videoUrl,
       terms1,

@@ -39,28 +39,31 @@ const handleShowPass = () =>{
 }
 
 
-  const countryList = [
-    "United States",
-    "India",
-    "United Kingdom",
-    "Canada",
-    "Australia",
-    "Germany",
-    "France",
-    "Japan",
-    "Brazil",
-    "China",
-    "South Korea",
-    "Russia",
-    "Italy",
-    "Spain",
-    "Mexico",
-    "Netherlands",
-    "Turkey",
-    "Sweden",
-    "South Africa",
-    "UAE",
-  ];
+ const countryList = [
+  "Afghanistan", "Albania", "Algeria", "Andorra", "Angola", "Antigua and Barbuda", "Argentina", "Armenia", "Australia",
+  "Austria", "Azerbaijan", "Bahamas", "Bahrain", "Bangladesh", "Barbados", "Belarus", "Belgium", "Belize", "Benin",
+  "Bhutan", "Bolivia", "Bosnia and Herzegovina", "Botswana", "Brazil", "Brunei", "Bulgaria", "Burkina Faso",
+  "Burundi", "Cambodia", "Cameroon", "Canada", "Cape Verde", "Central African Republic", "Chad", "Chile", "China",
+  "Colombia", "Comoros", "Costa Rica", "Croatia", "Cuba", "Cyprus", "Czech Republic", "Democratic Republic of the Congo",
+  "Denmark", "Djibouti", "Dominica", "Dominican Republic", "East Timor", "Ecuador", "Egypt", "El Salvador",
+  "Equatorial Guinea", "Eritrea", "Estonia", "Eswatini", "Ethiopia", "Fiji", "Finland", "France", "Gabon", "Gambia",
+  "Georgia", "Germany", "Ghana", "Greece", "Grenada", "Guatemala", "Guinea", "Guinea-Bissau", "Guyana", "Haiti",
+  "Honduras", "Hungary", "Iceland", "India", "Indonesia", "Iran", "Iraq", "Ireland", "Israel", "Italy", "Ivory Coast",
+  "Jamaica", "Japan", "Jordan", "Kazakhstan", "Kenya", "Kiribati", "Kuwait", "Kyrgyzstan", "Laos", "Latvia", "Lebanon",
+  "Lesotho", "Liberia", "Libya", "Liechtenstein", "Lithuania", "Luxembourg", "Madagascar", "Malawi", "Malaysia",
+  "Maldives", "Mali", "Malta", "Marshall Islands", "Mauritania", "Mauritius", "Mexico", "Micronesia", "Moldova",
+  "Monaco", "Mongolia", "Montenegro", "Morocco", "Mozambique", "Myanmar", "Namibia", "Nauru", "Nepal", "Netherlands",
+  "New Zealand", "Nicaragua", "Niger", "Nigeria", "North Korea", "North Macedonia", "Norway", "Oman", "Pakistan",
+  "Palau", "Panama", "Papua New Guinea", "Paraguay", "Peru", "Philippines", "Poland", "Portugal", "Qatar", "Republic of the Congo",
+  "Romania", "Russia", "Rwanda", "Saint Kitts and Nevis", "Saint Lucia", "Saint Vincent and the Grenadines",
+  "San Marino", "Sao Tome and Principe", "Saudi Arabia", "Senegal", "Serbia", "Seychelles", "Sierra Leone",
+  "Singapore", "Slovakia", "Slovenia", "Solomon Islands", "Somalia", "South Africa", "South Korea", "South Sudan",
+  "Spain", "Sri Lanka", "Sudan", "Suriname", "Sweden", "Switzerland", "Syria", "Tajikistan", "Tanzania", "Thailand",
+  "Togo", "Tonga", "Trinidad and Tobago", "Tunisia", "Turkey", "Turkmenistan", "Tuvalu", "Uganda", "Ukraine",
+  "United Arab Emirates", "United Kingdom", "United States", "Uruguay", "Uzbekistan", "Vanuatu", "Vatican City",
+  "Venezuela", "Vietnam", "Yemen", "Zambia", "Zimbabwe"
+];
+
   
   const languageList = [
     "English",
@@ -91,20 +94,30 @@ const handleShowPass = () =>{
     "Gujarati",
   ];
 
-  const topicOptions = [
-    { value: "Math", label: "Math" },
-    { value: "Science", label: "Science" },
-    { value: "Programming", label: "Programming" },
-    { value: "Music", label: "Music" },
-    { value: "Drawing", label: "Drawing" },
-    { value: "History", label: "History" },
-    { value: "Language", label: "Language" },
-    { value: "Geography", label: "Geography" },
-    { value: "Philosophy", label: "Philosophy" },
-    { value: "Fitness", label: "Fitness" },
-    { value: "Economics", label: "Economics" },
-    { value: "Environment", label: "Environment" },
-  ];
+const topicOptions = [
+  { value: "Science", label: "Science" },
+  { value: "Technology", label: "Technology" },
+  { value: "Engineering", label: "Engineering" },
+  { value: "Mathematics", label: "Mathematics" },
+  { value: "Art", label: "Art" },
+  { value: "Humanities", label: "Humanities" },
+  { value: "Psychology", label: "Psychology" },
+  { value: "Social Sciences", label: "Social Sciences" },
+  { value: "Health Science", label: "Health Science" },
+  { value: "Economics", label: "Economics" },
+  { value: "Business", label: "Business" },
+  { value: "Software Development", label: "Software Development" },
+  { value: "Web Design", label: "Web Design" },
+  { value: "Finance", label: "Finance" },
+  { value: "Accounting", label: "Accounting" },
+  { value: "Event Planning", label: "Event Planning" },
+  { value: "Content Writing", label: "Content Writing" },
+  { value: "Creative Writing", label: "Creative Writing" },
+  { value: "Languages", label: "Languages" },
+  { value: "English Literature", label: "English Literature" },
+  { value: "Computer Science", label: "Computer Science" },
+];
+
 
   const handleTopicChange = (selected) => {
     if (selected.length <= 10) {
@@ -174,7 +187,7 @@ const handleShowPass = () =>{
 
       <div>
         <label className="block font-medium text-sm w-full text-start text-white">
-          Full Name
+          Full name
         </label>
         <div className="flex items-center bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500">
           <input
@@ -255,33 +268,34 @@ const handleShowPass = () =>{
         )}
       </div>
 
-      <div>
-        <label className="block font-medium text-sm w-full text-start text-white">
-          Select your Language
-        </label>
-        <div className="flex items-center bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500">
-          <select
-            value={language}
-            onChange={(e) => {
-              setLanguage(e.target.value);
-              setLanguageError(false);
-            }}
-            className="w-full text-white bg-[#0e142a]  outline-none rounded py-1  cursor-pointer "
-          >
-            <option value="">Select Language</option>
-            {languageList.map((lang) => (
-              <option key={lang} value={lang}>
-                {lang}
-              </option>
-            ))}
-          </select>
-        </div>
-        {languageError && (
-          <span className="text-sm text-red-800">
-            Please select your language.
-          </span>
-        )}
-      </div>
+ <div>
+  <label className="block font-medium text-sm w-full text-start text-white">
+    Select your language:
+  </label>
+  <div className="anta-regular flex items-center bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500">
+    <input
+      list="language-options"
+      value={language}
+      onChange={(e) => {
+        setLanguage(e.target.value);
+        setLanguageError(false);
+      }}
+      placeholder="Type or select a language"
+      className="w-full text-white bg-[#0e142a] rounded outline-none py-1 cursor-text"
+    />
+    <datalist id="language-options">
+      {languageList.map((lang) => (
+        <option key={lang} value={lang} />
+      ))}
+    </datalist>
+  </div>
+  {languageError && (
+    <span className="text-sm text-red-800">
+      Please select or enter your language.
+    </span>
+  )}
+</div>
+
 
       <div>
       <label className="block font-medium text-sm w-full text-start text-white">Date of Birth</label>
@@ -365,6 +379,9 @@ const handleShowPass = () =>{
 
           {/* Password */}
           <div>
+            <label className="block font-medium text-sm w-full text-start text-white"> 
+              Create sign in password for this site
+            </label>
             <div className="flex items-center gap-2 bg-[#0e142a] p-3 rounded-lg border border-gray-600 focus-within:border-blue-500">
               <RiLockPasswordFill className="text-gray-400" />
               <input
@@ -402,17 +419,17 @@ const handleShowPass = () =>{
       <fieldset className="text-white bg-[#0e142a] rounded-lg p-4 border border-[#1e2a48] focus-within:border-blue-500">
         <legend className="font-bold">Accept Terms</legend>
         <label className="block cursor-pointer ">
-          <input type="checkbox" {...register("terms1", { required: true })} /> My parents are aware I'm using this site
+          <input type="checkbox" {...register("terms1", { required: true })} /> My parents are aware I'm using this site.
         </label>
         {errors.terms1 && <p className="text-red-600 text-sm">Required</p>}
 
         <label className="block cursor-pointer">
-          <input type="checkbox" {...register("terms2", { required: true })} /> This is not a social media site...
+          <input type="checkbox" {...register("terms2", { required: true })} /> This is not a social media site.
         </label>
         {errors.terms2 && <p className="text-red-600 text-sm">Required</p>}
 
         <label className="block cursor-pointer">
-          <input type="checkbox" {...register("terms3", { required: true })} /> Respectful communication
+          <input type="checkbox" {...register("terms3", { required: true })} /> Respectful communication.
         </label>
         {errors.terms3 && <p className="text-red-600 text-sm">Required</p>}
       </fieldset>

@@ -85,7 +85,7 @@ const Hero = () => {
   return (
     <div className="flex flex-col items-center justify-center gap-16">
     {/* Animated Heading */}
-    <div className={ `my-5 text-sm lg:text-4xl 2xl:text-6xl codystar-regular text-center overflow-hidden ${userProfile.theme === 'light' ? 'text-black' : 'text-white'}`}>
+    <div className={ `my-5 text-sm lg:text-4xl 2xl:text-6xl codystar-regular text-center overflow-hidden ${userProfile.theme === 'light' ? 'text-' : 'text-white'}`}>
       <div ref={textRef} className="inline-block">
         {text.split("").map((char, index) => (
           <span

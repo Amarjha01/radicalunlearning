@@ -18,17 +18,17 @@ import {
 } from 'lucide-react';
 
 import { FaGraduationCap, FaGlobeAmericas, FaUserTie, FaFileAlt, FaVideo, FaBookOpen , FaUserEdit } from 'react-icons/fa';
-import { IoVideocam } from "react-icons/io5";
+import { LuBotMessageSquare } from "react-icons/lu";
+import { IoMdClose } from "react-icons/io";
 import GroupChat from "../../components/Chat/GroupChat.jsx";
 import { MdHome } from "react-icons/md";
-import { CiChat1 } from "react-icons/ci";
+import { CiChat1 , CiMenuFries , CiLock } from "react-icons/ci";
 import { TbUserSearch } from "react-icons/tb";
 import { MdOutlineSearch } from "react-icons/md";
-import { CiLock } from "react-icons/ci";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import axios from 'axios';
-
+import AIChat from '../../components/ChatBot/Aichat.jsx';
 import { loadStripe } from '@stripe/stripe-js';
 const stripePromise = loadStripe('pk_test_51REr3D4Pm8bi1bka0tMXqVjPNPyEbfMEb97yP1sMgquLKLusTHjAtatfqPxEl6txhc8F5X8uN94FV3tWyUUA9MWF005QM2JElh');
 
@@ -128,12 +128,6 @@ const OverviewTab = ({ darkMode , sessions}) => {
       <div className={`p-6 rounded-lg shadow-sm mb-8 ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-semibold">Upcoming Sessions</h2>
-          <button 
-            onClick={() => {}} 
-            className="text-blue-500 hover:text-blue-600 text-sm flex items-center"
-          >
-            View All <ChevronRight size={16} />
-          </button>
         </div>
         <div className="space-y-4">
           {sessions?.upcoming?.map(session => (
@@ -171,7 +165,7 @@ const SearchTab = ({ darkMode  , userData}) => {
 
   const searcheducator = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/api/user/searchEducator', {
+      const response = await axios.get(API.searchEducator.url, {
         params: {
           searchKey: searchKey,
         },
@@ -211,21 +205,27 @@ const SearchTab = ({ darkMode  , userData}) => {
     <div className="w-full h-auto flex flex-col">
       {/* Search Input and Search Icon */}
       <div className="flex items-center space-x-2">
-        <input
-          onChange={(e) => {setSearchKey(e.target.value) }}
-          type="text"
-          id="name"
-          name="name"
-          required
-          size="10"
-          className="border p-2 w-full outline-none rounded-lg"
-          placeholder="Search by subjects........"
-        />
-        <MdOutlineSearch
-          onClick={searcheducator}
-          className="text-5xl cursor-pointer"
-        />
-      </div>
+  <input
+    onChange={(e) => setSearchKey(e.target.value)}
+    onKeyDown={(e) => {
+      if (e.key === 'Enter') {
+        searcheducator();
+      }
+    }}
+    type="text"
+    id="name"
+    name="name"
+    required
+    size="10"
+    className="border p-2 w-full outline-none rounded-lg"
+    placeholder="Search by topic........"
+  />
+  <MdOutlineSearch
+    onClick={searcheducator}
+    className="text-5xl cursor-pointer"
+  />
+</div>
+
 
       {/* Displaying Educator List */}
       <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -418,9 +418,9 @@ const SessionsTab = ({ darkMode, sessions }) => {
                       >
                         Reschedule
                       </button>
-                      <button className="px-3 py-1 text-xs bg-red-100 hover:bg-red-200 text-red-600 dark:bg-red-900 dark:hover:bg-red-800 dark:text-red-300 rounded-md">
+                      {/* <button className="px-3 py-1 text-xs bg-red-100 hover:bg-red-200 text-red-600 dark:bg-red-900 dark:hover:bg-red-800 dark:text-red-300 rounded-md">
                         Cancel
-                      </button>
+                      </button> */}
                     </div>
                   </td>
                 </tr>
@@ -545,6 +545,10 @@ return(
 )
 
 }
+const ChatBot = ({darkMode}) =>{
+return(
+<AIChat />
+)}
 
 // Settings Tab Component
 
@@ -912,19 +916,22 @@ const LearnerDashboard = () => {
       {/* Mobile Sidebar Toggle */}
       <div className="md:hidden p-4 flex justify-between items-center bg-blue-600 text-white">
         <h1 className="font-bold">RadicalUnlearning</h1>
-        <button 
-          onClick={() => setMobileSidebarOpen(!mobileSidebarOpen)}
-          className="p-2 rounded-md hover:bg-blue-700"
-        >
-          {mobileSidebarOpen ? 'Close' : 'Menu'}
-        </button>
+      <button
+  onClick={() => setMobileSidebarOpen(!mobileSidebarOpen)}
+  className={`p-2 rounded-md hover:bg-blue-700 text-xl cursor-pointer transition-all duration-500 transform ${
+    mobileSidebarOpen ? "rotate-90" : "rotate-0"
+  }`}
+>
+  {mobileSidebarOpen ? <IoMdClose /> : <CiMenuFries />}
+</button>
+
       </div>
 
       <div className="flex flex-col md:flex-row">
         {/* Sidebar */}
         <div className={`
           ${mobileSidebarOpen ? 'block' : 'hidden'} 
-          md:block md:w-64 md:min-h-screen 
+          md:block w-64 h-[100vh] z-10
           ${darkMode ? 'bg-gray-800' : 'bg-white'} 
           border-r border-gray-200 shadow-sm px-2 fixed
         `}>
@@ -948,13 +955,14 @@ const LearnerDashboard = () => {
           </div>
 
           {/* Navigation */}
-          <nav className="mt-2">
+          <nav className="flex flex-col space-y-2">
             {[
               { name: 'Overview', icon: <Home size={18} /> },
-              { name: 'Search Educator', icon: <TbUserSearch size={18} /> },
+              { name: 'Search For Expert', icon: <TbUserSearch size={18} /> },
               { name: 'My Goals', icon: <Award size={18} /> },
               { name: 'Sessions', icon: <Calendar size={18} /> },
-              { name: 'communityChat', icon: <CiChat1 size={18} /> },
+              { name: 'Community Chat', icon: <CiChat1 size={18} /> },
+              { name: 'AI Chat Bot', icon: <LuBotMessageSquare size={18} /> },
               { name: 'Settings', icon: <Settings size={18} /> },
             ].map((item) => (
               <button
@@ -963,14 +971,14 @@ const LearnerDashboard = () => {
                   setActiveTab(item.name);
                   setMobileSidebarOpen(false);
                 }}
-                className={`flex items-center w-full p-3 rounded-md transition-colors ${
+                className={`flex items-center w-full p-2 rounded-md transition-colors cursor-pointer ${
                   activeTab === item.name
-                    ? 'bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-300'
-                    : 'hover:bg-gray-100 dark:hover:bg-gray-700'
+                    ? 'bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-300 '
+                    : 'hover:bg-gray-100 dark:hover:bg-gray-700 '
                 }`}
               >
                 <span className="mr-3">{item.icon}</span>
-                <span>{item.name}</span>
+                <span className=''>{item.name}</span>
               </button>
             ))}
           </nav>
@@ -980,7 +988,7 @@ const LearnerDashboard = () => {
             <div className="flex justify-between mb-4">
               <button 
                 onClick={toggleDarkMode}
-                className={`flex items-center px-3 py-2 rounded-md ${
+                className={`flex items-center px-3 py-2 rounded-md cursor-pointer ${
                   darkMode ? 'text-blue-300' : 'text-gray-600'
                 }`}
               >
@@ -998,10 +1006,11 @@ const LearnerDashboard = () => {
         {/* Main Content */}
         <div className="flex-1 overflow-x-hidden p-4 md:p-8 md:pl-[35vw] lg:pl-[23vw]">
           {activeTab === 'Overview' && <OverviewTab darkMode={darkMode} sessions={sessions} userData={profileData} />}
-          {activeTab === 'Search Educator' && <SearchTab darkMode={darkMode} userData={profileData} />}
+          {activeTab === 'Search For Expert' && <SearchTab darkMode={darkMode} userData={profileData} />}
           {activeTab === 'My Goals' && <GoalsTab darkMode={darkMode} userData={profileData} />}
           {activeTab === 'Sessions' && <SessionsTab darkMode={darkMode} sessions={sessions} userData={profileData} />}
-          {activeTab === 'communityChat' && <ChatTab darkMode={darkMode}  />}
+          {activeTab === 'Community Chat' && <ChatTab darkMode={darkMode}  />}
+          {activeTab === 'AI Chat Bot' && <ChatBot darkMode={darkMode}  />}
           {activeTab === 'Settings' && <SettingsTab darkMode={darkMode}  userData={profileData} />}
         </div>
       </div>

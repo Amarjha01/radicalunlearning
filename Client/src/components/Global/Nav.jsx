@@ -98,7 +98,7 @@ console.log(theme);
       <Link to="/" className={`text-md md:text-xl lg:text-2xl font-semibold uppercase anta-regular cursor-pointer z-20 ${theme === 'dark' ? 'text-white' : 'text-[#575757]'}`}>
         Radical Unlearning
       </Link>
-
+      
       {/* Desktop Navbar */}
       <div className="absolute w-full hidden lg:flex justify-center items-center">
   <ul className="flex">
@@ -126,7 +126,7 @@ console.log(theme);
               : `${theme === 'dark' ? 'text-gray-300' : 'text-[#575757] hover:text-white'} px-3 py-2`
           }
         >
-          Dashboard
+          {user?.userData?.user?.role?.charAt(0).toUpperCase() + user?.userData?.user?.role?.slice(1).toLowerCase()} tools
         </NavLink>
       </li>
     )}
@@ -152,7 +152,7 @@ console.log(theme);
     <button
       onClick={handleSignOut}
       className={`${
-        theme === 'dark' ? 'bg-black text-white border-gray-700' : 'bg-[#FAD0C4] text-[#D0E1D4] border-[#D0E1D4] text-black'
+        theme === 'dark' ? 'bg-black text-white border-gray-700' : 'bg-[#FAD0C4]  border-[#D0E1D4] text-black'
       } rounded-4xl px-6 py-2 border-2 cursor-pointer`}
     >
       signOut

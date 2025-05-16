@@ -13,7 +13,7 @@ const theme = user?.userData?.user?.theme
 
 useEffect(() => {
   if (theme === 'light') {
-    document.body.style.backgroundColor = '#f0eee1'; 
+    document.body.style.backgroundColor = '#F4CCE9'; 
   } else {
     document.body.style.backgroundColor = '#020817'; 
   }
