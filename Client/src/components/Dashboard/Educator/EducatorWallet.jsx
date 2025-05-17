@@ -1,13 +1,14 @@
 import { useState } from 'react';
 import { BookOpen, Wallet, Calendar, ArrowDownRight, Plus, ChevronRight, Users, Clock } from 'lucide-react';
+import { LuPoundSterling } from "react-icons/lu";
 import axios from 'axios';
 import API from '../../../common/apis/ServerBaseURL';
-
-export default function EducatorWallet() {
-  const [balance, setBalance] = useState(2345.67);
+import { showSuccessToast, showErrorToast } from '../../../utils/Notification.jsx';
+export default function EducatorWallet(wallet) {
+  
+  const [balance, setBalance] = useState(wallet.wallet);
   const [upcomingSessions, setUpcomingSessions] = useState(5);
   const [totalStudents, setTotalStudents] = useState(12);
-  
 
 const handleRequestWithdraw = async(amount) =>{
 try {
@@ -16,14 +17,20 @@ try {
   })
   console.log(response);
   
+  if (response?.status === 200) {
+showSuccessToast("Withdrawal request submitted successfully.");
+  }
+   
+  
 } catch (error) {
   console.log(error);
-  
+   
 }
 }
 
   return (
     <div className="bg-gradient-to-br from-blue-900 to-purple-800 rounded-xl shadow-2xl p-6  mx-auto text-white ">
+     
       {/* Header */}
       <header className="flex justify-between items-center mb-6">
         <div>
@@ -38,7 +45,7 @@ try {
       {/* Balance Card */}
       <div className="bg-white/10 rounded-xl p-5 backdrop-blur-sm mb-6">
         <p className="text-blue-200 text-sm mb-1">Total Earnings</p>
-        <h2 className="text-3xl font-bold">${balance.toLocaleString('en-US', { minimumFractionDigits: 2 })}</h2>
+        <h2 className="text-3xl font-bold flex justify-center items-center"><LuPoundSterling />{balance.toLocaleString('en-US', { minimumFractionDigits: 2 })}</h2>
         
         {/* Stats Row */}
         <div className="flex justify-between mt-4 mb-5">
@@ -68,7 +75,7 @@ try {
         </div>
         
         <div className="mt-5 flex gap-3">
-          <button onClick={()=>{handleRequestWithdraw(50000)}} className="flex items-center justify-center gap-2 bg-blue-600 rounded-lg p-2 px-4 flex-1 hover:bg-blue-700 transition-colors cursor-pointer">
+          <button onClick={()=>{handleRequestWithdraw(balance)}} className="flex items-center justify-center gap-2 bg-blue-600 rounded-lg p-2 px-4 flex-1 hover:bg-blue-700 transition-colors cursor-pointer">
             <Calendar size={16} />
             <span>Withdraw</span>
           </button>

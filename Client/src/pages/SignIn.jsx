@@ -61,7 +61,7 @@ const SignIn = () => {
           navigate(`/dashboard/${userData.role.toLowerCase()}`);
         }, 1000);
 
-        setNotificationTimeout(timeout); // Store the timeout ID to clear it if needed
+        setNotificationTimeout(timeout); 
       }
     } catch (error) {
       setErrorMessage(error.response?.data?.message || "Login failed.");
@@ -78,13 +78,12 @@ const SignIn = () => {
 
   const handleDismissNotification = () => {
     if (notificationTimeout) {
-      clearTimeout(notificationTimeout); // Clear the timeout if the notification is dismissed
+      clearTimeout(notificationTimeout); 
     }
-    navigate("/"); // Immediately navigate when notification is dismissed
+    navigate("/");
   };
 
   useEffect(() => {
-    // Clean up timeout if the component is unmounted before navigation
     return () => {
       if (notificationTimeout) {
         clearTimeout(notificationTimeout);
@@ -213,7 +212,7 @@ const SignIn = () => {
           type={notification.type}
           message={notification.message}
           duration={notification.duration}
-          onDismiss={handleDismissNotification} // Add dismiss functionality
+          onDismiss={handleDismissNotification}
         />
       )}
     </div>

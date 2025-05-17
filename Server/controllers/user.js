@@ -159,13 +159,13 @@ export async function registerEducatorController(request, response) {
       });
     }
 
-    if (!documentUrl || !videoUrl) {
-      return response.status(400).json({
-        message: "Missing document or video URL",
-        error: true,
-        success: false,
-      });
-    }
+    // if (!documentUrl || !videoUrl) {
+    //   return response.status(400).json({
+    //     message: "Missing document or video URL",
+    //     error: true,
+    //     success: false,
+    //   });
+    // }
 
     if (!terms1 || !terms2 || !terms3 || !terms4 || !terms5) {
       return response.status(400).json({
@@ -435,6 +435,7 @@ export async function signin(request, response) {
           upiID: user.upiId,
           Approved: user.Approved,
           theme: user.theme,
+          wallet: user.wallet,
           _id: user._id,
         },
         role: user.role,

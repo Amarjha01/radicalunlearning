@@ -213,6 +213,9 @@ const Educator_userSchema = new mongoose.Schema({
       return this.payoutMethod === 'other';
     },
   },
+  stripeAccountId: {
+  type: String,
+},
 documentUrl: {
     type: String, 
   },
@@ -355,7 +358,7 @@ const WithdrawelRequestSchema = new mongoose.Schema({
   },
   currency: {
     type: String,
-    default: "USD",
+    default: "GBP",
   },
   status: {
     type: String,

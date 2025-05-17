@@ -30,7 +30,7 @@ import { useDispatch } from "react-redux";
 import axios from 'axios';
 import AIChat from '../../components/ChatBot/Aichat.jsx';
 import { loadStripe } from '@stripe/stripe-js';
-const stripePromise = loadStripe('pk_test_51REr3D4Pm8bi1bka0tMXqVjPNPyEbfMEb97yP1sMgquLKLusTHjAtatfqPxEl6txhc8F5X8uN94FV3tWyUUA9MWF005QM2JElh');
+const stripePromise = loadStripe('pk_test_51RPi0BI60AmMhjB7QXOsnO1d7vsWW7XVoYZnDe4Al7ZoQ7PIgSBdF1l9SE5AekRVZQ1LIFlebCoyrfvFF1vqqgsw00tA0b6Wy1');
 
 
 

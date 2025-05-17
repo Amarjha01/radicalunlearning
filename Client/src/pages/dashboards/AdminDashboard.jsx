@@ -11,7 +11,6 @@ import {
 import {
   Users,
   BookOpen,
-  DollarSign,
   Settings,
   Bell,
   Moon,
@@ -23,6 +22,7 @@ import {
   Trash2,
   Menu,
 } from "lucide-react";
+import { LuPoundSterling } from "react-icons/lu";
 import { CreditCard, Clock, Filter,  MoreVertical, CheckCircle, XCircle } from 'lucide-react';
 import {  BarChart, Bar } from 'recharts';
 import { IoWalletOutline } from "react-icons/io5";
@@ -278,7 +278,7 @@ const getWithdrawelRequests = async() =>{
               darkMode={darkMode}
             />
             <SidebarItem
-              icon={<DollarSign size={20} />}
+              icon={<LuPoundSterling size={20} />}
               label="Revenue"
               active={activeView === "revenue"}
               onClick={() => setActiveView("revenue")}
@@ -373,7 +373,7 @@ const getWithdrawelRequests = async() =>{
                   darkMode={darkMode}
                 />
                 <SidebarItem
-                  icon={<DollarSign size={20} />}
+                  icon={<LuPoundSterling size={20} />}
                   label="Revenue"
                   active={activeView === "revenue"}
                   onClick={() => {
@@ -485,8 +485,8 @@ const getWithdrawelRequests = async() =>{
             />
             <StatCard
               title="Monthly Revenue"
-              value={`$${monthlyRevenue}`}
-              icon={<DollarSign className="h-8 w-8 text-blue-500" />}
+              value={`${monthlyRevenue}`}
+              icon={<LuPoundSterling className="h-8 w-8 text-blue-500" />}
               darkMode={darkMode}
             />
 
@@ -581,7 +581,7 @@ const getWithdrawelRequests = async() =>{
               <tr key={request.id} className={`${darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-500'}`}>
                 <td className="px-4 py-3 text-sm dark:text-white">{request._id}</td>
                 <td className="px-4 py-3 text-sm dark:text-white">{request.educator.name}</td>
-                <td className="px-4 py-3 text-sm font-medium dark:text-white">${request.amount.toFixed(2)}</td>
+                <td className="px-4 py-3 text-sm font-medium dark:text-white flex items-center">< LuPoundSterling />{request.amount.toFixed(2)}</td>
                 <td className="px-4 py-3 text-sm dark:text-gray-300"> {new Date(request.createdAt).toLocaleDateString()}</td>
                 <td className="px-4 py-3 text-sm dark:text-gray-300">{request.educator.payoutMethod}</td>
                 <td className="px-4 py-3 text-sm">
@@ -652,12 +652,12 @@ const getWithdrawelRequests = async() =>{
   <table className="min-w-full table-fixed divide-y divide-gray-200 dark:divide-gray-700 rounded-lg">
   <thead className="bg-gray-50 dark:bg-gray-700">
     <tr>
-      <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider w-1/5 break-words w-1/5 break-words">Name</th>
-      <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider w-1/5 break-words w-1/5 break-words">Email</th>
-      <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider w-1/5 break-words w-1/5 break-words">Sub-Role</th>
-      <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider w-1/5 break-words w-1/5 break-words">Country</th>
-      <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider w-1/5 break-words w-1/5 break-words">Join Date</th>
-      <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider w-1/5 break-words w-1/5 break-words">View</th>
+      <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider  w-1/5 break-words">Name</th>
+      <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider  w-1/5 break-words">Email</th>
+      <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider  w-1/5 break-words">Sub-Role</th>
+      <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider  w-1/5 break-words">Country</th>
+      <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider  w-1/5 break-words">Join Date</th>
+      <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider  w-1/5 break-words">View</th>
     </tr>
   </thead>
   <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
@@ -810,25 +810,25 @@ const getWithdrawelRequests = async() =>{
                   <tr>
                     <th
                       scope="col"
-                      className="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider w-1/5 break-words w-1/5 break-words"
+                      className="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider  w-1/5 break-words"
                     >
                       Name
                     </th>
                     <th
                       scope="col"
-                      className="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider w-1/5 break-words w-1/5 break-words"
+                      className="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider  w-1/5 break-words"
                     >
                       Email
                     </th>
                     <th
                       scope="col"
-                      className="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider w-1/5 break-words w-1/5 break-words"
+                      className="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider  w-1/5 break-words"
                     >
                       Join Date
                     </th>
                     <th
                       scope="col"
-                      className="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider w-1/5 break-words w-1/5 break-words"
+                      className="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider  w-1/5 break-words"
                     >
                       Actions
                     </th>
@@ -870,13 +870,13 @@ const getWithdrawelRequests = async() =>{
               <StatCard
                 title="Total Revenue"
                 value={`$${totalRevenue}`}
-                icon={<DollarSign className="h-8 w-8 text-green-500" />}
+                icon={<LuPoundSterling className="h-8 w-8 text-green-500" />}
                 darkMode={darkMode}
               />
               <StatCard
                 title="Monthly Revenue"
                 value={`$${monthlyRevenue}`}
-                icon={<DollarSign className="h-8 w-8 text-blue-500" />}
+                icon={<LuPoundSterling className="h-8 w-8 text-blue-500" />}
                 darkMode={darkMode}
               />
               <StatCard

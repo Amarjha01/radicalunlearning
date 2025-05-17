@@ -59,7 +59,7 @@ const AIChat = () => {
   };
 
   return (
-    <div className="max-w-2xl mx-auto p-6 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl shadow-lg">
+    <div className="max-w-5xl mx-auto p-6 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl shadow-lg">
       <div className="flex justify-between items-center mb-4 pb-3 border-b border-indigo-100">
         <div className="flex items-center">
           <div className="w-10 h-10 rounded-full bg-gradient-to-r from-indigo-500 to-purple-600 flex items-center justify-center shadow-md">

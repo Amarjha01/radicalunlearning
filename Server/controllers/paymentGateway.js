@@ -152,3 +152,40 @@ await EducatorUserModel.findByIdAndUpdate(record.educatorId, {
 }
 
 
+export const createConnectedAccount = async (educator) => {
+  const account = await stripe.accounts.create({
+    type: 'custom',
+    country: educator.country || 'GB', // Use actual country code if available
+    email: educator.email,
+    business_type: 'individual',
+    capabilities: {
+      transfers: { requested: true },
+    },
+  });
+
+  return account.id;
+};
+
+export const payoutToEducator = async (req, res) => {
+  const { educatorId, amount } = req.body;
+
+  const educator = await EducatorUserModel.findById(educatorId);
+
+  if (!educator.stripeAccountId) {
+    return res.status(400).json({ message: 'Educator has no Stripe account' });
+  }
+
+  try {
+    const transfer = await stripe.transfers.create({
+      amount: amount * 100, // in cents
+      currency: educator.currency || 'gbp',
+      destination: educator.stripeAccountId,
+      description: 'Educator Payout',
+    });
+
+    res.status(200).json({ success: true, transfer });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Payout failed' });
+  }
+};

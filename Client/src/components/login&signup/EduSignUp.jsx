@@ -176,75 +176,73 @@ const EduSignUp = () => {
     }
   };
 
-  const onSubmit = async (data) => {
-    let hasError = false;
-  
-    if (!country) {
-      setCountryError(true);
-      hasError = true;
-    } else {
-      setCountryError(false);
-    }
-  
-    if (!language) {
-      setLanguageError(true);
-      hasError = true;
-    } else {
-      setLanguageError(false);
-    }
-  
- 
-  
-    if (hasError) return;
-  
-    try {
-      setIsSubmitting(true);
-  
-      const [documentUrl, videoUrl] = await Promise.all([
-        uploadToCloudinary(documentFile, "raw"),
-        uploadToCloudinary(videoFile, "video"),
-      ]);
-  
-      if (!documentUrl || !videoUrl) {
-         documentUrl = null;
-         videoUrl = null;
-      }
-  
-      const payload = {
-        ...data,
-        country,
-        language,
-        subjects: data.subjects?.map((s) => s.value),
-        role: "educator",
-        bio,
-        documentUrl,
-        videoUrl,
-      };
-  
-      const response = await axios.post(API.registerEducator.url, payload);
-      
-      alert("Registration Successful!");
-      console.log("Server Response:", response.data);
+const onSubmit = async (data) => {
+  let hasError = false;
 
-      reset(); // This clears all controlled fields
-      setBio(""); // manually clear bio state
-      setWordCount(0);
-      setCountry("");
-      setLanguage("");
-      setDocumentFile(null);
-      setVideoFile(null);
-      window.scrollTo({ top: 0, behavior: "smooth" });
-      Navigate('/signin')
+  if (!country) {
+    setCountryError(true);
+    hasError = true;
+  } else {
+    setCountryError(false);
+  }
 
-    } catch (error) {
-      console.error("Error in registration:", error);
-      // Show server-side error message from backend if available
-      const message = error.response?.data?.message || "Something went wrong. Please try again.";
-      alert(message);
-    } finally {
-      setIsSubmitting(false);
+  if (!language) {
+    setLanguageError(true);
+    hasError = true;
+  } else {
+    setLanguageError(false);
+  }
+
+  if (hasError) return;
+
+  try {
+    setIsSubmitting(true);
+
+    let documentUrl = null;
+    let videoUrl = null;
+
+    if (documentFile) {
+      documentUrl = await uploadToCloudinary(documentFile, "raw");
     }
-  };
+
+    if (videoFile) {
+      videoUrl = await uploadToCloudinary(videoFile, "video");
+    }
+
+    const payload = {
+      ...data,
+      country,
+      language,
+      subjects: data.subjects?.map((s) => s.value),
+      role: "educator",
+      bio,
+      documentUrl,
+      videoUrl,
+    };
+
+    const response = await axios.post(API.registerEducator.url, payload);
+
+    alert("Registration Successful!");
+    console.log("Server Response:", response.data);
+
+    reset();
+    setBio("");
+    setWordCount(0);
+    setCountry("");
+    setLanguage("");
+    setDocumentFile(null);
+    setVideoFile(null);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    Navigate("/signin");
+  } catch (error) {
+    console.error("Error in registration:", error);
+    const message = error.response?.data?.message || "Something went wrong. Please try again.";
+    alert(message);
+  } finally {
+    setIsSubmitting(false);
+  }
+};
+
   
   
 

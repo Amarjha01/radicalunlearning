@@ -4,7 +4,6 @@ import {
   Clock,
   Users,
   User,
-  DollarSign,
   Settings,
   Bell,
   LogOut,
@@ -18,6 +17,9 @@ import {
   Search,
   X,
 } from "lucide-react";
+import { FaRupeeSign, FaCheck } from "react-icons/fa";
+import { LuPoundSterling } from "react-icons/lu";
+import { LuBotMessageSquare } from "react-icons/lu";
 import { IoWalletOutline } from "react-icons/io5";
 import {FaUserEdit } from 'react-icons/fa';
 import axios from "axios";
@@ -30,7 +32,9 @@ import { MdHome } from "react-icons/md";
 import { CiChat1 } from "react-icons/ci";
 import { Link } from "react-router-dom";
 import EducatorWallet from "../../components/Dashboard/Educator/EducatorWallet.jsx";
-
+import AIChat from '../../components/ChatBot/Aichat.jsx';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 // Main Component
 export default function EducatorDashboard() {
   const [activeTab, setActiveTab] = useState("dashboard");
@@ -40,6 +44,7 @@ export default function EducatorDashboard() {
   const [profileData, setProfileData] = useState({});
   const [sessions, setSessions] = useState({previous:[],upcoming:[]});
   const [isChangePasswordOpen, setIsChangePasswordOpen] = useState(false);
+  console.log(activeTab);
   
   const dispatch = useDispatch();
 
@@ -113,13 +118,34 @@ export default function EducatorDashboard() {
     alert("Currently We are not able to update your profile");
   }
 
-  
+    const [sessionFee, setSessionFee] = useState("1000");
+  const [isEditing, setIsEditing] = useState(false);
+  const [tempFee, setTempFee] = useState(sessionFee);
+
+  const handleSave = () => {
+    if (!isNaN(tempFee) && tempFee.trim() !== "") {
+      setSessionFee(tempFee);
+      setIsEditing(false);
+    }
+  };
 
 
 
 
   return (
     <div className="w-[100vw] min-h-screen flex max-w-[1680px] mx-auto bg-green-500">
+         <ToastContainer
+        position="top-right"
+        autoClose={4000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+      />
       {/* sidebar desktop */}
       <div className="hidden md:flex relative left-0 min-h-screen w-64 bg-white dark:bg-gray-800 shadow-md flex-col">
         <aside className="min-h-screen inset-y-0 left-0 z-10 w-64 bg-white dark:bg-gray-800 shadow-lg transform transition-transform duration-300 md:translate-x-0 hidden md:block">
@@ -187,8 +213,20 @@ export default function EducatorDashboard() {
                     : "text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
                 }`}
               >
-                <DollarSign className="mr-3 h-5 w-5" />
+                <LuPoundSterling className="mr-3 h-5 w-5" />
                 <span>Payment Settings</span>
+              </button>
+
+              <button
+                onClick={() => setActiveTab("AIbot")}
+                className={`flex items-center px-3 py-2 w-full text-left rounded-md text-sm font-medium ${
+                  activeTab === "AIbot"
+                    ? "bg-indigo-100 text-indigo-600 dark:bg-indigo-900 dark:text-indigo-200"
+                    : "text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
+                }`}
+              >
+                <LuBotMessageSquare className="mr-3 h-5 w-5" />
+                <span>AI ChatBot</span>
               </button>
 
               <button
@@ -267,17 +305,17 @@ export default function EducatorDashboard() {
                   </button>
                   <button 
                     onClick={() => {
-                      setActiveTab("communityChat");
+                      setActiveTab("Community Chat");
                       setMobileMenuOpen(false);
                     }}
                     className={`flex items-center px-3 py-2 w-full text-left rounded-md text-sm font-medium ${
-                      activeTab === "communityChat" 
+                      activeTab === "Community Chat" 
                       ? "bg-indigo-100 text-indigo-600 dark:bg-indigo-900 dark:text-indigo-200" 
                       : "text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
                     }`}
                   >
                     <CiChat1 className="mr-3 h-5 w-5" />
-                    <span>communityChat</span>
+                    <span>Community Chat</span>
                   </button>
                   
                   <button 
@@ -291,16 +329,32 @@ export default function EducatorDashboard() {
                       : "text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
                     }`}
                   >
-                    <DollarSign className="mr-3 h-5 w-5" />
+                    <LuPoundSterling className="mr-3 h-5 w-5" />
                     <span>Payment Settings</span>
                   </button>
+
+                  <button 
+                    onClick={() => {
+                      setActiveTab("AIbot");
+                      setMobileMenuOpen(false);
+                    }}
+                    className={`flex items-center px-3 py-2 w-full text-left rounded-md text-sm font-medium ${
+                      activeTab === "AIbot" 
+                      ? "bg-indigo-100 text-indigo-600 dark:bg-indigo-900 dark:text-indigo-200" 
+                      : "text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
+                    }`}
+                  >
+                    <LuPoundSterling className="mr-3 h-5 w-5" />
+                    <span>AI ChatBot</span>
+                  </button>
+
                   <button 
                     onClick={() => {
                       setActiveTab("Wallet");
                       setMobileMenuOpen(false);
                     }}
                     className={`flex items-center px-3 py-2 w-full text-left rounded-md text-sm font-medium ${
-                      activeTab === "payment" 
+                      activeTab === "Wallet" 
                       ? "bg-indigo-100 text-indigo-600 dark:bg-indigo-900 dark:text-indigo-200" 
                       : "text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
                     }`}
@@ -921,8 +975,62 @@ export default function EducatorDashboard() {
             <GroupChat  className='w-[50%]'/>
           </div>
         )}
+
+ {activeTab === "payment" && (
+        <div className="p-4 md:p-6 max-w-md mx-auto bg-white rounded-2xl shadow-md border mt-4">
+          <h2 className="text-xl font-semibold mb-4 text-center">Session Fee</h2>
+
+          {!isEditing ? (
+            <div className="flex items-center justify-between">
+              <div className="flex items-center text-lg font-medium">
+                <FaRupeeSign className="text-gray-600 mr-1" />
+                {sessionFee}
+              </div>
+              <button
+                onClick={() => {
+                  setTempFee(sessionFee);
+                  setIsEditing(true);
+                }}
+                className="text-sm bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition"
+              >
+                Edit
+              </button>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              <input
+                type="text"
+                value={tempFee}
+                onChange={(e) => setTempFee(e.target.value)}
+                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                placeholder="Enter new session fee"
+              />
+              <div className="flex gap-3 justify-end">
+                <button
+                  onClick={() => setIsEditing(false)}
+                  className="text-sm bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded-lg transition"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleSave}
+                  className="text-sm bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition"
+                >
+                  <FaCheck />
+                  Save
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+        {activeTab === "AIbot" && (
+          <div className="">
+            <AIChat />
+          </div>
+        )}
         {activeTab === "Wallet" &&(
-         <EducatorWallet />
+         <EducatorWallet wallet={profileData.wallet} />
         )}
       </div>
     </div>
