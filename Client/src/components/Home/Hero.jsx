@@ -32,26 +32,6 @@ const Hero = (theme) => {
     "DreamLab", "ZenSpace", "GameDev", "Feelings", "SketchUp",
   ];
 
-  useEffect(() => {
-    const chars = textRef.current.querySelectorAll("span");
-
-    gsap.fromTo(
-      chars,
-      {
-        opacity: 0,
-        scale: 2.5,
-        y: 20,
-      },
-      {
-        opacity: 1,
-        scale: 1,
-        y: 0,
-        duration: 0.6,
-        ease: "power3.out",
-        stagger: 0.03,
-      }
-    );
-  }, []);
 
   const animateButton = () => {
     gsap.fromTo(
@@ -86,17 +66,6 @@ const Hero = (theme) => {
     <div className="flex flex-col items-center justify-center gap-16">
     {/* Animated Heading */}
     <div className={ `my-5 text-2xl lg:text-6xl 2xl:text-9xl codystar-regular text-center overflow-hidden ${userProfile.theme === 'light' ? 'text-' : 'text-white'}`}>
-      <div ref={textRef} className="inline-block">
-        {text.split("").map((char, index) => (
-          <span
-            key={index}
-            className="inline-block whitespace-pre"
-            style={{ display: "inline-block" }}
-          >
-            {char}
-          </span>
-        ))}
-      </div>
     </div>
 
     {/* Animated Button Section */}
