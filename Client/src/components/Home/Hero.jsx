@@ -6,10 +6,10 @@ import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 
-const Hero = () => {
+const Hero = (theme) => {
   const textRef = useRef(null);
   const buttonRef = useRef(null);
-  const text = "Radical Unlearning - A revolution in Education";
+  const text = "Radical Unlearning ";
   const btnLabels = ["HOME", "COURSES", "ROADMAP"];
   const [currentIndex, setCurrentIndex] = useState(0);
   const [userProfile , setUserProfile] = useState({})
@@ -85,7 +85,7 @@ const Hero = () => {
   return (
     <div className="flex flex-col items-center justify-center gap-16">
     {/* Animated Heading */}
-    <div className={ `my-5 text-sm lg:text-4xl 2xl:text-6xl codystar-regular text-center overflow-hidden ${userProfile.theme === 'light' ? 'text-' : 'text-white'}`}>
+    <div className={ `my-5 text-2xl lg:text-6xl 2xl:text-9xl codystar-regular text-center overflow-hidden ${userProfile.theme === 'light' ? 'text-' : 'text-white'}`}>
       <div ref={textRef} className="inline-block">
         {text.split("").map((char, index) => (
           <span
@@ -105,7 +105,7 @@ const Hero = () => {
         {/* Prev Arrow */}
         <IoIosArrowRoundForward
           size={36}
-          className="rotate-180 text-white cursor-pointer hover:scale-110 transition"
+          className={`rotate-180  cursor-pointer hover:scale-110 transition ${theme === 'dark' ? 'text-white' : 'text-blac'}`}
           onClick={goPrev}
         />
 
@@ -122,7 +122,7 @@ const Hero = () => {
         {/* Next Arrow */}
         <IoIosArrowRoundForward
           size={36}
-          className="text-white cursor-pointer hover:scale-110 transition"
+          className={` cursor-pointer hover:scale-110 transition ${theme === 'dark' ? 'text-white' : 'text-blac'}`}
           onClick={goNext}
         />
       </div>

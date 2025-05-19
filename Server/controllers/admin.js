@@ -1,6 +1,9 @@
 import { EducatorUserModel , LearnerUserModel ,  WithdrawelRequestModel} from "../models/user.js";
-
 import jwt from 'jsonwebtoken'
+
+import Stripe from 'stripe';
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+
 // get all educator data
 export  const getAllEducatorData = async (req, resp) => {
 
@@ -98,24 +101,94 @@ export const suspendUser = async (req , resp) =>{
 }
  
 // Approve educator
-export const approveEducator = async (req, res) =>{
-    try {
-        const {email} = req.body;
-        console.log(email)
-        await EducatorUserModel.updateOne({email},{Approved:true})
-        res.status(200).json({
-            message: 'Approved',
-            success:true,
-            error:false
-        })
-    } catch (error) {
-        res.status(500).json({
-            message:'error while approving educator',
-            success:false,
-            error:true
-        })
+export const approveEducator = async (req, res) => {
+  try {
+    const { email } = req.body;
+  const ipAddress = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+    const educator = await EducatorUserModel.findOne({ email });
+
+    if (!educator) {
+      return res.status(404).json({
+        message: 'Educator not found',
+        success: false,
+        error: true,
+      });
     }
-}
+
+    // If Stripe account doesn't exist, create one
+// 1. Create the Custom Connect account
+const account = await stripe.accounts.create({
+  type: 'custom',
+  country: educator.country || 'GB',
+  email: educator.email,
+  business_type: 'individual',
+  individual: {
+    first_name: educator.name.split(' ')[0] || educator.name,
+    last_name: educator.name.split(' ')[1] || 'LastName',
+    email: educator.email,
+    phone: educator.phone,
+    dob: {
+      day: educator.dob?.day,
+      month: educator.dob?.month,
+      year: educator.dob?.year,
+    },
+    address: {
+      line1: educator.address?.line1,
+      city: educator.address?.city,
+      postal_code: educator.address?.postal_code,
+      country: educator.address?.country || 'GB',
+    },
+  },
+  capabilities: {
+    transfers: { requested: true },
+  },
+  tos_acceptance: {
+    date: Math.floor(Date.now() / 1000),
+    ip: ipAddress, // Make sure you capture IP from request
+  },
+});
+
+// 2. Create a bank token for the educator's UK account
+const bankToken = await stripe.tokens.create({
+  bank_account: {
+    country: 'GB',
+    currency: 'GBP',
+    account_holder_name: educator.name,
+    account_holder_type: 'individual',
+    routing_number: educator.ifscCode, // e.g., '108800'
+    account_number: educator.bankAccount, // e.g., '00012345'
+  },
+});
+
+// 3. Attach the external bank account to the custom Stripe account
+await stripe.accounts.createExternalAccount(account.id, {
+  external_account: bankToken.id,
+});
+
+// 4. Save the account ID in your DB (optional but highly recommended)
+educator.stripeAccountId = account.id;
+await educator.save();
+
+    // ✅ Mark educator as approved
+    educator.Approved = true;
+    await educator.save();
+
+    res.status(200).json({
+      message: 'Educator approved and Stripe account created',
+      success: true,
+      error: false,
+    });
+  } catch (error) {
+    console.error('Error approving educator:', error);
+    res.status(500).json({
+      message: 'Error while approving educator',
+      success: false,
+      error: true,
+    });
+  }
+};
+
+
 
 export const getEducatorDataDetails = async(req, res) =>{
     try {

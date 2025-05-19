@@ -101,179 +101,131 @@ export async function registerLearnerController(request, response) {
   }
 }
 
-export async function registerEducatorController(request, response) {
-  try {
-    const {
-      name,
-      email,
-      password,
-      role,
-      subrole,
-      country,
-      language,
-      bio,
-      experience,
-      subjects,
-      serviceType,
-      payoutMethod,
-      upiId,
-      bankAccount,
-      ifscCode,
-      paypalEmail,
-      otherPayout,
-      documentUrl,
-      videoUrl,
-      terms1,
-      terms2,
-      terms3,
-      terms4,
-      terms5,
-    } = request.body;
+export async function registerEducatorController(request, response) { try { const { name, email, password, role, subrole, country, language, phone, dob, address, bio, experience, subjects, serviceType, sessionfee, payoutMethod, upiId, bankAccount, ifscCode, paypalEmail, otherPayout, documentUrl, videoUrl, profileUrl, terms1, terms2, terms3, terms4, terms5, } = request.body;
 
-    console.log("Received payload:", request.body);
+console.log("Received payload:", request.body);
 
-    // Basic validation
-    if (!name || !email || !password || !role) {
-      return response.status(400).json({
-        message: "Please provide name, email, password, and role",
-        error: true,
-        success: false,
-      });
-    }
-
-    // Email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      return response.status(400).json({
-        message: "Invalid email format",
-        error: true,
-        success: false,
-      });
-    }
-
-    if (password.length < 8) {
-      return response.status(400).json({
-        message: "Password must be at least 8 characters",
-        error: true,
-        success: false,
-      });
-    }
-
-    // if (!documentUrl || !videoUrl) {
-    //   return response.status(400).json({
-    //     message: "Missing document or video URL",
-    //     error: true,
-    //     success: false,
-    //   });
-    // }
-
-    if (!terms1 || !terms2 || !terms3 || !terms4 || !terms5) {
-      return response.status(400).json({
-        message: "Please accept all terms and conditions",
-        error: true,
-        success: false,
-      });
-    }
-
-    // Payout method-specific checks
-    if (payoutMethod === "upi" && !upiId) {
-      return response.status(400).json({
-        message: "UPI ID is required",
-        error: true,
-        success: false,
-      });
-    }
-
-    if (payoutMethod === "bank" && (!bankAccount || !ifscCode)) {
-      return response.status(400).json({
-        message: "Bank account and IFSC code are required",
-        error: true,
-        success: false,
-      });
-    }
-
-    if (payoutMethod === "paypal" && !paypalEmail) {
-      return response.status(400).json({
-        message: "PayPal email is required",
-        error: true,
-        success: false,
-      });
-    }
-    if (payoutMethod === "other" && !otherPayout) {
-      return response.status(400).json({
-        message: "Other payout method details are required",
-        error: true,
-        success: false,
-      });
-    }
-
-    // Normalize email
-    const normalizedEmail = email.toLowerCase();
-
-    const existingUser = await EducatorUserModel.findOne({
-      email: normalizedEmail,
-    });
-    if (existingUser) {
-      return response.status(400).json({
-        message: "Email already registered",
-        error: true,
-        success: false,
-      });
-    }
-
-    // Password hash
-    const salt = await bcryptjs.genSalt(10);
-    const hashPassword = await bcryptjs.hash(password, salt);
-
-    const payload = {
-      name,
-      email: normalizedEmail,
-      password: hashPassword,
-      role,
-      subrole,
-      country,
-      language,
-      bio,
-      experience,
-      subjects,
-      serviceType,
-      payoutMethod,
-      upiId,
-      bankAccount,
-      ifscCode,
-      paypalEmail,
-      otherPayout,
-      documentUrl,
-      videoUrl,
-      terms1,
-      terms2,
-      terms3,
-      terms4,
-      terms5,
-    };
-
-    console.log("Saving user:", payload);
-
-    const newUser = new EducatorUserModel(payload);
-    const savedUser = await newUser.save();
-
-    const { password: _, ...userWithoutPassword } = savedUser.toObject();
-
-    return response.status(201).json({
-      message: "User registered successfully",
-      success: true,
-      error: false,
-      data: userWithoutPassword,
-    });
-  } catch (error) {
-    console.error("Registration error:", error);
-    return response.status(500).json({
-      message: error.message || "Internal server error",
-      error: true,
-      success: false,
-    });
-  }
+if (!name || !email || !password || !role || !subrole || !country || !language || !bio || !serviceType) {
+  return response.status(400).json({
+    message: "Missing required fields",
+    error: true,
+    success: false,
+  });
 }
+
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+if (!emailRegex.test(email)) {
+  return response.status(400).json({
+    message: "Invalid email format",
+    error: true,
+    success: false,
+  });
+}
+
+if (password.length < 8) {
+  return response.status(400).json({
+    message: "Password must be at least 8 characters",
+    error: true,
+    success: false,
+  });
+}
+
+if (!terms1 || !terms2 || !terms3 || !terms4 || !terms5) {
+  return response.status(400).json({
+    message: "Please accept all terms and conditions",
+    error: true,
+    success: false,
+  });
+}
+
+if (payoutMethod === "upi" && !upiId) {
+  return response.status(400).json({
+    message: "UPI ID is required",
+    error: true,
+    success: false,
+  });
+}
+
+if (payoutMethod === "bank" && (!bankAccount || !ifscCode)) {
+  return response.status(400).json({
+    message: "Bank account and IFSC code are required",
+    error: true,
+    success: false,
+  });
+}
+
+if (payoutMethod === "paypal" && !paypalEmail) {
+  return response.status(400).json({
+    message: "PayPal email is required",
+    error: true,
+    success: false,
+  });
+}
+
+if (payoutMethod === "other" && !otherPayout) {
+  return response.status(400).json({
+    message: "Other payout method details are required",
+    error: true,
+    success: false,
+  });
+}
+
+const normalizedEmail = email.toLowerCase();
+const existingUser = await EducatorUserModel.findOne({ email: normalizedEmail });
+if (existingUser) {
+  return response.status(400).json({
+    message: "Email already registered",
+    error: true,
+    success: false,
+  });
+}
+
+const salt = await bcryptjs.genSalt(10);
+const hashPassword = await bcryptjs.hash(password, salt);
+
+const newUser = new EducatorUserModel({
+  name,
+  email: normalizedEmail,
+  password: hashPassword,
+  role,
+  subrole,
+  country,
+  language,
+  phone,
+  dob,
+  address,
+  bio,
+  experience,
+  subjects,
+  serviceType,
+  sessionfee,
+  payoutMethod,
+  upiId,
+  bankAccount,
+  ifscCode,
+  paypalEmail,
+  otherPayout,
+  documentUrl,
+  videoUrl,
+  profileUrl,
+  terms1,
+  terms2,
+  terms3,
+  terms4,
+  terms5,
+});
+
+const savedUser = await newUser.save();
+const { password: _, ...userWithoutPassword } = savedUser.toObject();
+
+return response.status(201).json({
+  message: "User registered successfully",
+  success: true,
+  error: false,
+  data: userWithoutPassword,
+});
+
+} catch (error) { console.error("Registration error:", error); return response.status(500).json({ message: error.message || "Internal server error", error: true, success: false, }); } }
 
 export async function registerAdminController(request, response) {
   try {

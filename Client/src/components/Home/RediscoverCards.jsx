@@ -18,7 +18,7 @@ const loopCards = [
   },
 ];
 
-const RediscoverCards = () => {
+const RediscoverCards = (theme) => {
   const [current, setCurrent] = useState(0);
 
   // Rotate cards every 4s
@@ -30,13 +30,13 @@ const RediscoverCards = () => {
   }, []);
 
   return (
-    <section className="w-full min-h-fit  text-white flex flex-col md:flex-row items-center justify-between gap-10 px-8 py-20 overflow-hidden">
+    <section className={`w-full min-h-fit flex flex-col md:flex-row items-center justify-between gap-10 px-8 py-20 overflow-hidden`}>
       {/* Left side content */}
       <div className="max-w-xl text-left">
         <h2 className="text-4xl font-bold leading-snug mb-6">
           <span className="text-gray-400">Unlearn</span> to <strong>Rediscover</strong>
         </h2>
-        <p className="text-gray-300 text-lg">
+        <p className={` text-lg `}>
           Education isn’t about memorizing facts — it’s about becoming curious again.
           <br />
           RadicalUnlearning gives you the space to question, explore, and create without limits.
@@ -64,7 +64,7 @@ const RediscoverCards = () => {
                 }
               `}
             >
-              <p className="text-gray-200 text-md mb-4">{card.text}</p>
+              <p className={`text-md mb-4 ${theme === 'dark' ? 'text-gray-200 ': 'text-blac'}`}>{card.text}</p>
             </div>
           );
         })}

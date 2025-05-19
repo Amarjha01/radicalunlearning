@@ -139,12 +139,16 @@ const Educator_userSchema = new mongoose.Schema({
     required: [true, "Provide email"],
     unique: true,
   },
+  password: {
+    type: String,
+    required: true,
+  },
   role: {
     type: String,
   },
   subrole: {
-      type: String,
-      required: true,
+    type: String,
+    required: true,
   },
   country: {
     type: String,
@@ -154,6 +158,21 @@ const Educator_userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  phone: {
+    type: String, 
+  },
+  dob: {
+    day: Number,
+    month: Number,
+    year: Number,
+  },
+  address: {
+    line1: String,
+    line2: String,
+    city: String,
+    state: String,
+    postal_code: String,
+  },
   bio: {
     type: String,
     required: true,
@@ -162,7 +181,7 @@ const Educator_userSchema = new mongoose.Schema({
     type: String,
   },
   subjects: {
-    type: [String], 
+    type: [String],
   },
   serviceType: {
     type: String,
@@ -179,9 +198,9 @@ const Educator_userSchema = new mongoose.Schema({
     type: String,
     default: "GBP",
   },
-  
+
   payoutMethod: {
-    type: String,
+    type: String, // bank / upi / paypal / other
   },
   upiId: {
     type: String,
@@ -190,13 +209,13 @@ const Educator_userSchema = new mongoose.Schema({
     },
   },
   bankAccount: {
-    type: String,
+    type: String, // account_number
     required: function () {
       return this.payoutMethod === 'bank';
     },
   },
   ifscCode: {
-    type: String,
+    type: String, // sort_code (for UK), or IFSC (for India)
     required: function () {
       return this.payoutMethod === 'bank';
     },
@@ -213,70 +232,59 @@ const Educator_userSchema = new mongoose.Schema({
       return this.payoutMethod === 'other';
     },
   },
+
   stripeAccountId: {
-  type: String,
-},
-documentUrl: {
-    type: String, 
+    type: String,
+  },
+  stripeOnboardingStatus: {
+    type: String, // pending | completed | restricted | error
+    default: "pending",
+  },
+
+  documentUrl: {
+    type: String,
   },
   videoUrl: {
-    type: String, 
+    type: String,
   },
   profileUrl: {
-    type: String, 
-    // required: true,
-  },
-  password: {
     type: String,
-    required: true,
   },
-  terms1: {
-    type: Boolean,
-    required: true,
-  },
-  terms2: {
-    type: Boolean,
-    required: true,
-  },
-  terms3: {
-    type: Boolean,
-    required: true,
-  },
-  terms4: {
-    type: Boolean,
-    required: true,
-  },
-  terms5: {
-    type: Boolean,
-    required: true,
-  },
+
+  terms1: { type: Boolean, required: true },
+  terms2: { type: Boolean, required: true },
+  terms3: { type: Boolean, required: true },
+  terms4: { type: Boolean, required: true },
+  terms5: { type: Boolean, required: true },
+
   Approved: {
     type: Boolean,
-    default: false 
-},
+    default: false,
+  },
   otp: {
     type: Number,
-    default: 0
+    default: 0,
   },
   suspended: {
     type: String,
     enum: ['YES', 'NO'],
     default: 'NO',
   },
-  theme:{
-    type:String,
-    enum:['light' , 'dark'],
-    default:'light'
+  theme: {
+    type: String,
+    enum: ['light', 'dark'],
+    default: 'light',
   },
   totalSessions: {
     type: Number,
-    default: 0
+    default: 0,
   }
 }, {
   timestamps: true,
 });
 
 export const EducatorUserModel = mongoose.model("User-educators", Educator_userSchema);
+
 
 
 

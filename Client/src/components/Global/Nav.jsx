@@ -42,6 +42,15 @@ const Nav = () => {
       // setTheme(theme);
     }
   };
+useEffect(() => {
+  if (theme === 'dark') {
+    document.body.style.backgroundColor = '#020817'; 
+    document.body.style.color = 'white'; 
+  } else {
+    document.body.style.backgroundColor = '#faf3dd'; 
+    document.body.style.color = 'black'; // Optional: set light mode text color
+  }
+}, [theme]);
 console.log(theme);
 
   useEffect(() => {
@@ -94,13 +103,15 @@ console.log(theme);
 
   return (
     <div className="relative w-full text-white flex justify-between items-center px-5 z-50">
-      {/* Logo */}
-      <Link to="/" className={`text-md md:text-xl lg:text-2xl font-semibold uppercase anta-regular cursor-pointer z-20 ${theme === 'dark' ? 'text-white' : 'text-[#575757]'}`}>
+    <div className=" flex items-center gap-2">
+        <img src="/logo.webp" alt="" className="h-16  z-50 "/>
+      <Link to="/" className={` hidden md:flex text-md md:text-xl lg:text-2xl font-semibold uppercase anta-regular cursor-pointer z-20 ${theme === 'dark' ? 'text-white' : 'text-[#575757]'}`}>
         Radical Unlearning
       </Link>
+    </div>
       
       {/* Desktop Navbar */}
-      <div className="absolute w-full hidden lg:flex justify-center items-center">
+      <div className=" absolute w-full hidden lg:flex justify-center items-center">
   <ul className="flex">
     {navRoutes.map((path, idx) => (
       <li key={path}>
@@ -108,8 +119,8 @@ console.log(theme);
           to={path}
           className={({ isActive }) =>
             isActive
-              ? `border-b-2 ${theme === 'dark' ? 'border-white text-white' : 'border-[#D0E1D4] text-[#575757]'} px-3 py-2 rounded-xl`
-              : `${theme === 'dark' ? 'text-gray-300' : 'text-[#575757] hover:text-white'} px-3 py-2`
+              ? `border-b-2 ${theme === 'dark' ? 'border-white text-white' : 'border-[#D0E1D4] text-black'} px-3 py-2 rounded-xl`
+              : `${theme === 'dark' ? 'text-gray-300' : 'text-[#575757] hover:text-black'} px-3 py-2`
           }
         >
           {["Home", "About Us", "Contact Us"][idx]}
@@ -122,8 +133,8 @@ console.log(theme);
           to={`/dashboard/${user?.userData?.user?.role?.toLowerCase()}`}
           className={({ isActive }) =>
             isActive
-              ? `border-b-2 ${theme === 'dark' ? 'border-white text-white' : 'border-[#D0E1D4] text-[#575757]'} px-3 py-2 rounded-xl`
-              : `${theme === 'dark' ? 'text-gray-300' : 'text-[#575757] hover:text-white'} px-3 py-2`
+              ? `border-b-2 ${theme === 'dark' ? 'border-white text-white' : 'border-[#D0E1D4] text-black'} px-3 py-2 rounded-xl`
+              : `${theme === 'dark' ? 'text-gray-300' : 'text-[#575757] hover:text-black'} px-3 py-2`
           }
         >
           {user?.userData?.user?.role?.charAt(0).toUpperCase() + user?.userData?.user?.role?.slice(1).toLowerCase()} tools
@@ -152,7 +163,7 @@ console.log(theme);
     <button
       onClick={handleSignOut}
       className={`${
-        theme === 'dark' ? 'bg-black text-white border-gray-700' : 'bg-[#FAD0C4]  border-[#D0E1D4] text-black'
+        theme === 'dark' ? 'bg-black text-white border-gray-700' : 'bg-[#F2C078]  border-[#D0E1D4] text-black'
       } rounded-4xl px-6 py-2 border-2 cursor-pointer`}
     >
       signOut
@@ -161,7 +172,7 @@ console.log(theme);
     <Link to="/signin">
       <button
         className={`${
-          theme === 'dark' ? 'bg-black text-white border-gray-700' : 'bg-[#FAD0C4] text-[#D0E1D4] border-[#D0E1D4]'
+          theme === 'dark' ? 'bg-black text-white border-gray-700' : 'bg-[#F2C078] text-[#D0E1D4] border-[#D0E1D4]'
         } rounded-4xl px-6 py-2 border-2 cursor-pointer`}
       >
         Join Now

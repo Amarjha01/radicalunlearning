@@ -4,7 +4,7 @@ import { FaInstagram, FaFacebookF, FaYoutube, FaEnvelope, FaPhoneAlt, FaRobot } 
 const Footer= () =>  {
   const [openChatBot , setOpenChatBot] = useState(false)
   return (
-    <footer className="anta-regular text-white px-8 py-10 rounded-t-2xl">
+    <footer className="anta-regular px-8 py-10 rounded-t-2xl">
       <div className="flex flex-col lg:flex-row justify-between items-center gap-8">
         <div className="text-center lg:text-left space-y-2">
           <h3 className="text-xl font-semibold">Radical Unlearning</h3>

@@ -177,6 +177,8 @@ const EduSignUp = () => {
   };
 
 const onSubmit = async (data) => {
+  console.log(data);
+  
   let hasError = false;
 
   if (!country) {
@@ -291,34 +293,178 @@ const onSubmit = async (data) => {
         )}
       </div>
 
-      <div>
-        <label className="block font-medium text-sm w-full text-start text-white">
-          Select your country:
-        </label>
+<div>
+  <label className="block font-medium text-sm w-full text-start text-white">
+    Select your country:
+  </label>
+  <div className="anta-regular flex items-center bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500">
+    <select
+      {...register("country", { required: true })}
+      value={country}
+      onChange={(e) => {
+        setCountry(e.target.value);
+        setCountryError(false);
+      }}
+      className="w-full text-white bg-[#0e142a] outline-none rounded py-1 cursor-pointer"
+    >
+      <option value="">Select Country</option>
+      {[
+        { code: "US", name: "United States" },
+        { code: "GB", name: "United Kingdom" },
+        { code: "IN", name: "India" },
+        { code: "CA", name: "Canada" },
+        { code: "AU", name: "Australia" },
+        { code: "DE", name: "Germany" },
+        { code: "FR", name: "France" },
+        { code: "IT", name: "Italy" },
+        { code: "ES", name: "Spain" },
+        { code: "NL", name: "Netherlands" },
+        { code: "SG", name: "Singapore" },
+        { code: "AE", name: "United Arab Emirates" },
+        { code: "EG", name: "Egypt" },
+        { code: "ZA", name: "South Africa" },
+        { code: "BR", name: "Brazil" },
+        { code: "MX", name: "Mexico" },
+        { code: "JP", name: "Japan" },
+        { code: "CN", name: "China" },
+        { code: "HK", name: "Hong Kong" },
+        { code: "MY", name: "Malaysia" },
+        { code: "TH", name: "Thailand" },
+        { code: "NG", name: "Nigeria" },
+        { code: "KE", name: "Kenya" },
+        { code: "NZ", name: "New Zealand" },
+        { code: "IE", name: "Ireland" },
+        { code: "CH", name: "Switzerland" },
+        { code: "SE", name: "Sweden" },
+        { code: "BE", name: "Belgium" },
+        { code: "AT", name: "Austria" },
+        { code: "DK", name: "Denmark" },
+        { code: "FI", name: "Finland" },
+        { code: "NO", name: "Norway" },
+        { code: "PL", name: "Poland" },
+        { code: "PT", name: "Portugal" },
+        { code: "RU", name: "Russia" },
+        { code: "KR", name: "South Korea" },
+        { code: "ID", name: "Indonesia" },
+        { code: "PH", name: "Philippines" },
+        { code: "BD", name: "Bangladesh" },
+        { code: "PK", name: "Pakistan" },
+      ].map((c) => (
+        <option key={c.code} value={c.code}>
+          {c.name}
+        </option>
+      ))}
+    </select>
+  </div>
+  {countryError && (
+    <span className="text-sm text-red-800">Please select your country.</span>
+  )}
+</div>
+{/* Phone Number */}
+<div>
+  <label className="block font-medium text-sm w-full text-start text-white">
+    Phone Number
+  </label>
+  <div className="flex items-center bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500">
+    <input
+      {...register("phone", { required: true })}
+      placeholder="+441234567890"
+      className="bg-transparent outline-none w-full text-white anta-regular"
+    />
+  </div>
+  {errors.phone && (
+    <span className="text-sm text-red-800">Please enter a valid phone number.</span>
+  )}
+</div>
 
-        <div className="anta-regular  flex items-center bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500 ">
-          <select
-            value={country}
-            onChange={(e) => {
-              setCountry(e.target.value);
-              setCountryError(false);
-            }}
-            className="w-full text-white bg-[#0e142a]  outline-none rounded py-1  cursor-pointer "
-          >
-            <option value="" >Select Country</option>
-            {countryList.map((c) => (
-              <option key={c} value={c}>
-                {c}
-              </option>
-            ))}
-          </select>
-        </div>
-        {countryError && (
-          <span className="text-sm text-red-800">
-            Please select your country.
-          </span>
-        )}
-      </div>
+{/* Date of Birth */}
+<div className="mt-2 grid grid-cols-3 gap-2">
+  <div>
+    <label className="block text-sm text-white font-medium">Day</label>
+    <div className="bg-[#0e142a] px-4 py-3 rounded-lg border border-[#1e2a48] focus-within:border-blue-500">
+      <input
+        {...register("dob.day", { required: true })}
+        type="number"
+        min="1"
+        max="31"
+        placeholder="DD"
+        className="bg-transparent outline-none w-full text-white anta-regular"
+      />
+    </div>
+  </div>
+  <div>
+    <label className="block text-sm text-white font-medium">Month</label>
+    <div className="bg-[#0e142a] px-4 py-3 rounded-lg border border-[#1e2a48] focus-within:border-blue-500">
+      <input
+        {...register("dob.month", { required: true })}
+        type="number"
+        min="1"
+        max="12"
+        placeholder="MM"
+        className="bg-transparent outline-none w-full text-white anta-regular"
+      />
+    </div>
+  </div>
+  <div>
+    <label className="block text-sm text-white font-medium">Year</label>
+    <div className="bg-[#0e142a] px-4 py-3 rounded-lg border border-[#1e2a48] focus-within:border-blue-500">
+      <input
+        {...register("dob.year", { required: true })}
+        type="number"
+        placeholder="YYYY"
+        className="bg-transparent outline-none w-full text-white anta-regular"
+      />
+    </div>
+  </div>
+</div>
+
+{/* Address Line 1 */}
+<div className="mt-2">
+  <label className="block font-medium text-sm w-full text-start text-white">Address Line 1</label>
+  <div className="flex items-center bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500">
+    <input
+      {...register("address.line1", { required: true })}
+      placeholder="House / Flat / Street"
+      className="bg-transparent outline-none w-full text-white anta-regular"
+    />
+  </div>
+</div>
+
+{/* City */}
+<div className="mt-2">
+  <label className="block font-medium text-sm w-full text-start text-white">City</label>
+  <div className="flex items-center bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500">
+    <input
+      {...register("address.city", { required: true })}
+      placeholder="City"
+      className="bg-transparent outline-none w-full text-white anta-regular"
+    />
+  </div>
+</div>
+
+{/* State */}
+<div className="mt-2">
+  <label className="block font-medium text-sm w-full text-start text-white">State</label>
+  <div className="flex items-center bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500">
+    <input
+      {...register("address.state", { required: true })}
+      placeholder="State"
+      className="bg-transparent outline-none w-full text-white anta-regular"
+    />
+  </div>
+</div>
+
+{/* Postal Code */}
+<div className="mt-2">
+  <label className="block font-medium text-sm w-full text-start text-white">Postal Code</label>
+  <div className="flex items-center bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500">
+    <input
+      {...register("address.postal_code", { required: true })}
+      placeholder="Postal Code"
+      className="bg-transparent outline-none w-full text-white anta-regular"
+    />
+  </div>
+</div>
 
 <div>
   <label className="block font-medium text-sm w-full text-start text-white">
@@ -479,6 +625,7 @@ const onSubmit = async (data) => {
         <label className="block font-medium text-sm w-full text-start text-white">
           Are you providing your services as:
         </label>
+        
         <div className=" bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500 ">
           <select
             {...register("serviceType", { required: true })}
@@ -503,6 +650,7 @@ const onSubmit = async (data) => {
           Enter Your Payout Method
         </label>
         <p className=" text-blue-600 text-sm">*Please specify the method by which you would like us to pay you, your session fees</p>
+        <p className=" text-blue-600 text-sm">*Please Select Banck Transfer if you from european countries</p>
         <div className="flex items-center bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500 ">
           <select
             {...register("payoutMethod", { required: true })}
@@ -539,42 +687,42 @@ const onSubmit = async (data) => {
         </div>
       )}
 
-      {payoutMethod === "bank" && (
-        <>
-          <div className="mt-2">
-            <label className="block font-medium text-sm w-full text-start text-white">
-              Bank Account Number
-            </label>
-            <div className=" text-white bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500 ">
-              <input
-                {...register("bankAccount", { required: true })}
-                className="w-full text-white bg-transparent outline-none rounded"
-                placeholder="123456789012"
-              />
-            </div>
-            {errors.bankAccount && (
-              <p className="text-red-500 text-sm">
-                Bank Account Number is required.
-              </p>
-            )}
-          </div>
-          <div className="mt-2">
-            <label className="block font-medium text-sm w-full text-start text-white">
-              IFSC Code
-            </label>
-            <div className=" text-white bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500  ">
-              <input
-                {...register("ifscCode", { required: true })}
-                className="w-full text-white bg-transparent outline-none rounded"
-                placeholder="SBIN0001234"
-              />
-            </div>
-            {errors.ifscCode && (
-              <p className="text-red-500 text-sm">IFSC Code is required.</p>
-            )}
-          </div>
-        </>
+  {payoutMethod === "bank" && (
+  <>
+    <div className="mt-2">
+      <label className="block font-medium text-sm w-full text-start text-white">
+        Bank Account Number
+      </label>
+      <div className="text-white bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500">
+        <input
+          {...register("bankAccount", { required: true })}
+          className="w-full text-white bg-transparent outline-none rounded"
+          placeholder="e.g. 12345678"
+        />
+      </div>
+      {errors.bankAccount && (
+        <p className="text-red-500 text-sm">Bank Account Number is required.</p>
       )}
+    </div>
+
+    <div className="mt-2">
+      <label className="block font-medium text-sm w-full text-start text-white">
+        IFSC / SWIFT / BIC Code
+      </label>
+      <div className="text-white bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500">
+        <input
+          {...register("ifscCode", { required: true })}
+          className="w-full text-white bg-transparent outline-none rounded"
+          placeholder="e.g. SBIN0001234 or BOFSGBS1XXX"
+        />
+      </div>
+      {errors.ifscCode && (
+        <p className="text-red-500 text-sm">Code is required.</p>
+      )}
+    </div>
+  </>
+)}
+
 
       {payoutMethod === "paypal" && (
         <div className="mt-2 ">

@@ -7,22 +7,24 @@ import { useState } from 'react';
 import { useSelector } from "react-redux";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import FloatingSocialIcons from './components/Global/FloatingSocialIcons.jsx';
 function App() {
 
 const user = useSelector((state) => state?.user);
 const theme = user?.userData?.user?.theme
+console.log(theme);
 
 useEffect(() => {
-  if (theme === 'light') {
-    document.body.style.backgroundColor = '#F4CCE9'; 
-  } else {
+  if (theme === 'dark' ) {
     document.body.style.backgroundColor = '#020817'; 
+  } else {
+    document.body.style.backgroundColor = '#faf3dd'; 
   }
 }, [theme]);
 
   return (
     <>
-   <div className='relative min-h-screen text-white lg:pt-[1%] pt-[3%]  overflow-x-hidden  flex flex-col '>
+   <div className={`relative min-h-screen  lg:pt-[1%] pt-[3%]  overflow-x-hidden  flex flex-col `}>
     <ToastContainer
   position="top-right"
   autoClose={4000}
@@ -36,6 +38,7 @@ useEffect(() => {
   theme="colored"
 />
     <Nav />
+    <FloatingSocialIcons />
     <Outlet />
     <Footer />
    </div>

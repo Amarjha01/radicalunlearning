@@ -155,7 +155,7 @@ await EducatorUserModel.findByIdAndUpdate(record.educatorId, {
 export const createConnectedAccount = async (educator) => {
   const account = await stripe.accounts.create({
     type: 'custom',
-    country: educator.country || 'GB', // Use actual country code if available
+    country: educator.country || 'GB', 
     email: educator.email,
     business_type: 'individual',
     capabilities: {
@@ -167,25 +167,44 @@ export const createConnectedAccount = async (educator) => {
 };
 
 export const payoutToEducator = async (req, res) => {
-  const { educatorId, amount } = req.body;
-
-  const educator = await EducatorUserModel.findById(educatorId);
-
-  if (!educator.stripeAccountId) {
-    return res.status(400).json({ message: 'Educator has no Stripe account' });
-  }
-
   try {
+    const { educatorId, amount } = req.body;
+    const educator = await EducatorUserModel.findById(educatorId);
+
+    if (!educator) {
+      return res.status(404).json({ message: 'Educator not found' });
+    }
+
+    if (!educator.stripeAccountId) {
+      return res.status(400).json({ message: 'Educator has no Stripe account' });
+    }
+
+    const payoutAmount = Math.floor(Number(amount) * 100);
+    if (!payoutAmount || payoutAmount < 100) {
+      return res.status(400).json({ message: 'Invalid payout amount' });
+    }
+
+    if (educator.wallet < amount) {
+      return res.status(400).json({ message: 'Insufficient wallet balance' });
+    }
+
+    // Transfer from platform to educator Stripe account
     const transfer = await stripe.transfers.create({
-      amount: amount * 100, // in cents
+      amount: payoutAmount,
       currency: educator.currency || 'gbp',
       destination: educator.stripeAccountId,
       description: 'Educator Payout',
     });
 
+    educator.wallet -= amount;
+    await educator.save();
+
+    // Optional: save transfer info to your own DB
+
     res.status(200).json({ success: true, transfer });
   } catch (err) {
-    console.error(err);
+    console.error('Stripe payout error:', err);
     res.status(500).json({ message: 'Payout failed' });
   }
 };
+
