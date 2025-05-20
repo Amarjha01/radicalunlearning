@@ -1,7 +1,6 @@
 import React from "react";
 import CircularText from './CircularText';
 import VimeoPlayer from '../components/About/Video.jsx'
-import VideoCall from '../p2p/VideoCall.jsx'
 import '../components/Global/global.css'
 // import NotificationSystem from "../notification/NotificationSystem.jsx";
 const About = () => {
@@ -11,7 +10,6 @@ const About = () => {
       <h1 className="text-4xl md:text-5xl font-bold text-center mb-10 bg-gradient-to-r from-[#4facfe] via-[#6f57ff] to-[#00f2fe] bg-clip-text text-transparent orbitron-regular tracking-widest">
         🚀 About Us
       </h1>
-{/* Cinematic Video Section */}
 {/* 🎬 Cinematic Video Section */}
 <div className="py-20 w-full flex flex-col items-center justify-center px-4 md:px-20">
   <h2 className="text-3xl font-bold text-center mb-6 text-[#00f2fe] anta-regular">

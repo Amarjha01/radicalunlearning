@@ -19,48 +19,9 @@ const Nav = () => {
   const user = useSelector((state) => state.user);
 
   const currentTheme = user?.userData?.user?.theme || 'dark'; // Get from Redux
-  const [theme, setTheme] = useState(currentTheme); // Local UI theme
 
-  const handleToggleTheme = async () => {
-    const newTheme = theme === 'light' ? 'dark' : 'light';
 
-    // 1. Update Redux immediately
-    dispatch(updateTheme(newTheme));
-    // 2. Update Local State
-    setTheme(newTheme);
 
-    // 3. Send Backend update
-    try {
-      await axios.post(
-        API.toggleTheme.url,
-        { theme: newTheme }, // send new theme
-        { withCredentials: true }
-      );
-    } catch (err) {
-      console.error("Error toggling theme:", err.response?.data?.message || err.message);
-      // Optional: rollback
-      // setTheme(theme);
-    }
-  };
-useEffect(() => {
-  if (theme === 'dark') {
-    document.body.style.backgroundColor = '#020817'; 
-    document.body.style.color = 'white'; 
-  } else {
-    document.body.style.backgroundColor = '#faf3dd'; 
-    document.body.style.color = 'black'; // Optional: set light mode text color
-  }
-}, [theme]);
-console.log(theme);
-
-  useEffect(() => {
-    if (user && user.userData) {
-      setIsUser(true);
-      setTheme(user?.userData?.user?.theme || 'light'); // Sync UI if user changes
-    } else {
-      setIsUser(false);
-    }
-  }, [user]);
 
   const handleSignOut = async() => {
     try {
@@ -105,7 +66,7 @@ console.log(theme);
     <div className="relative w-full text-white flex justify-between items-center px-5 z-50">
     <div className=" flex items-center gap-2">
         <img src="/logo.webp" alt="" className="h-16  z-50 "/>
-      <Link to="/" className={` hidden md:flex text-md md:text-xl lg:text-2xl font-semibold uppercase anta-regular cursor-pointer z-20 ${theme === 'dark' ? 'text-white' : 'text-[#575757]'}`}>
+      <Link to="/" className={` hidden md:flex text-md md:text-xl lg:text-2xl font-semibold uppercase anta-regular cursor-pointer z-20  text-[#575757]`}>
         Radical Unlearning
       </Link>
     </div>
@@ -119,8 +80,8 @@ console.log(theme);
           to={path}
           className={({ isActive }) =>
             isActive
-              ? `border-b-2 ${theme === 'dark' ? 'border-white text-white' : 'border-[#D0E1D4] text-black'} px-3 py-2 rounded-xl`
-              : `${theme === 'dark' ? 'text-gray-300' : 'text-[#575757] hover:text-black'} px-3 py-2`
+              ? `border-b-2 border-[#D0E1D4] text-black px-3 py-2 rounded-xl`
+              : `text-[#575757] hover:text-black px-3 py-2`
           }
         >
           {["Home", "About Us", "Contact Us"][idx]}
@@ -133,8 +94,8 @@ console.log(theme);
           to={`/dashboard/${user?.userData?.user?.role?.toLowerCase()}`}
           className={({ isActive }) =>
             isActive
-              ? `border-b-2 ${theme === 'dark' ? 'border-white text-white' : 'border-[#D0E1D4] text-black'} px-3 py-2 rounded-xl`
-              : `${theme === 'dark' ? 'text-gray-300' : 'text-[#575757] hover:text-black'} px-3 py-2`
+              ? `border-b-2 border-[#D0E1D4] text-black px-3 py-2 rounded-xl`
+              : `text-[#575757] hover:text-black px-3 py-2`
           }
         >
           {user?.userData?.user?.role?.charAt(0).toUpperCase() + user?.userData?.user?.role?.slice(1).toLowerCase()} tools
@@ -147,17 +108,11 @@ console.log(theme);
 
       {/* Glowing Circle */}
       <div className="absolute w-full h-auto -z-20 flex justify-center items-center">
-        <div className={`h-56 w-56 rounded-full filter-1 bg-gradient-to-r ${theme === 'dark' ? 'from-blue-500 to-purple-600' : 'from-[#FAD0C4] to-[#D0E1D4]'}`} />
+        <div className={`h-56 w-56 rounded-full filter-1 bg-gradient-to-r from-[#FAD0C4] to-[#D0E1D4]`} />
       </div>
 
-      {/* CTA & Hamburger */}
+      
       <div className="flex items-center gap-3">
-        <button 
-          onClick={handleToggleTheme}
-          className="relative w-12 h-6 flex items-center bg-gradient-to-r from-purple-500 to-pink-500 dark:from-gray-700 dark:to-gray-900 rounded-full p-1 cursor-pointer transition-all duration-500 shadow-lg"
-        >
-          <div className={`bg-white dark:bg-black w-4 h-4 rounded-full shadow-md transform transition-transform duration-300 ${theme === 'dark' ? 'translate-x-6' : ''}`} />
-        </button>
         <div className="relative button button-2 p-0.5 rounded-4xl cursor-pointer">
   {isUser ? (
     <button
@@ -171,9 +126,7 @@ console.log(theme);
   ) : (
     <Link to="/signin">
       <button
-        className={`${
-          theme === 'dark' ? 'bg-black text-white border-gray-700' : 'bg-[#F2C078] text-[#D0E1D4] border-[#D0E1D4]'
-        } rounded-4xl px-6 py-2 border-2 cursor-pointer`}
+        className={`bg-[#F2C078] text-[#000000] border-[#D0E1D4] rounded-4xl px-6 py-2 border-2 cursor-pointer`}
       >
         Join Now
       </button>

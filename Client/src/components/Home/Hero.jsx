@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 
-const Hero = (theme) => {
+const Hero = () => {
   const textRef = useRef(null);
   const buttonRef = useRef(null);
   const text = "Radical Unlearning ";
@@ -23,7 +23,7 @@ const Hero = (theme) => {
     }
   }, [user]); 
 
-  const isLightTheme = userProfile.theme === "light";
+
 
   const slideTest = [
     "MakerLab", "GrowMind", "LogicPlay", "SoulWork", "CodeCamp",
@@ -65,8 +65,6 @@ const Hero = (theme) => {
   return (
     <div className="flex flex-col items-center justify-center gap-16">
     {/* Animated Heading */}
-    <div className={ `my-5 text-2xl lg:text-6xl 2xl:text-9xl codystar-regular text-center overflow-hidden ${userProfile.theme === 'light' ? 'text-' : 'text-white'}`}>
-    </div>
 
     {/* Animated Button Section */}
     <div className="w-full flex justify-center items-center mt-4">
@@ -74,7 +72,7 @@ const Hero = (theme) => {
         {/* Prev Arrow */}
         <IoIosArrowRoundForward
           size={36}
-          className={`rotate-180  cursor-pointer hover:scale-110 transition ${theme === 'dark' ? 'text-white' : 'text-blac'}`}
+          className={`rotate-180  cursor-pointer hover:scale-110 transition text-black`}
           onClick={goPrev}
         />
 
@@ -91,7 +89,7 @@ const Hero = (theme) => {
         {/* Next Arrow */}
         <IoIosArrowRoundForward
           size={36}
-          className={` cursor-pointer hover:scale-110 transition ${theme === 'dark' ? 'text-white' : 'text-blac'}`}
+          className={` cursor-pointer hover:scale-110 transition text-black`}
           onClick={goNext}
         />
       </div>

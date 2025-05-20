@@ -1,11 +1,11 @@
 body{
-  /* background-color: #F4CCE9 ; */
+  background-color: #faf3dd ;
   /* background-color: #f0eee1 ; */
   /* background-color: #b4c0b2; */
 }
 
 #root {
-  /* background: #1F1300; */
+  /* background: #faf3dd; */
   max-width: 1680px;
   min-height:fit-content;
   margin: 0 auto;
