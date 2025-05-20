@@ -12,9 +12,6 @@ import {
   Users,
   BookOpen,
   Settings,
-  Bell,
-  Moon,
-  Sun,
   Search,
   ChevronDown,
   Check,
@@ -24,7 +21,6 @@ import {
 } from "lucide-react";
 import { LuPoundSterling } from "react-icons/lu";
 import { CreditCard, Clock, Filter,  MoreVertical, CheckCircle, XCircle } from 'lucide-react';
-import {  BarChart, Bar } from 'recharts';
 import { IoWalletOutline } from "react-icons/io5";
 import { MdHome } from "react-icons/md";
 import { CiChat1 } from "react-icons/ci";
@@ -48,7 +44,6 @@ const dummyRevenueData = [
 
 // Main App Component
 export default function AdminDashboard() {
-  const [darkMode, setDarkMode] = useState(false);
   const [activeView, setActiveView] = useState("dashboard");
   const [educators, setEducators] = useState([]);
   const [pendingEducators, setPendingEducators] = useState([]);
@@ -93,29 +88,29 @@ export default function AdminDashboard() {
     alert(`Subscription fee updated to $${subscriptionFee}`);
   };
 
-  const SidebarItem = ({ icon, label, active, onClick, darkMode }) => (
+  const SidebarItem = ({ icon, label, active, onClick, }) => (
     <li
       onClick={onClick}
       className={`flex items-center p-2 cursor-pointer rounded-md transition 
         ${
           active
-            ? "bg-indigo-100 dark:bg-indigo-600 text-indigo-800 dark:text-white"
-            : "text-gray-700 dark:text-gray-300"
+            ? "bg-indigo-100  text-indigo-800 "
+            : "text-gray-700 "
         }
-        hover:bg-indigo-200 dark:hover:bg-indigo-700`}
+        hover:bg-indigo-200 `}
     >
       {icon}
       <span className="ml-2">{label}</span>
     </li>
   );
 
-  const StatCard = ({ title, value, icon, darkMode }) => (
-    <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow flex items-center justify-between">
+  const StatCard = ({ title, value, icon, }) => (
+    <div className="bg-[#b4c0b2]  p-4 rounded-lg shadow flex items-center justify-between">
       <div>
-        <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
+        <p className="text-sm font-medium text-black ">
           {title}
         </p>
-        <p className="text-2xl font-bold text-gray-800 dark:text-white">
+        <p className="text-2xl font-bold text-black ">
           {value}
         </p>
       </div>
@@ -239,50 +234,50 @@ const getWithdrawelRequests = async() =>{
     
   return (
 
-    <div className=" w-[100vw] min-h-screen flex max-w-[1680px] mx-auto">
+    <div className=" w-[100vw] min-h-screen flex max-w-[1680px] mx-auto ">
            {
       viewUserDetails && (
-        <div className={` w-[100vw] absolute z-50 bg-black flex justify-center`}><UserDetailsList user={educatorDetailedData} />
-        <span onClick={()=>{setViewUserDetails(false)}} className=' text-white absolute right-5 text-3xl top-0 cursor-pointer'>X</span>
+        <div className={` w-[100vw] absolute z-50  flex justify-center`}><UserDetailsList user={educatorDetailedData} />
+        <span onClick={()=>{setViewUserDetails(false)}} className=' text-black absolute right-5 text-3xl top-0 cursor-pointer'>X</span>
         </div>
       )
      }
       {/* Sidebar - Desktop */}
-      <div className="hidden md:flex relative left-0 min-h-screen w-64 bg-white dark:bg-gray-800 shadow-md flex-col">
+      <div className="hidden md:flex relative left-0 min-h-screen w-64 bg-[#f2c078] shadow-md flex-col">
         <div className="p-4 flex items-center space-x-2">
-          <BookOpen className="h-8 w-8 text-indigo-600 dark:text-indigo-400" />
-          <h1 className="text-xl font-bold dark:text-white">EduAdmin</h1>
+          <BookOpen className="h-8 w-8  " />
+          <h1 className="text-xl font-bold ">Admin Tools</h1>
         </div>
 
-        <nav className="flex-1 p-4">
-          <ul className="space-y-2">
+        <nav className="flex-1 p-4 text-black">
+          <ul className="space-y-2 text-bl">
             <SidebarItem
               icon={<BookOpen size={20} />}
               label="Dashboard"
               active={activeView === "dashboard"}
               onClick={() => setActiveView("dashboard")}
-              darkMode={darkMode}
+
             />
             <SidebarItem
               icon={<Users size={20} />}
               label="Educators"
               active={activeView === "educators"}
               onClick={() => setActiveView("educators")}
-              darkMode={darkMode}
+
             />
             <SidebarItem
               icon={<Users size={20} />}
               label="Learners"
               active={activeView === "learners"}
               onClick={() => setActiveView("learners")}
-              darkMode={darkMode}
+
             />
             <SidebarItem
               icon={<LuPoundSterling size={20} />}
               label="Revenue"
               active={activeView === "revenue"}
               onClick={() => setActiveView("revenue")}
-              darkMode={darkMode}
+
             />
             <SidebarItem
               icon={<IoWalletOutline size={20} />}
@@ -292,51 +287,48 @@ const getWithdrawelRequests = async() =>{
                 setActiveView("withdrawelRequests") 
                 getWithdrawelRequests()
               }}
-              darkMode={darkMode}
+
             />
             <SidebarItem
               icon={<CiChat1 size={20} />}
               label="Community Chat"
               active={activeView === "communityChat"}
               onClick={() => setActiveView("communityChat")}
-              darkMode={darkMode}
+
             />
             <SidebarItem
               icon={<Settings size={20} />}
               label="Settings"
               active={activeView === "settings"}
               onClick={() => setActiveView("settings")}
-              darkMode={darkMode}
+
             />
           </ul>
         </nav>
       </div>
 
       {/* Mobile Menu Button */}
-      <div className="md:hidden fixed top-4 left-4 z-30">
+      <div className="md:hidden fixed top- left-">
         <button
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="p-2 rounded-md bg-gray-200 dark:bg-gray-700"
+          className="p-2 rounded-md bg-gray-200 "
         >
-          {mobileMenuOpen ? (
-            <X size={24} className="text-gray-800 dark:text-white" />
-          ) : (
-            <Menu size={24} className="text-gray-800 dark:text-white" />
-          )}
+            <Menu size={24} className="text-black " />
+         
         </button>
       </div>
 
       {/* Mobile Menu */}
       {mobileMenuOpen && (
-        <div className="md:hidden absolute left-0 inset-0 z-20 bg-gray-900 bg-opacity-50 backdrop-blur-sm">
-          <div className="h-full w-64 bg-white dark:bg-gray-800 shadow-lg p-4">
+        <div className="md:hidden absolute left-0 inset-0 z-20 bg-opacity-50 backdrop-blur-sm">
+          <div className="h-full w-64 bg-[#f2c078] hadow-lg p-4">
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center space-x-2">
-                <BookOpen className="h-6 w-6 text-indigo-600 dark:text-indigo-400" />
-                <h1 className="text-lg font-bold dark:text-white">EduAdmin</h1>
+                <BookOpen className="h-6 w-6 text-black " />
+                <h1 className="text-lg font-bold ">EduAdmin</h1>
               </div>
               <button onClick={() => setMobileMenuOpen(false)}>
-                <X size={24} className="text-gray-500 dark:text-gray-400" />
+                <X size={24} className="text-black" />
               </button>
             </div>
 
@@ -350,7 +342,7 @@ const getWithdrawelRequests = async() =>{
                     setActiveView("dashboard");
                     setMobileMenuOpen(false);
                   }}
-                  darkMode={darkMode}
+
                 />
                 <SidebarItem
                   icon={<Users size={20} />}
@@ -360,7 +352,7 @@ const getWithdrawelRequests = async() =>{
                     setActiveView("educators");
                     setMobileMenuOpen(false);
                   }}
-                  darkMode={darkMode}
+
                 />
                 <SidebarItem
                   icon={<Users size={20} />}
@@ -370,7 +362,7 @@ const getWithdrawelRequests = async() =>{
                     setActiveView("learners");
                     setMobileMenuOpen(false);
                   }}
-                  darkMode={darkMode}
+
                 />
                 <SidebarItem
                   icon={<LuPoundSterling size={20} />}
@@ -380,7 +372,7 @@ const getWithdrawelRequests = async() =>{
                     setActiveView("revenue");
                     setMobileMenuOpen(false);
                   }}
-                  darkMode={darkMode}
+
                 />
                 <SidebarItem
                   icon={<IoWalletOutline size={20} />}
@@ -390,17 +382,17 @@ const getWithdrawelRequests = async() =>{
                     setActiveView("withdrawelRequests");
                     setMobileMenuOpen(false);
                   }}
-                  darkMode={darkMode}
+
                 />
                 <SidebarItem
                   icon={<CiChat1 size={20} />}
-                  label="communityChat"
+                  label="Community Chat"
                   active={activeView === "communityChat"}
                   onClick={() => {
                     setActiveView("communityChat");
                     setMobileMenuOpen(false);
                   }}
-                  darkMode={darkMode}
+
                 />
                 <SidebarItem
                   icon={<Settings size={20} />}
@@ -410,51 +402,39 @@ const getWithdrawelRequests = async() =>{
                     setActiveView("settings");
                     setMobileMenuOpen(false);
                   }}
-                  darkMode={darkMode}
+
                 />
               </ul>
             </nav>
           </div>
         </div>
       )}
-      {/* main content */}
       {/* top bar */}
-      <div className=" grow-1 min-h-screen bg-white p-5">
-        <div className="bg-white dark:bg-gray-800 shadow rounded-lg mb-4 p-4 flex justify-between items-center">
+      <div className=" grow-1 min-h-screen bg-[#faf3dd] p-5">
+        <div className=" shadow rounded-lg mb-4 p-4 flex justify-between items-center">
           <div className="flex items-center">
-            <h2 className="text-xl font-semibold dark:text-white">
+            <h2 className="text-xl font-semibold ">
               {activeView === "dashboard" && "Dashboard"}
               {activeView === "educators" && "Educators Management"}
               {activeView === "learners" && "Learners Management"}
               {activeView === "revenue" && "Revenue Overview"}
               {activeView === "settings" && "Subscription Settings"}
+              {activeView === "withdrawelRequests" && "withdrawel Requests"}
+              {activeView === "communityChat" && "Community Chat"}
             </h2>
           </div>
 
           <div className="flex items-center space-x-4">
-            <button className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700">
+            <button className="p-2 rounded-full hover:bg-gray-100 ">
              <Link to={'/'}>
-             <MdHome  size={20} className="text-gray-600 dark:text-gray-300 cursor-pointer" />
+             <MdHome  size={20} className="text-black  cursor-pointer" />
              </Link>
-            </button>
-            <button className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700">
-              <Bell size={20} className="text-gray-600 dark:text-gray-300" />
-            </button>
-            <button
-              className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
-              onClick={() => setDarkMode(!darkMode)}
-            >
-              {darkMode ? (
-                <Sun size={20} className="text-gray-300" />
-              ) : (
-                <Moon size={20} className="text-gray-600" />
-              )}
             </button>
             <div className="flex items-center space-x-2">
               <div className="w-8 h-8 rounded-full bg-indigo-500 flex items-center justify-center text-white font-semibold">
                 A
               </div>
-              <span className="text-sm font-medium hidden sm:block dark:text-white">
+              <span className="text-sm font-medium hidden sm:block ">
                 {user.userData.user.name}
               </span>
             </div>
@@ -469,29 +449,29 @@ const getWithdrawelRequests = async() =>{
               title="Total Educators"
               value={totalEducators}
               icon={<Users className="h-8 w-8 text-indigo-500" />}
-              darkMode={darkMode}
+
             />
             <StatCard
               title="Pending Requests"
               value={pendingEducators.length}
-              icon={<Users className="h-8 w-8 text-yellow-500" />}
-              darkMode={darkMode}
+              icon={<Users className="h-8 w-8 text-yellow-900" />}
+
             />
             <StatCard
               title="Total Learners"
               value={totalLearners}
-              icon={<Users className="h-8 w-8 text-green-500" />}
-              darkMode={darkMode}
+              icon={<Users className="h-8 w-8 text-green-900" />}
+
             />
             <StatCard
               title="Monthly Revenue"
               value={`${monthlyRevenue}`}
               icon={<LuPoundSterling className="h-8 w-8 text-blue-500" />}
-              darkMode={darkMode}
+
             />
 
-            <div className="col-span-1 md:col-span-2 lg:col-span-4 bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
-              <h3 className="text-lg font-semibold mb-4 dark:text-white">
+            <div className="col-span-1 md:col-span-2 lg:col-span-4  p-4 rounded-lg shadow">
+              <h3 className="text-lg font-semibold mb-4 ">
                 Revenue Overview
               </h3>
               <div className="h-64">
@@ -499,14 +479,14 @@ const getWithdrawelRequests = async() =>{
                   <LineChart data={dummyRevenueData}>
                     <XAxis
                       dataKey="month"
-                      stroke={darkMode ? "#9ca3af" : "#6b7280"}
+                      stroke={"#6b7280"}
                     />
-                    <YAxis stroke={darkMode ? "#9ca3af" : "#6b7280"} />
+                    <YAxis stroke={"#6b7280"} />
                     <Tooltip
                       contentStyle={{
-                        backgroundColor: darkMode ? "#1f2937" : "#ffffff",
-                        color: darkMode ? "#ffffff" : "#000000",
-                        border: `1px solid ${darkMode ? "#374151" : "#e5e7eb"}`,
+                        backgroundColor:  "#ffffff",
+                        color:  "#000000",
+                        border: `1px solid  "#e5e7eb"`,
                       }}
                     />
                     <Legend />
@@ -533,29 +513,27 @@ const getWithdrawelRequests = async() =>{
       title="Pending Withdrawals"
       value={withdrawalRequestsData.length}
       icon={<Clock className="h-8 w-8 text-orange-500" />}
-      darkMode={darkMode}
     />
     <StatCard
       title="Processing Time"
       value="24 hrs"
       icon={<Clock className="h-8 w-8 text-blue-500" />}
-      darkMode={darkMode}
     />
     
     {/* Withdrawal Requests Table */}
-    <div className="col-span-1 md:col-span-2 lg:col-span-4 bg-white dark:bg-gray-800 rounded-lg shadow mb-6">
-      <div className="flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700">
-        <h3 className="text-lg font-semibold dark:text-white">Withdrawal Requests</h3>
+    <div className="col-span-1 md:col-span-2 lg:col-span-4  rounded-lg shadow mb-6">
+      <div className="flex justify-between items-center p-4 border-b border-gray-200 ">
+        <h3 className="text-lg font-semibold ">Withdrawal Requests</h3>
         <div className="flex items-center gap-2">
           <div className="relative">
             <input
               type="text"
               placeholder="Search requests..."
-              className="pl-8 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+              className="pl-8 pr-4 py-2 border border-gray-300  rounded-lg text-sm bg-gray-50  text-gray-900 "
             />
             <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-400" />
           </div>
-          <button className="flex items-center gap-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200">
+          <button className="flex items-center gap-1 px-3 py-2 border border-gray-300  rounded-lg text-sm bg-white  text-gray-700 ">
             <Filter className="h-4 w-4" />
             <span>Filter</span>
             <ChevronDown className="h-4 w-4" />
@@ -565,7 +543,7 @@ const getWithdrawelRequests = async() =>{
       
       <div className="overflow-x-auto">
         <table className="w-full">
-          <thead className={`text-xs uppercase ${darkMode ? 'bg-gray-700 text-gray-300' : 'bg-gray-100 text-gray-700'}`}>
+          <thead className={`text-xs uppercase bg-gray-100 text-gray-700`}>
             <tr>
               <th className="px-4 py-3 text-left">Request ID</th>
               <th className="px-4 py-3 text-left">Educator Name</th>
@@ -576,14 +554,14 @@ const getWithdrawelRequests = async() =>{
               <th className="px-4 py-3 text-right">Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+          <tbody className="divide-y divide-gray-200 ">
             {withdrawalRequestsData?.map((request) => (
-              <tr key={request.id} className={`${darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-500'}`}>
-                <td className="px-4 py-3 text-sm dark:text-white">{request._id}</td>
-                <td className="px-4 py-3 text-sm dark:text-white">{request.educator.name}</td>
-                <td className="px-4 py-3 text-sm font-medium dark:text-white flex items-center">< LuPoundSterling />{request.amount.toFixed(2)}</td>
-                <td className="px-4 py-3 text-sm dark:text-gray-300"> {new Date(request.createdAt).toLocaleDateString()}</td>
-                <td className="px-4 py-3 text-sm dark:text-gray-300">{request.educator.payoutMethod}</td>
+              <tr key={request.id} className={`hover:bg-black`}>
+                <td className="px-4 py-3 text-sm ">{request._id}</td>
+                <td className="px-4 py-3 text-sm ">{request.educator.name}</td>
+                <td className="px-4 py-3 text-sm font-medium  flex items-center">< LuPoundSterling />{request.amount.toFixed(2)}</td>
+                <td className="px-4 py-3 text-sm "> {new Date(request.createdAt).toLocaleDateString()}</td>
+                <td className="px-4 py-3 text-sm ">{request.educator.payoutMethod}</td>
                 <td className="px-4 py-3 text-sm">
                   <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full  font-bold text-xl text-yellow-500 `}>
                     {request.status.charAt(0).toUpperCase() + request.status.slice(1)}
@@ -593,15 +571,15 @@ const getWithdrawelRequests = async() =>{
                   <div className="flex justify-end items-center gap-2">
                     {request.status === 'pending' && (
                       <>
-                        <button className="p-1 rounded-full text-green-600 hover:bg-green-100 dark:hover:bg-green-900">
+                        <button className="p-1 rounded-full text-green-600 hover:bg-green-100 ">
                           <CheckCircle className="h-5 w-5" />
                         </button>
-                        <button className="p-1 rounded-full text-red-600 hover:bg-red-100 dark:hover:bg-red-900">
+                        <button className="p-1 rounded-full text-red-600 hover:bg-red-100 ">
                           <XCircle className="h-5 w-5" />
                         </button>
                       </>
                     )}
-                    <button className="p-1 rounded-full text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700">
+                    <button className="p-1 rounded-full text-black hover:bg-gray-100 ">
                       <MoreVertical className="h-5 w-5" />
                     </button>
                   </div>
@@ -612,25 +590,25 @@ const getWithdrawelRequests = async() =>{
         </table>
       </div>
       
-      <div className="flex justify-between items-center p-4 border-t border-gray-200 dark:border-gray-700">
-        <p className="text-sm text-gray-500 dark:text-gray-400">
+      <div className="flex justify-between items-center p-4 border-t border-gray-200 ">
+        <p className="text-sm text-black ">
           Showing <span className="font-medium">5</span> of{" "}
           <span className="font-medium">42</span> requests
         </p>
         <div className="flex items-center gap-2">
-          <button className="px-3 py-1 border border-gray-300 dark:border-gray-600 rounded text-sm bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200">
+          <button className="px-3 py-1 border border-gray-300  rounded text-sm bg-white  text-gray-700 ">
             Previous
           </button>
-          <button className="px-3 py-1 border border-gray-300 dark:border-gray-600 rounded text-sm bg-indigo-600 text-white">
+          <button className="px-3 py-1 border border-gray-300  rounded text-sm bg-indigo-600 text-white">
             1
           </button>
-          <button className="px-3 py-1 border border-gray-300 dark:border-gray-600 rounded text-sm bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200">
+          <button className="px-3 py-1 border border-gray-300  rounded text-sm bg-white  text-gray-700 ">
             2
           </button>
-          <button className="px-3 py-1 border border-gray-300 dark:border-gray-600 rounded text-sm bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200">
+          <button className="px-3 py-1 border border-gray-300  rounded text-sm bg-white  text-gray-700 ">
             3
           </button>
-          <button className="px-3 py-1 border border-gray-300 dark:border-gray-600 rounded text-sm bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200">
+          <button className="px-3 py-1 border border-gray-300  rounded text-sm bg-white  text-gray-700 ">
             Next
           </button>
         </div>
@@ -644,33 +622,33 @@ const getWithdrawelRequests = async() =>{
         {activeView === "educators" && (
 <div className=" flex flex-col gap-10 ">
 {/* approved educator */}
-<div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
-  <h3 className="text-lg font-semibold mb-4 dark:text-white">
+<div className=" p-4 rounded-lg shadow">
+  <h3 className="text-lg font-semibold mb-4 ">
   Approved Educator
   </h3>
   <div className="overflow-x-auto">
-  <table className="min-w-full table-fixed divide-y divide-gray-200 dark:divide-gray-700 rounded-lg">
-  <thead className="bg-gray-50 dark:bg-gray-700">
+  <table className="min-w-full table-fixed divide-y divide-gray-200 ">
+  <thead className="bg-gray-50 ">
     <tr>
-      <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider  w-1/5 break-words">Name</th>
-      <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider  w-1/5 break-words">Email</th>
-      <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider  w-1/5 break-words">Sub-Role</th>
-      <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider  w-1/5 break-words">Country</th>
-      <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider  w-1/5 break-words">Join Date</th>
-      <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider  w-1/5 break-words">View</th>
+      <th className="px-3 py-3 text-left text-xs font-medium text-black  uppercase tracking-wider  w-1/5 break-words">Name</th>
+      <th className="px-3 py-3 text-left text-xs font-medium text-black  uppercase tracking-wider  w-1/5 break-words">Email</th>
+      <th className="px-3 py-3 text-left text-xs font-medium text-black  uppercase tracking-wider  w-1/5 break-words">Sub-Role</th>
+      <th className="px-3 py-3 text-left text-xs font-medium text-black  uppercase tracking-wider  w-1/5 break-words">Country</th>
+      <th className="px-3 py-3 text-left text-xs font-medium text-black  uppercase tracking-wider  w-1/5 break-words">Join Date</th>
+      <th className="px-3 py-3 text-left text-xs font-medium text-black  uppercase tracking-wider  w-1/5 break-words">View</th>
     </tr>
   </thead>
-  <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+  <tbody className=" divide-y divide-gray-200 ">
     {approvedEducators.map((educator) => (
       <tr key={educator.id} className="align-top">
-        <td className="px-3 py-4 text-sm font-medium text-gray-900 dark:text-white break-words  text-start">{educator.name}</td>
-        <td className="px-3 py-4 text-sm text-gray-500 dark:text-gray-300 break-words  text-start">{educator.email}</td>
-        <td className="px-3 py-4 text-sm text-gray-500 dark:text-gray-300 break-words  text-start">{educator.subrole}</td>
-        <td className="px-3 py-4 text-sm text-gray-500 dark:text-gray-300 break-words text-start">{educator.country}</td>
-        <td className="px-3 py-4 text-sm text-gray-500 dark:text-gray-300 break-words text-start">{new Date(educator.createdAt).toLocaleDateString()}</td>
+        <td className="px-3 py-4 text-sm font-medium text-gray-900  break-words  text-start">{educator.name}</td>
+        <td className="px-3 py-4 text-sm text-black  break-words  text-start">{educator.email}</td>
+        <td className="px-3 py-4 text-sm text-black  break-words  text-start">{educator.subrole}</td>
+        <td className="px-3 py-4 text-sm text-black  break-words text-start">{educator.country}</td>
+        <td className="px-3 py-4 text-sm text-black  break-words text-start">{new Date(educator.createdAt).toLocaleDateString()}</td>
         <td
           onClick={() => fetchEducatorsDetailedData(educator.email)}
-          className="px-3 py-4 text-sm text-gray-500 dark:text-green-500 cursor-pointer break-words"
+          className="px-3 py-4 text-sm text-green-700  cursor-pointer break-words"
         >
           View
         </td>
@@ -683,57 +661,57 @@ const getWithdrawelRequests = async() =>{
 
 
 
-<div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
-  <h3 className="text-lg font-semibold mb-4 dark:text-white">
+<div className=" p-4 rounded-lg shadow">
+  <h3 className="text-lg font-semibold mb-4 ">
     Pending Educator Requests
   </h3>
   <div className="overflow-x-auto">
-  <table className="min-w-full table-fixed divide-y divide-gray-200 dark:divide-gray-700">
-      <thead className="bg-gray-50 dark:bg-gray-700">
+  <table className="min-w-full table-fixed divide-y divide-gray-200 ">
+      <thead className="bg-gray-50 ">
         <tr >
           <th
             scope="col"
-            className="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider w-1/5 break-words"
+            className="px-3 py-3 text-left text-xs font-medium text-black  uppercase tracking-wider w-1/5 break-words"
           >
             Name
           </th>
           <th
             scope="col"
-            className="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider w-1/5 break-words"
+            className="px-3 py-3 text-left text-xs font-medium text-black  uppercase tracking-wider w-1/5 break-words"
           >
             Email
           </th>
           <th
             scope="col"
-            className="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider w-1/5 break-words"
+            className="px-3 py-3 text-left text-xs font-medium text-black  uppercase tracking-wider w-1/5 break-words"
           >
             Request Date
           </th>
           <th
             scope="col"
-            className="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider w-1/5 break-words"
+            className="px-3 py-3 text-left text-xs font-medium text-black  uppercase tracking-wider w-1/5 break-words"
           >
             Actions
           </th>
           <th
             scope="col"
-            className="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider w-1/5 break-words"
+            className="px-3 py-3 text-left text-xs font-medium text-black  uppercase tracking-wider w-1/5 break-words"
           >
             View Details
           </th>
         </tr>
       </thead>
-      <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+      <tbody className=" divide-y divide-gray-200 ">
         {pendingEducators && pendingEducators.length > 0 ? (
           pendingEducators.map((educator) => (
             <tr key={educator.id} className="align-top">
-              <td className="px-3 py-4 text-sm font-medium text-gray-900 dark:text-white break-words  text-start">
+              <td className="px-3 py-4 text-sm font-medium text-gray-900  break-words  text-start">
                 {educator.name}
               </td>
-              <td className="px-3 py-4 text-sm font-medium text-gray-900 dark:text-white break-words  text-start">
+              <td className="px-3 py-4 text-sm font-medium text-gray-900  break-words  text-start">
                 {educator.email}
               </td>
-              <td className="px-3 py-4 text-sm font-medium text-gray-900 dark:text-white break-words  text-start">
+              <td className="px-3 py-4 text-sm font-medium text-gray-900  break-words  text-start">
                 {new Date(educator.createdAt).toLocaleDateString()}
               </td>
               <td className="px-3 py-4 whitespace-nowrap text-sm">
@@ -766,7 +744,7 @@ const getWithdrawelRequests = async() =>{
           <tr>
             <td
               colSpan="5"
-              className="px-6 py-4 text-center text-sm text-gray-500 dark:text-gray-300"
+              className="px-6 py-4 text-center text-sm text-black "
             >
               No pending requests
             </td>
@@ -789,64 +767,64 @@ const getWithdrawelRequests = async() =>{
         {/* learner view */}
 
         {activeView === "learners" && (
-          <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
+          <div className=" p-4 rounded-lg shadow">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold dark:text-white">
+              <h3 className="text-lg font-semibold ">
                 Learners Management
               </h3>
               <div className="relative">
                 <input
                   type="text"
                   placeholder="Search learners..."
-                  className="pl-8 pr-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="pl-8 pr-4 py-2 rounded-lg border border-gray-300    focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 />
                 <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-400" />
               </div>
             </div>
 
             <div className="overflow-x-auto">
-              <table className="min-w-full table-fixed divide-y divide-gray-200 dark:divide-gray-700">
-                <thead className="bg-gray-50 dark:bg-gray-700">
+              <table className="min-w-full table-fixed divide-y divide-gray-200 ">
+                <thead className="bg-gray-50 ">
                   <tr>
                     <th
                       scope="col"
-                      className="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider  w-1/5 break-words"
+                      className="px-3 py-3 text-left text-xs font-medium text-black  uppercase tracking-wider  w-1/5 break-words"
                     >
                       Name
                     </th>
                     <th
                       scope="col"
-                      className="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider  w-1/5 break-words"
+                      className="px-3 py-3 text-left text-xs font-medium text-black  uppercase tracking-wider  w-1/5 break-words"
                     >
                       Email
                     </th>
                     <th
                       scope="col"
-                      className="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider  w-1/5 break-words"
+                      className="px-3 py-3 text-left text-xs font-medium text-black  uppercase tracking-wider  w-1/5 break-words"
                     >
                       Join Date
                     </th>
                     <th
                       scope="col"
-                      className="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider  w-1/5 break-words"
+                      className="px-3 py-3 text-left text-xs font-medium text-black  uppercase tracking-wider  w-1/5 break-words"
                     >
                       Actions
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                <tbody className=" divide-y divide-gray-200 ">
                   {learners.map((learner) => (
                     <tr key={learner.id} className="align-top">
-                      <td className="px-3 py-4 text-sm font-medium text-gray-900 dark:text-white break-words  text-start">
+                      <td className="px-3 py-4 text-sm font-medium text-gray-900  break-words  text-start">
                         {learner.name}
                       </td>
-                      <td className="px-3 py-4 text-sm font-medium text-gray-900 dark:text-white break-words  text-start">
+                      <td className="px-3 py-4 text-sm font-medium text-gray-900  break-words  text-start">
                         {learner.email}
                       </td>
-                      <td className="px-3 py-4 text-sm font-medium text-gray-900 dark:text-white break-words  text-start">
+                      <td className="px-3 py-4 text-sm font-medium text-gray-900  break-words  text-start">
                         {new Date(learner.createdAt).toLocaleDateString()}
                       </td>
-                      <td className="px-3 py-4 font-medium text-gray-900 dark:text-white break-words  text-start ">
+                      <td className="px-3 py-4 font-medium text-gray-900  break-words  text-start ">
                         <button
                           onClick={() => deleteUser(learner.email)}
                           className="p-1 bg-red-100 text-red-600 rounded hover:bg-red-200 transition cursor-pointer "
@@ -871,24 +849,24 @@ const getWithdrawelRequests = async() =>{
                 title="Total Revenue"
                 value={`$${totalRevenue}`}
                 icon={<LuPoundSterling className="h-8 w-8 text-green-500" />}
-                darkMode={darkMode}
+
               />
               <StatCard
                 title="Monthly Revenue"
                 value={`$${monthlyRevenue}`}
                 icon={<LuPoundSterling className="h-8 w-8 text-blue-500" />}
-                darkMode={darkMode}
+
               />
               <StatCard
                 title="Active Subscriptions"
                 value={totalLearners}
                 icon={<Users className="h-8 w-8 text-indigo-500" />}
-                darkMode={darkMode}
+
               />
             </div>
 
-            <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
-              <h3 className="text-lg font-semibold mb-4 dark:text-white">
+            <div className=" p-4 rounded-lg shadow">
+              <h3 className="text-lg font-semibold mb-4 ">
                 Revenue Trend
               </h3>
               <div className="h-64">
@@ -896,14 +874,14 @@ const getWithdrawelRequests = async() =>{
                   <LineChart data={dummyRevenueData}>
                     <XAxis
                       dataKey="month"
-                      stroke={darkMode ? "#9ca3af" : "#6b7280"}
+                      stroke={"#6b7280"}
                     />
-                    <YAxis stroke={darkMode ? "#9ca3af" : "#6b7280"} />
+                    <YAxis stroke={"#6b7280"} />
                     <Tooltip
                       contentStyle={{
-                        backgroundColor: darkMode ? "#1f2937" : "#ffffff",
-                        color: darkMode ? "#ffffff" : "#000000",
-                        border: `1px solid ${darkMode ? "#374151" : "#e5e7eb"}`,
+                        backgroundColor: "#ffffff",
+                        color: "#000000",
+                        border: `1px solid "#e5e7eb"`,
                       }}
                     />
                     <Legend />

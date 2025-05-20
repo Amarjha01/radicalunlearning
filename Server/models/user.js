@@ -62,6 +62,9 @@ const Lerner_userSchema = new mongoose.Schema({
     type: Date,
     required: true,
   },
+   avatar: {
+    type: String,
+  },
   subjects: {
     type: [String],
     required: true,

@@ -11,8 +11,6 @@ const GroupChat = ({ roomId = "general" }) => {
     
     const user = useSelector((state) => state.user?.userData?.user);
 
-console.log("chatgroup" , user);
-
 
   if (!user) return <p>Please sign in to join the chat.</p>;
 

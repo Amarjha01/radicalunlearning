@@ -403,6 +403,7 @@ export async function signin(request, response) {
           Approved: user.Approved,
           theme: user.theme,
           wallet: user.wallet,
+          avatar: user.avatar,
           _id: user._id,
         },
         role: user.role,
@@ -434,7 +435,9 @@ export async function updateUserDetails(req, res) {
     let updateUser;
 
     if (role === "LEARNER") {
-      const { name, email, country, language, bio } = req.body;
+      const { name, email, country, language, bio , avatar } = req.body;
+      console.log("updateUserDetails:", req.body);
+      
       updateUser = await LearnerUserModel.updateOne(
         { _id: userId },
         {
@@ -443,6 +446,7 @@ export async function updateUserDetails(req, res) {
           ...(country && { country }),
           ...(language && { language }),
           ...(bio && { bio }),
+          ...(avatar && { avatar }),
         }
       );
     } else if (role === "EDUCATOR") {

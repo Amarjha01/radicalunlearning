@@ -59,7 +59,7 @@ const AIChat = () => {
   };
 
   return (
-    <div className="max-w-5xl mx-auto p-6 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl shadow-lg">
+    <div className="max-w-5xl mx-auto p-6 bg-[#b4c0b2] rounded-xl shadow-lg">
       <div className="flex justify-between items-center mb-4 pb-3 border-b border-indigo-100">
         <div className="flex items-center">
           <div className="w-10 h-10 rounded-full bg-gradient-to-r from-indigo-500 to-purple-600 flex items-center justify-center shadow-md">
@@ -77,7 +77,7 @@ const AIChat = () => {
         </button>
       </div>
 
-<div className="bg-white rounded-lg shadow-inner h-96 overflow-y-auto mb-4 p-4">
+<div className="bg-[#faf3dd] rounded-lg shadow-inner h-96 overflow-y-auto mb-4 p-4">
   {responses.length === 0 ? (
       <div className="flex flex-col items-center justify-center h-full text-center text-gray-400">
       <svg className="w-16 h-16 mb-2 opacity-30" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -121,7 +121,7 @@ const AIChat = () => {
 
       <div className="relative">
         <textarea
-          className="w-full border-2 text-black border-indigo-100 rounded-lg py-3 px-4 pr-12 resize-none focus:outline-none focus:border-indigo-300 focus:ring focus:ring-indigo-200"
+          className="w-full border-2 text-black border-indigo-100 rounded-lg py-3 px-4 pr-12 resize-none focus:outline-none focus:border-[#faf3dd] focus:ring focus:ring-indigo-200"
           rows={2}
           placeholder="Type your message here..."
           value={message}
@@ -131,7 +131,7 @@ const AIChat = () => {
         <button
           onClick={sendMessage}
           disabled={loading || !message.trim()}
-          className={`absolute right-2 bottom-2 rounded-full p-2 ${
+          className={`absolute right-2 bottom-[25%] rounded-full p-2 ${
             !message.trim() || loading
               ? "bg-gray-200 text-gray-400 cursor-not-allowed"
               : "bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-md hover:shadow-lg"

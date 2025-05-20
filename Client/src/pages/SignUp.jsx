@@ -7,7 +7,7 @@ const SignUp = () => {
     <div className="max-w-4xl min-h-screen mx-auto  p-6 rounded-lg shadow-md flex flex-col items-center z-50">
       <Link
         to={"/"}
-        className="absolute top-6 left-6 flex items-center gap-2 text-black hover:text-blue-400 transition"
+        className="absolute top-6 left-6 flex items-center gap-2 text-black hover:text-[#f2c078] transition"
       >
         <AiFillHome className="text-2xl" />
         <span className="hidden sm:inline-block font-semibold">Home</span>

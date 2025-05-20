@@ -92,10 +92,10 @@ const SignIn = () => {
   }, [notificationTimeout]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 py-10 text-white font-sans">
-      <div className="relative w-full max-w-md bg-[#111827] p-8 rounded-2xl border border-white/10 shadow-lg glow-hover">
-        <div className="absolute -top-5 -left-5 w-20 h-20 bg-gradient-to-br from-blue-500 via-purple-600 to-pink-500 blur-2xl rounded-full -z-10 opacity-50" />
-        <h2 className="text-3xl anta-regular text-center mb-6">Sign In</h2>
+    <div className="min-h-screen flex items-center justify-center px-4 py-10 text-black font-sans">
+      <div className="relative w-full max-w-md bg-[#b4c0b2] p-8 rounded-2xl border border-white/10 shadow-lg glow-hover">
+        <div className="" />
+        <h2 className="text-3xl anta-regular text-center mb-6 ">Sign In</h2>
 
         {errorMessage && (
           <p className="text-red-400 text-center mb-4">{errorMessage}</p>
@@ -105,14 +105,14 @@ const SignIn = () => {
           {/* Role */}
 {/* Role Dropdown */}
 <div>
-  <div className="flex items-center gap-2 bg-[#1f2937] p-3 rounded-lg border border-gray-600 focus-within:border-blue-500">
-    <FaUserAlt className="text-gray-400" />
+  <div className="flex items-center gap-2 bg-[#868674] p-3 rounded-lg border border-gray-600 focus-within:border-blue-500">
+    <FaUserAlt className="text-black" />
     <select
       {...register("role", { required: "Role is required" })}
-      className="bg-transparent outline-none text-white w-full"
+      className=" outline-none text-black bg-[#868674] w-full"
       defaultValue=""
     >
-      <option value="" disabled className="text-gray-500">
+      <option value="" disabled className="text-black">
         Select Role
       </option>
       <option value="ADMIN" className="text-black">ADMIN</option>
@@ -128,8 +128,8 @@ const SignIn = () => {
 
           {/* Email */}
           <div>
-            <div className="flex items-center gap-2 bg-[#1f2937] p-3 rounded-lg border border-gray-600 focus-within:border-blue-500">
-              <FaUserAlt className="text-gray-400" />
+            <div className="flex items-center gap-2 bg-[#868674] p-3 rounded-lg border border-gray-600 focus-within:border-blue-500">
+              <FaUserAlt className="text-black" />
               <input
                 type="email"
                 placeholder="Email"
@@ -140,7 +140,7 @@ const SignIn = () => {
                     message: "Invalid email format",
                   },
                 })}
-                className="bg-transparent outline-none text-white w-full"
+                className="bg-transparent outline-none text-black w-full"
               />
             </div>
             {errors.email && (
@@ -150,8 +150,8 @@ const SignIn = () => {
 
           {/* Password */}
           <div>
-            <div className="flex items-center gap-2 bg-[#1f2937] p-3 rounded-lg border border-gray-600 focus-within:border-blue-500">
-              <RiLockPasswordFill className="text-gray-400" />
+            <div className="flex items-center gap-2 bg-[#868674] p-3 rounded-lg border border-gray-600 focus-within:border-blue-500">
+              <RiLockPasswordFill className="text-black" />
               <input
                 type={`${showPass ? "string" : "password"}`}
                 placeholder="Password"
@@ -170,12 +170,12 @@ const SignIn = () => {
                     return !hasScriptTag || "No script tags allowed!";
                   },
                 })}
-                className="bg-transparent outline-none text-white w-full"
+                className="bg-transparent outline-none text-black w-full"
               />
               <button
                 type="button"
                 onClick={handleShowPass}
-                className="text-xl text-gray-400 focus:outline-none cursor-pointer"
+                className="text-xl text-black focus:outline-none cursor-pointer"
               >
                 {showPass ? <IoMdEye /> : <IoMdEyeOff />}
               </button>
@@ -188,18 +188,18 @@ const SignIn = () => {
           {/* Submit Button */}
           <button
             type="submit"
-            className="w-full bg-gradient-to-r from-blue-500 via-purple-600 to-pink-500 text-white font-semibold py-2 rounded-lg hover:brightness-110 transition-all cursor-pointer"
+            className="w-full bg-[#f2c078] text-black font-semibold py-2 rounded-lg hover:brightness-110 transition-all cursor-pointer"
           >
             Sign In
           </button>
         </form>
 
         {/* Sign Up Redirect */}
-        <p className="text-center text-sm text-gray-400 mt-6">
+        <p className="text-center text-sm text-black mt-6">
           Don’t have an account?{" "}
           <Link
             to="/signup/learner"
-            className="text-blue-400 hover:underline transition cursor-pointer"
+            className="text-blue-800 hover:underline transition cursor-pointer"
           >
             Sign Up
           </Link>

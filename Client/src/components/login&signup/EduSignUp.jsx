@@ -254,21 +254,20 @@ const onSubmit = async (data) => {
     animate={{ opacity: 1, y: 0 }}
     transition={{ duration: 0.5 }}
       onSubmit={handleSubmit(onSubmit)}
-      className="max-w-3xl  mx-auto  space-y-5 roboto-regular   bg-black p-10 rounded-2xl
-       hover:shadow-[0_0_5px_#000]  duration-100 backdrop-blur-lg  w-full border "
+      className="max-w-3xl  mx-auto  space-y-5 roboto-regular bg-[#b4c0b2] p-10 rounded-2xl hover:shadow-[0_0_5px_#000]  duration-100 backdrop-blur-lg  w-full border text-black"
     >
-      <h2 className="text-2xl font-extrabold mb-4 orbitron-regular bg-gradient-to-r from-[#6f57ff] via-[#00f2fe] to-[#4facfe] bg-clip-text text-transparent tracking-widest">
+      <h2 className="text-2xl font-extrabold mb-4 orbitron-regular  tracking-widest">
         Educator Registration
       </h2>
       <div>
-        <label className="block font-medium text-sm w-full text-start text-white">
+        <label className="block font-medium text-sm w-full text-start ">
           Full name
         </label>
-        <div className="flex items-center bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500 ">
+        <div className="flex items-center bg-[#868674] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500 ">
           <input
             {...register("name", { required: true })}
             placeholder="Full Name"
-            className="bg-transparent outline-none w-full text-white anta-regular"
+            className="bg-transparent outline-none w-full  anta-regular"
           />
         </div>
         {errors.name && (
@@ -277,14 +276,14 @@ const onSubmit = async (data) => {
       </div>
 
       <div>
-        <label className="block font-medium text-sm w-full text-start text-white">
+        <label className="block font-medium text-sm w-full text-start ">
           Email
         </label>
-        <div className="flex items-center bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500 ">
+        <div className="flex items-center bg-[#868674] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500 ">
           <input
             {...register("email", { required: true })}
             placeholder="Enter Your mail id"
-            className="bg-transparent outline-none w-full text-white anta-regular"
+            className="bg-transparent outline-none w-full  anta-regular"
           />
         </div>
         {errors.email && (
@@ -295,10 +294,10 @@ const onSubmit = async (data) => {
       </div>
 
 <div>
-  <label className="block font-medium text-sm w-full text-start text-white">
+  <label className="block font-medium text-sm w-full text-start ">
     Select your country:
   </label>
-  <div className="anta-regular flex items-center bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500">
+  <div className="anta-regular flex items-center bg-[#868674] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500">
     <select
       {...register("country", { required: true })}
       value={country}
@@ -306,7 +305,7 @@ const onSubmit = async (data) => {
         setCountry(e.target.value);
         setCountryError(false);
       }}
-      className="w-full text-white bg-[#0e142a] outline-none rounded py-1 cursor-pointer"
+      className="w-full  bg-[#868674] outline-none rounded py-1 cursor-pointer"
     >
       <option value="">Select Country</option>
       {[
@@ -363,14 +362,14 @@ const onSubmit = async (data) => {
 </div>
 {/* Phone Number */}
 <div>
-  <label className="block font-medium text-sm w-full text-start text-white">
+  <label className="block font-medium text-sm w-full text-start ">
     Phone Number
   </label>
-  <div className="flex items-center bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500">
+  <div className="flex items-center bg-[#868674] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500">
     <input
       {...register("phone", { required: true })}
       placeholder="+441234567890"
-      className="bg-transparent outline-none w-full text-white anta-regular"
+      className="bg-transparent outline-none w-full  anta-regular"
     />
   </div>
   {errors.phone && (
@@ -381,39 +380,39 @@ const onSubmit = async (data) => {
 {/* Date of Birth */}
 <div className="mt-2 grid grid-cols-3 gap-2">
   <div>
-    <label className="block text-sm text-white font-medium">Day</label>
-    <div className="bg-[#0e142a] px-4 py-3 rounded-lg border border-[#1e2a48] focus-within:border-blue-500">
+    <label className="block text-sm  font-medium">Day</label>
+    <div className="bg-[#868674] px-4 py-3 rounded-lg border border-[#1e2a48] focus-within:border-blue-500">
       <input
         {...register("dob.day", { required: true })}
         type="number"
         min="1"
         max="31"
         placeholder="DD"
-        className="bg-transparent outline-none w-full text-white anta-regular"
+        className="bg-transparent outline-none w-full  anta-regular"
       />
     </div>
   </div>
   <div>
-    <label className="block text-sm text-white font-medium">Month</label>
-    <div className="bg-[#0e142a] px-4 py-3 rounded-lg border border-[#1e2a48] focus-within:border-blue-500">
+    <label className="block text-sm  font-medium">Month</label>
+    <div className="bg-[#868674] px-4 py-3 rounded-lg border border-[#1e2a48] focus-within:border-blue-500">
       <input
         {...register("dob.month", { required: true })}
         type="number"
         min="1"
         max="12"
         placeholder="MM"
-        className="bg-transparent outline-none w-full text-white anta-regular"
+        className="bg-transparent outline-none w-full  anta-regular"
       />
     </div>
   </div>
   <div>
-    <label className="block text-sm text-white font-medium">Year</label>
-    <div className="bg-[#0e142a] px-4 py-3 rounded-lg border border-[#1e2a48] focus-within:border-blue-500">
+    <label className="block text-sm  font-medium">Year</label>
+    <div className="bg-[#868674] px-4 py-3 rounded-lg border border-[#1e2a48] focus-within:border-blue-500">
       <input
         {...register("dob.year", { required: true })}
         type="number"
         placeholder="YYYY"
-        className="bg-transparent outline-none w-full text-white anta-regular"
+        className="bg-transparent outline-none w-full  anta-regular"
       />
     </div>
   </div>
@@ -421,57 +420,57 @@ const onSubmit = async (data) => {
 
 {/* Address Line 1 */}
 <div className="mt-2">
-  <label className="block font-medium text-sm w-full text-start text-white">Address Line 1</label>
-  <div className="flex items-center bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500">
+  <label className="block font-medium text-sm w-full text-start ">Address Line 1</label>
+  <div className="flex items-center bg-[#868674] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500">
     <input
       {...register("address.line1", { required: true })}
       placeholder="House / Flat / Street"
-      className="bg-transparent outline-none w-full text-white anta-regular"
+      className="bg-transparent outline-none w-full  anta-regular"
     />
   </div>
 </div>
 
 {/* City */}
 <div className="mt-2">
-  <label className="block font-medium text-sm w-full text-start text-white">City</label>
-  <div className="flex items-center bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500">
+  <label className="block font-medium text-sm w-full text-start ">City</label>
+  <div className="flex items-center bg-[#868674] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500">
     <input
       {...register("address.city", { required: true })}
       placeholder="City"
-      className="bg-transparent outline-none w-full text-white anta-regular"
+      className="bg-transparent outline-none w-full  anta-regular"
     />
   </div>
 </div>
 
 {/* State */}
 <div className="mt-2">
-  <label className="block font-medium text-sm w-full text-start text-white">State</label>
-  <div className="flex items-center bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500">
+  <label className="block font-medium text-sm w-full text-start ">State</label>
+  <div className="flex items-center bg-[#868674] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500">
     <input
       {...register("address.state", { required: true })}
       placeholder="State"
-      className="bg-transparent outline-none w-full text-white anta-regular"
+      className="bg-transparent outline-none w-full  anta-regular"
     />
   </div>
 </div>
 
 {/* Postal Code */}
 <div className="mt-2">
-  <label className="block font-medium text-sm w-full text-start text-white">Postal Code</label>
-  <div className="flex items-center bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500">
+  <label className="block font-medium text-sm w-full text-start ">Postal Code</label>
+  <div className="flex items-center bg-[#868674] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500">
     <input
       {...register("address.postal_code", { required: true })}
       placeholder="Postal Code"
-      className="bg-transparent outline-none w-full text-white anta-regular"
+      className="bg-transparent outline-none w-full  anta-regular"
     />
   </div>
 </div>
 
 <div>
-  <label className="block font-medium text-sm w-full text-start text-white">
+  <label className="block font-medium text-sm w-full text-start ">
     Select your language:
   </label>
-  <div className="anta-regular flex items-center bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500">
+  <div className="anta-regular flex items-center bg-[#868674] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500">
     <input
       list="language-options"
       value={language}
@@ -480,7 +479,7 @@ const onSubmit = async (data) => {
         setLanguageError(false);
       }}
       placeholder="Type or select a language"
-      className="w-full text-white bg-[#0e142a] rounded outline-none py-1 cursor-text"
+      className="w-full  bg-[#868674] rounded outline-none py-1 cursor-text"
     />
     <datalist id="language-options">
       {languageList.map((lang) => (
@@ -497,13 +496,13 @@ const onSubmit = async (data) => {
 
 
       <div>
-        <label className="block font-medium text-sm w-full text-start text-white">
+        <label className="block font-medium text-sm w-full text-start ">
         Are you interested in registering as:
         </label>
-        <div className="anta-regular flex items-center bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500 ">
+        <div className="anta-regular flex items-center bg-[#868674] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500 ">
           <select
             {...register("subrole", { required: true })}
-            className="w-full text-white bg-[#0e142a] outline-none rounded py-1 cursor-pointer"
+            className="w-full  bg-[#868674] outline-none rounded py-1 cursor-pointer"
           >
             <option value="">Select Sub Role</option>
             <option value="Expert">Expert</option>
@@ -519,10 +518,10 @@ const onSubmit = async (data) => {
       {(educatorType === "Expert" || educatorType === "Both") && (
         <>
           <div>
-            <label className="block font-medium text-sm w-full text-start text-white">
+            <label className="block font-medium text-sm w-full text-start ">
               Which subject(s) are you an expert at?
             </label>
-            <div className=" bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500  text-white">
+            <div className=" bg-[#868674] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500  ">
             <Controller
   className=""
   name="subjects"
@@ -538,7 +537,7 @@ const onSubmit = async (data) => {
       }}
       value={field.value}
       placeholder="Select or create up to 10 subjects"
-      className="text-white outline-none bg-[#0e142a] anta-regular"  // Tailwind for base styling
+      className=" outline-none bg-[#868674] anta-regular"  // Tailwind for base styling
       styles={{
         control: (base) => ({
           ...base,
@@ -582,14 +581,14 @@ const onSubmit = async (data) => {
 
       {(educatorType === "Expert" || educatorType === "Both") && (
         <div>
-          <label className="block font-medium text-sm w-full text-start text-white">
+          <label className="block font-medium text-sm w-full text-start ">
             Please share your experience in teaching the subjects you have chosen.
           </label>
-          <div className=" bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500 ">
+          <div className=" bg-[#868674] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500 ">
             <textarea
               {...register("experience", { required: true })}
               placeholder="Specify topics within subject area with practical experience (500 words)"
-              className="w-full text-white outline-none rounded"
+              className="w-full  outline-none rounded"
               rows={5}
             />
           </div>
@@ -602,19 +601,19 @@ const onSubmit = async (data) => {
       )}
 
 <div>
-      <label className="block font-medium text-sm w-full text-start text-white">
+      <label className="block font-medium text-sm w-full text-start ">
         Please tell us about yourself - your background and what you’re looking for.
       </label>
-      <div className="bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500 ">
+      <div className="bg-[#868674] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500 ">
         <textarea
           value={bio}
           onChange={handleBioChange}
-          className="w-full text-white outline-none rounded"
+          className="w-full  outline-none rounded"
           rows={5}
           placeholder="About me (150 words)"
         />
       </div>
-      <div className="text-white text-sm">
+      <div className=" text-sm">
         <span>{wordCount}/150 words</span>
       </div>
       {wordCount > 150 && (
@@ -623,14 +622,14 @@ const onSubmit = async (data) => {
     </div>
 
       <div>
-        <label className="block font-medium text-sm w-full text-start text-white">
+        <label className="block font-medium text-sm w-full text-start ">
           Are you providing your services as:
         </label>
         
-        <div className=" bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500 ">
+        <div className=" bg-[#868674] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500 ">
           <select
             {...register("serviceType", { required: true })}
-            className="w-full text-white bg-[#0e142a] outline-none cursor-pointer rounded py-1"
+            className="w-full  bg-[#868674] outline-none cursor-pointer rounded py-1"
           >
             <option value="">Select</option>
             <option value="Paid">Paid</option>
@@ -647,15 +646,15 @@ const onSubmit = async (data) => {
 
 {(serviceType === "Paid" || serviceType === "Both") && (
         <div>
-        <label className="block font-medium text-sm w-full text-start text-white">
+        <label className="block font-medium text-sm w-full text-start ">
           Enter Your Payout Method
         </label>
         <p className=" text-blue-600 text-sm">*Please specify the method by which you would like us to pay you, your session fees</p>
         <p className=" text-blue-600 text-sm">*Please Select Banck Transfer if you from european countries</p>
-        <div className="flex items-center bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500 ">
+        <div className="flex items-center bg-[#868674] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500 ">
           <select
             {...register("payoutMethod", { required: true })}
-            className="w-full text-white bg-[#0e142a] outline-none cursor-pointer rounded py-1"
+            className="w-full  bg-[#868674] outline-none cursor-pointer rounded py-1"
           >
             <option value="">-- Select Method --</option>
             <option  value="upi">UPI</option>
@@ -672,13 +671,13 @@ const onSubmit = async (data) => {
 
       {payoutMethod === "upi" && (
         <div className="mt-2">
-          <label className="block font-medium text-sm w-full text-start text-white">
+          <label className="block font-medium text-sm w-full text-start ">
             Enter UPI ID
           </label>
-          <div className="flex items-center bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500 ">
+          <div className="flex items-center bg-[#868674] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500 ">
             <input
               {...register("upiId", { required: true })}
-              className="w-full text-white bg-[#0e142a] outline-none   rounded py-2"
+              className="w-full  bg-[#868674] outline-none   rounded py-2"
               placeholder="yourname@upi"
             />
           </div>
@@ -691,13 +690,13 @@ const onSubmit = async (data) => {
   {payoutMethod === "bank" && (
   <>
     <div className="mt-2">
-      <label className="block font-medium text-sm w-full text-start text-white">
+      <label className="block font-medium text-sm w-full text-start ">
         Bank Account Number
       </label>
-      <div className="text-white bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500">
+      <div className=" bg-[#868674] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500">
         <input
           {...register("bankAccount", { required: true })}
-          className="w-full text-white bg-transparent outline-none rounded"
+          className="w-full  bg-transparent outline-none rounded"
           placeholder="e.g. 12345678"
         />
       </div>
@@ -707,13 +706,13 @@ const onSubmit = async (data) => {
     </div>
 
     <div className="mt-2">
-      <label className="block font-medium text-sm w-full text-start text-white">
+      <label className="block font-medium text-sm w-full text-start ">
         IFSC / SWIFT / BIC Code
       </label>
-      <div className="text-white bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500">
+      <div className=" bg-[#868674] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500">
         <input
           {...register("ifscCode", { required: true })}
-          className="w-full text-white bg-transparent outline-none rounded"
+          className="w-full  bg-transparent outline-none rounded"
           placeholder="e.g. SBIN0001234 or BOFSGBS1XXX"
         />
       </div>
@@ -727,14 +726,14 @@ const onSubmit = async (data) => {
 
       {payoutMethod === "paypal" && (
         <div className="mt-2 ">
-          <label className="block font-medium text-sm w-full text-start text-white">
+          <label className="block font-medium text-sm w-full text-start ">
             PayPal Email
           </label>
-          <div className=" bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500  ">
+          <div className=" bg-[#868674] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500  ">
             <input
               type="email"
               {...register("paypalEmail", { required: true })}
-              className="w-full outline-none text-white bg-transparent rounded"
+              className="w-full outline-none  bg-transparent rounded"
               placeholder="you@example.com"
             />
           </div>
@@ -745,13 +744,13 @@ const onSubmit = async (data) => {
       )}
   {payoutMethod === "other" && (
         <div className="mt-2">
-          <label className="block font-medium text-sm w-full text-start text-white">
+          <label className="block font-medium text-sm w-full text-start ">
             Enter Your Payout details
           </label>
-          <div className="flex items-center bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500 ">
+          <div className="flex items-center bg-[#868674] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500 ">
             <input
               {...register("otherPayout", { required: true })}
-              className="w-full text-white bg-[#0e142a] outline-none   rounded py-2"
+              className="w-full  bg-[#868674] outline-none   rounded py-2"
               placeholder="Enter Your Payout details"
             />
           </div>
@@ -763,10 +762,10 @@ const onSubmit = async (data) => {
       
                 {/* Password */}
                 <div>
-                  <label className="block font-medium text-sm w-full text-start text-white">
+                  <label className="block font-medium text-sm w-full text-start ">
                    Create sign in password for this site
                   </label>
-                  <div className="flex items-center gap-2 bg-[#0e142a]  p-3 rounded-lg border border-[#1e2a48] focus-within:border-blue-500  ">
+                  <div className="flex items-center gap-2 bg-[#868674]  p-3 rounded-lg border border-[#1e2a48] focus-within:border-blue-500  ">
                     <RiLockPasswordFill className="text-gray-400" />
                     <input
                       type={`${showPass ? 'text' : 'password'}`}
@@ -786,7 +785,7 @@ const onSubmit = async (data) => {
                           return !hasScriptTag || "No script tags allowed!";
                         }
                       })}
-                      className="bg-transparent outline-none text-white w-full"
+                      className="bg-transparent outline-none  w-full"
                     />
                      <button
             type="button"
@@ -801,7 +800,7 @@ const onSubmit = async (data) => {
                   )}
                 </div>
 
-      <fieldset className="border border-blue-500 p-2 text-sm rounded-lg space-y-2 text-white">
+      <fieldset className="border border-blue-500 p-2 text-sm rounded-lg space-y-2 ">
         <legend className="font-bold">Accept Terms</legend>
         {[1, 2, 3, 4, 5].map((num) => (
           <label className="block cursor-pointer" key={num}>
@@ -826,15 +825,15 @@ const onSubmit = async (data) => {
       </fieldset>
  {/* PDF Upload */}
  <div>
-        <label className="block font-medium text-sm w-full text-start text-white">
+        <label className="block font-medium text-sm w-full text-start ">
           Upload Documents pdf only (optional) (Max 20 MB )
         </label>
-        <div className="flex items-center bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500">
+        <div className="flex items-center bg-[#868674] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500">
           <input
             type="file"
             accept=".pdf"
             onChange={handleDocumentSelect}
-            className="w-full text-white outline-none cursor-pointer"
+            className="w-full  outline-none cursor-pointer"
           />
         </div>
         {documentFile && (
@@ -844,15 +843,15 @@ const onSubmit = async (data) => {
 
       {/* Video Upload */}
       <div>
-        <label className="block font-medium text-sm w-full text-start text-white">
+        <label className="block font-medium text-sm w-full text-start ">
           Upload Introduction Video (optional) (MP4 only, Max 100 MB)
         </label>
-        <div className="flex items-center bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500">
+        <div className="flex items-center bg-[#868674] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500">
           <input
             type="file"
             accept="video/mp4"
             onChange={handleVideoSelect}
-            className="w-full text-white outline-none cursor-pointer"
+            className="w-full  outline-none cursor-pointer"
           />
         </div>
         {videoFile && (
@@ -864,11 +863,11 @@ const onSubmit = async (data) => {
       <button
         type="submit"
         disabled={isSubmitting}
-        className={`mt-4 px-6 py-1 rounded-full bg-[#1e2a48] font-semibold tracking-wide cursor-pointer ${
+        className={`mt-4 px-6 py-1 rounded-full bg-[#f2c078] font-semibold tracking-wide cursor-pointer ${
           isSubmitting ? "opacity-50 cursor-not-allowed" : "hover:opacity-90"
         } transition duration-300`}
       >
-        <span className="bg-gradient-to-r from-[#6f57ff] to-[#00f2fe] bg-clip-text text-transparent text-shadow-lg text-2xl orbitron-regular">
+        <span className=" text-shadow-lg text-2xl orbitron-regular">
           {isSubmitting ? "Submitting..." : "Submit"}
         </span>
       </button>

@@ -11,16 +11,6 @@ import FloatingSocialIcons from './components/Global/FloatingSocialIcons.jsx';
 function App() {
 
 const user = useSelector((state) => state?.user);
-const theme = user?.userData?.user?.theme
-console.log(theme);
-
-useEffect(() => {
-  if (theme === 'dark' ) {
-    document.body.style.backgroundColor = '#020817'; 
-  } else {
-    document.body.style.backgroundColor = '#faf3dd'; 
-  }
-}, [theme]);
 
   return (
     <>

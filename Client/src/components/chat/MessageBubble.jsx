@@ -12,7 +12,7 @@ const MessageBubble = ({ message, currentUserId }) => {
       case "educator":
         return "text-green-800";
       case "learner":
-        return "text-yellow-400";
+        return "text-yellow-900";
       default:
         return "text-white";
     }
@@ -65,7 +65,7 @@ const MessageBubble = ({ message, currentUserId }) => {
       <div 
         className={`max-w-xs lg:max-w-md rounded-2xl px-3 py-2 shadow ${
           isOwn 
-            ? "bg-blue-600 rounded-br-none" 
+            ? "bg-[#f2c078] rounded-br-none" 
             : "bg-gray-300 rounded-bl-none"
         }`}
         onClick={() => setShowTime(!showTime)}

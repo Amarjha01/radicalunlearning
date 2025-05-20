@@ -62,15 +62,8 @@ const isUser = !!user?.userData?.user;
 
   return (
     <div className="relative w-full text-white flex justify-between items-center px-5 z-50">
-    <div className=" flex items-center gap-2">
-       <Link to={"/"}> <img src="/logo.webp" alt="" className="h-16 z-50 cursor-pointer  "/></Link>
-      <Link to="/" className={` hidden md:flex text-md md:text-xl lg:text-2xl font-semibold uppercase anta-regular cursor-pointer z-20  text-[#575757]`}>
-        Radical Unlearning
-      </Link>
-    </div>
-      
       {/* Desktop Navbar */}
-      <div className=" absolute w-full hidden lg:flex justify-center items-center">
+      <div className="   hidden lg:flex justify-center items-center">
   <ul className="flex">
     {navRoutes.map((path, idx) => (
       <li key={path}>
@@ -123,8 +116,6 @@ const isUser = !!user?.userData?.user;
     </Link>
   )}
 </div>
-
-
         <div className="block text-black font-bold lg:hidden">
           {isOpen ? (
             <IoMdClose onClick={handleMenu} />

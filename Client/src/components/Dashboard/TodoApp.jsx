@@ -101,9 +101,9 @@ export default function TodoApp() {
 
   return (
     <div className="min-h-screen  p-4 flex items-center justify-center">
-      <div className="w-full max-w-md bg-white rounded-2xl shadow-xl overflow-hidden">
+      <div className="w-full max-w-md bg-[] rounded-2xl shadow-xl overflow-hidden">
         {/* Header */}
-        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-4">
+        <div className="bg-[#b4c0b2] px-6 py-4">
           <div className="flex items-center justify-between">
             <h1 className="text-2xl font-bold text-white flex items-center">
               <FaTasks className="mr-2" />
@@ -120,7 +120,7 @@ export default function TodoApp() {
             <div className="mt-3">
               <div className="w-full bg-white/20 rounded-full h-2">
                 <div 
-                  className="bg-white h-2 rounded-full transition-all duration-500" 
+                  className="bg-[#faf3dd] h-2 rounded-full transition-all duration-500" 
                   style={{ width: `${percentComplete}%` }}
                 ></div>
               </div>
@@ -170,8 +170,8 @@ export default function TodoApp() {
                 key={index}
                 className={`group flex items-center justify-between p-3 rounded-xl transition-all duration-200 ${
                   todo?.completed 
-                    ? 'bg-blue-50 border border-blue-100' 
-                    : 'bg-white border border-gray-100 hover:border-blue-200 hover:shadow-md'
+                    ? 'bg-[#868674] border border-blue-100' 
+                    : 'bg-[#f2c078] border border-gray-100 hover:border-blue-200 hover:shadow-md'
                 }`}
               >
                 <div className="flex items-center">

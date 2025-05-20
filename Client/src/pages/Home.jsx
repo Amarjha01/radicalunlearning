@@ -4,6 +4,7 @@ import RediscoverCards from "../components/Home/RediscoverCards";
 import Features from "../components/Home/Features";
 import DynamicRadioContent from "../components/Home/DynamicRadioContent";
 import { FaLightbulb } from 'react-icons/fa';
+import { Link } from "react-router-dom";
 const Home = () => {
 
   const offer = [
@@ -14,9 +15,16 @@ const Home = () => {
 
   return (
     <div>
-    <div className="max-w-4xl mx-auto my-16 px-6 sm:px-10 py-10 bg-[#C1DBB3] rounded-xl shadow-md">
+        <div className=" w-full flex flex-col items-center justify-center px-4 md:px-20 py-5 ">
+       <Link to={"/"}> <img src="/logo.webp" alt="" className="h-full z-50 cursor-pointer  "/></Link>
+      <Link to="/" className={` hidden md:flex text-md md:text-xl lg:text-2xl font-semibold uppercase anta-regular cursor-pointer z-20  text-[#575757]`}>
+        Radical Unlearning - A revolution in education
+      </Link>
+    </div>
+    <div className="max-w-4xl mx-auto my-16 px-6 sm:px-10 py-10 bg-[#b4c0b2] rounded-xl shadow-md">
+      
       <div className="flex items-center mb-6">
-        <FaLightbulb className="text-purple-600 text-3xl mr-3" />
+        <FaLightbulb className="text-[#faf3dd] text-3xl mr-3" />
         <h2 className="text-3xl font-semibold text-gray-800">
           About Radical Unlearning
         </h2>
