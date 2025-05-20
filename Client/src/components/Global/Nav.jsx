@@ -104,7 +104,6 @@ console.log(theme);
   return (
     <div className="relative w-full text-white flex justify-between items-center px-5 z-50">
     <div className=" flex items-center gap-2">
-        <img src="/logo.webp" alt="" className="h-16  z-50 "/>
       <Link to="/" className={` hidden md:flex text-md md:text-xl lg:text-2xl font-semibold uppercase anta-regular cursor-pointer z-20 ${theme === 'dark' ? 'text-white' : 'text-[#575757]'}`}>
         Radical Unlearning
       </Link>

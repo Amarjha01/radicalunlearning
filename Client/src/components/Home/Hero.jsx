@@ -9,7 +9,7 @@ import { useDispatch } from "react-redux";
 const Hero = (theme) => {
   const textRef = useRef(null);
   const buttonRef = useRef(null);
-  const text = "Radical Unlearning ";
+  const text = "Radical Unlearning - a revolution in education";
   const btnLabels = ["HOME", "COURSES", "ROADMAP"];
   const [currentIndex, setCurrentIndex] = useState(0);
   const [userProfile , setUserProfile] = useState({})
@@ -85,7 +85,7 @@ const Hero = (theme) => {
   return (
     <div className="flex flex-col items-center justify-center gap-16">
     {/* Animated Heading */}
-    <div className={ `my-5 text-2xl lg:text-6xl 2xl:text-9xl codystar-regular text-center overflow-hidden ${userProfile.theme === 'light' ? 'text-' : 'text-white'}`}>
+    <div className={ `my-5 text-xl lg:text-4xl 2xl:text-6xl codystar-regular text-center overflow-hidden ${userProfile.theme === 'light' ? 'text-' : 'text-white'}`}>
       <div ref={textRef} className="inline-block">
         {text.split("").map((char, index) => (
           <span
