@@ -328,6 +328,21 @@ export async function signin(request, response) {
       });
     }
 
+    if(user?.Approved === false || user?.Approved === "false"){
+  return response.status(403).json({
+    message: "Your account is not approved yet",
+    error: true,
+    success: false,
+  });
+}
+    if(user?.suspended === "YES" || user?.suspended === true){
+  return response.status(403).json({
+    message: "Your account is suspended",
+    error: true,
+    success: false,
+  });
+}
+
     const checkPassword = await bcryptjs.compare(password, user.password);
 
     if (!checkPassword) {

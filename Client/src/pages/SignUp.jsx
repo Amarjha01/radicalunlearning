@@ -7,13 +7,13 @@ const SignUp = () => {
     <div className="max-w-4xl min-h-screen mx-auto  p-6 rounded-lg shadow-md flex flex-col items-center z-50">
       <Link
         to={"/"}
-        className="absolute top-6 left-6 flex items-center gap-2 text-white hover:text-blue-400 transition"
+        className="absolute top-6 left-6 flex items-center gap-2 text-black hover:text-blue-400 transition"
       >
         <AiFillHome className="text-2xl" />
         <span className="hidden sm:inline-block font-semibold">Home</span>
       </Link>
 
-      <p className=" text-white text-2xl anta-regular ">SignUp As </p>
+      <p className=" text-black text-2xl anta-regular ">SignUp As </p>
       <div className="w-full h-14 rounded-4xl flex justify-center items-center">
         <div className="bg-white text-center flex gap-5 font-bold uppercase rounded-4xl px-2 py-1 anta-regular">
           <NavLink

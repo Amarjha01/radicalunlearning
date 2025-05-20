@@ -5,21 +5,19 @@ import { IoMdClose } from "react-icons/io";
 import { useState, useEffect, useRef } from "react";
 
 import { useSelector, useDispatch } from "react-redux";
-import { updateTheme, clearUser } from "../../store/slices/userSlice.jsx";
+import { clearUser } from "../../store/slices/userSlice.jsx";
 
 import axios from "axios";
 import API from "../../common/apis/ServerBaseURL.jsx";
 
 const Nav = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [isUser, setIsUser] = useState(false);
   const menuRef = useRef();
   
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user);
 
-  const currentTheme = user?.userData?.user?.theme || 'dark'; // Get from Redux
-
+const isUser = !!user?.userData?.user;
 
 
 
@@ -60,12 +58,12 @@ const Nav = () => {
     setIsOpen(false);
   };
 
-  const navRoutes = ['/', '/about', '/contact'];
+  const navRoutes = ['/', '/contact'];
 
   return (
     <div className="relative w-full text-white flex justify-between items-center px-5 z-50">
     <div className=" flex items-center gap-2">
-        <img src="/logo.webp" alt="" className="h-16  z-50 "/>
+       <Link to={"/"}> <img src="/logo.webp" alt="" className="h-16 z-50 cursor-pointer  "/></Link>
       <Link to="/" className={` hidden md:flex text-md md:text-xl lg:text-2xl font-semibold uppercase anta-regular cursor-pointer z-20  text-[#575757]`}>
         Radical Unlearning
       </Link>
@@ -80,11 +78,11 @@ const Nav = () => {
           to={path}
           className={({ isActive }) =>
             isActive
-              ? `border-b-2 border-[#D0E1D4] text-black px-3 py-2 rounded-xl`
-              : `text-[#575757] hover:text-black px-3 py-2`
+              ? `border-b-2 border-[#D0E1D4] text-black px-3 py-2 rounded-xl font-semibold`
+              : `text-[#575757] hover:text-black px-3 py-2 font-semibold`
           }
         >
-          {["Home", "About Us", "Contact Us"][idx]}
+          {["Home", "Contact Us"][idx]}
         </NavLink>
       </li>
     ))}
@@ -94,8 +92,8 @@ const Nav = () => {
           to={`/dashboard/${user?.userData?.user?.role?.toLowerCase()}`}
           className={({ isActive }) =>
             isActive
-              ? `border-b-2 border-[#D0E1D4] text-black px-3 py-2 rounded-xl`
-              : `text-[#575757] hover:text-black px-3 py-2`
+              ? `border-b-2 border-[#D0E1D4] text-black px-3 py-2 rounded-xl font-semibold`
+              : `text-[#575757] hover:text-black px-3 py-2 font-semibold`
           }
         >
           {user?.userData?.user?.role?.charAt(0).toUpperCase() + user?.userData?.user?.role?.slice(1).toLowerCase()} tools
@@ -105,21 +103,13 @@ const Nav = () => {
   </ul>
 </div>
 
-
-      {/* Glowing Circle */}
-      <div className="absolute w-full h-auto -z-20 flex justify-center items-center">
-        <div className={`h-56 w-56 rounded-full filter-1 bg-gradient-to-r from-[#FAD0C4] to-[#D0E1D4]`} />
-      </div>
-
       
       <div className="flex items-center gap-3">
         <div className="relative button button-2 p-0.5 rounded-4xl cursor-pointer">
   {isUser ? (
     <button
       onClick={handleSignOut}
-      className={`${
-        theme === 'dark' ? 'bg-black text-white border-gray-700' : 'bg-[#F2C078]  border-[#D0E1D4] text-black'
-      } rounded-4xl px-6 py-2 border-2 cursor-pointer`}
+      className={`bg-[#F2C078]  border-[#D0E1D4] text-black rounded-4xl px-6 py-2 border-2 cursor-pointer`}
     >
       signOut
     </button>
@@ -135,7 +125,7 @@ const Nav = () => {
 </div>
 
 
-        <div className="block lg:hidden">
+        <div className="block text-black font-bold lg:hidden">
           {isOpen ? (
             <IoMdClose onClick={handleMenu} />
           ) : (
@@ -163,7 +153,7 @@ const Nav = () => {
                     : "text-gray-300 hover:text-white px-3 py-2"
                 }
               >
-                {["Home", "About Us", "Contact Us"][idx]}
+                {["Home", "Contact Us"][idx]}
               </NavLink>
             </li>
           ))}
