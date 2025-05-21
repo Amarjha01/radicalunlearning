@@ -5,7 +5,7 @@ import Features from "../components/Home/Features";
 import DynamicRadioContent from "../components/Home/DynamicRadioContent";
 import { FaLightbulb } from 'react-icons/fa';
 import { Link } from "react-router-dom";
-import { showSuccessToast, showErrorToast } from "../utils/Notification.jsx";
+import { showSuccessToast, showErrorToast , showAccessDeniedToast, showSecurityAlertToast } from "../utils/Notification.jsx";
 
 const Home = () => {
 
@@ -17,6 +17,8 @@ const Home = () => {
   const handleNotification = () => {
     showSuccessToast("This is a success notification!");
     showErrorToast("This is an error notification!");
+    showAccessDeniedToast("This is an access denied notification!");
+    showSecurityAlertToast("This is a security alert notification!");
   };
   return (
     <div>
