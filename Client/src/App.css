@@ -74,11 +74,16 @@ body{
 /* notification */
 
 .custom-toast {
-  background: rgba(255, 255, 255, 0.1); /* Light transparent glassy background */
-  border: 1px solid rgba(255, 255, 255, 0.2); /* Subtle white border */
-  border-radius: 8px;
-  padding: 16px;
+  background: rgba(45, 212, 7, 0.141); /* Light transparent glassy background */
+  padding-left: 8px solid rgba(0, 128, 0, 0.578); /* Subtle white border */
+  border-radius: 1px;
+  /* padding: 16px; */
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px); /* Safari support */
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+}
+.progressClassNam{
+  background: rgb(45, 212, 7); /* Light transparent glassy background */
+  height: 10px;
+  border-radius: 1px;
 }
