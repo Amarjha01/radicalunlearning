@@ -16,6 +16,7 @@ import Contact from '../pages/Contact.jsx'
 import User from '../pages/User.jsx'
 import TopBar from '../components/Dashboard/admin/TopBar.jsx';
 import SchedulePage from '../pages/SchedulePage/SchedulePage.jsx';
+import Noti from '../notification/Noti.jsx';
 const routes = createBrowserRouter(
     [
         {
@@ -43,6 +44,10 @@ const routes = createBrowserRouter(
         {
             path: 'signin',
             element: <SignIn />
+        },
+        {
+            path: 'notification',
+            element: <Noti />
         },
         {
             path: 'signup',
