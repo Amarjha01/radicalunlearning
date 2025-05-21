@@ -5,7 +5,6 @@ import Features from "../components/Home/Features";
 import DynamicRadioContent from "../components/Home/DynamicRadioContent";
 import { FaLightbulb } from 'react-icons/fa';
 import { Link } from "react-router-dom";
-import { showSuccessToast, showErrorToast , showAccessDeniedToast, showSecurityAlertToast } from "../utils/Notification.jsx";
 
 const Home = () => {
 
@@ -14,17 +13,8 @@ const Home = () => {
     {img:'/offers/offer2.webp', title: 'For Educators & Parents' , points:['Coaching you to adopt the Radical Unlearning framework through webinars, meetings, learning resources and more', 'Registering your profiles for learners to reach out to you for paid/unpaid sessions as an Expert in a subject area or a general Coach', 'Conversation with you to understand how you could offer your experience and expertise for the benefit of the community', 'Reference checks and due diligence for interacting with underage learners, where possible', 'Platform to network with other educators and parents to exchange ideas']}, 
     {img:'/offers/offer3.webp', title: 'For Others in Learning Community' , points:['Knowledge sharing through dedicated webinars and meet-ups', 'Industry to offer internships, sponsorships and learning opportunities for our learners', 'Special guests invited to offer their expertise through talks and webinars']},
   ]
-  const handleNotification = () => {
-    showSuccessToast("This is a success notification!");
-    showErrorToast("This is an error notification!");
-    showAccessDeniedToast("This is an access denied notification!");
-    showSecurityAlertToast("This is a security alert notification!");
-  };
   return (
     <div>
-<button onClick={handleNotification} >
-  noti
-</button>
         <div className=" w-full flex flex-col items-center justify-center px-4 md:px-20 py-5 ">
       <img src="/logo.webp" alt="" className="h-full z-50 cursor-pointer  "/>
       <div className={` text-md md:text-xl lg:text-2xl font-semibold uppercase anta-regular cursor-pointer z-20  text-[#575757]`}>
