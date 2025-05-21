@@ -29,11 +29,11 @@ export async function createCheckoutSession(req , res) {
       line_items: [
         {
           price_data: {
-            currency: 'inr',
+            currency: 'GBP',
             product_data: {
               name: `Session Booking Fee - ${learnerName}`,
             },
-            unit_amount: amount * 100,
+            unit_amount: amount,
           },
           quantity: 1,
         },
@@ -59,6 +59,8 @@ export async function createCheckoutSession(req , res) {
 
 
 export async function handleStripeWebhook(req, res) {
+  console.log('webhook call');
+  
   if (req.method !== 'POST') {
     return res.status(405).send('Method Not Allowed');
   }
@@ -99,7 +101,7 @@ export async function handleStripeWebhook(req, res) {
 
 export async function finalizeSessionAfterPayment(req, res) {
   const { sessionId, scheduledAt } = req.body;
-console.log(sessionId);
+console.log('sessionId:', sessionId);
 
   try {
     const record = await PaymentRecord.findOne({ stripeSessionId: sessionId });
@@ -127,7 +129,7 @@ console.log(record);
       status: 'scheduled',
     });
 
-const amountToCredit = record.amountPaid; // ✅ Trusted from Stripe
+const amountToCredit = record.amountPaid; 
 
 await EducatorUserModel.findByIdAndUpdate(record.educatorId, {
   $inc: { wallet: amountToCredit }
@@ -143,6 +145,27 @@ await EducatorUserModel.findByIdAndUpdate(record.educatorId, {
     
     // ✅ Clean up temp payment record
     await PaymentRecord.deleteOne({ _id: record._id });
+
+    // Get current month short name (e.g., "May")
+const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const currentMonth = monthNames[new Date().getMonth()];
+
+// Credit revenue to Admin
+const platformRevenue = Math.floor(record.amountPaid); // Example: platform gets 100%
+
+const admin = await AdminModel.findOne(); // get first admin (adjust if multi-admin)
+
+if (admin) {
+  const existingMonth = admin.revenue.find(r => r.month === currentMonth);
+
+  if (existingMonth) {
+    existingMonth.revenue += platformRevenue;
+  } else {
+    admin.revenue.push({ month: currentMonth, revenue: platformRevenue });
+  }
+
+  await admin.save();
+}
 
     res.status(200).json({ message: "Session scheduled", session });
   } catch (err) {

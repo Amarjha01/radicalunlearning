@@ -5,6 +5,8 @@ import Features from "../components/Home/Features";
 import DynamicRadioContent from "../components/Home/DynamicRadioContent";
 import { FaLightbulb } from 'react-icons/fa';
 import { Link } from "react-router-dom";
+import { showSuccessToast, showErrorToast } from "../utils/Notification.jsx";
+
 const Home = () => {
 
   const offer = [
@@ -12,14 +14,21 @@ const Home = () => {
     {img:'/offers/offer2.webp', title: 'For Educators & Parents' , points:['Coaching you to adopt the Radical Unlearning framework through webinars, meetings, learning resources and more', 'Registering your profiles for learners to reach out to you for paid/unpaid sessions as an Expert in a subject area or a general Coach', 'Conversation with you to understand how you could offer your experience and expertise for the benefit of the community', 'Reference checks and due diligence for interacting with underage learners, where possible', 'Platform to network with other educators and parents to exchange ideas']}, 
     {img:'/offers/offer3.webp', title: 'For Others in Learning Community' , points:['Knowledge sharing through dedicated webinars and meet-ups', 'Industry to offer internships, sponsorships and learning opportunities for our learners', 'Special guests invited to offer their expertise through talks and webinars']},
   ]
-
+  const handleNotification = () => {
+    showSuccessToast("This is a success notification!");
+    showErrorToast("This is an error notification!");
+  };
   return (
     <div>
+<button onClick={handleNotification} >
+  noti
+</button>
         <div className=" w-full flex flex-col items-center justify-center px-4 md:px-20 py-5 ">
-       <Link to={"/"}> <img src="/logo.webp" alt="" className="h-full z-50 cursor-pointer  "/></Link>
-      <Link to="/" className={` hidden md:flex text-md md:text-xl lg:text-2xl font-semibold uppercase anta-regular cursor-pointer z-20  text-[#575757]`}>
-        Radical Unlearning - A revolution in education
-      </Link>
+      <img src="/logo.webp" alt="" className="h-full z-50 cursor-pointer  "/>
+      <div className={` text-md md:text-xl lg:text-2xl font-semibold uppercase anta-regular cursor-pointer z-20  text-[#575757]`}>
+       <span className=" block">Radical Unlearning </span>
+       <span className=" block translate-x-[50%]">- A revolution in education</span>
+      </div>
     </div>
     <div className="max-w-4xl mx-auto my-16 px-6 sm:px-10 py-10 bg-[#b4c0b2] rounded-xl shadow-md">
       
@@ -41,20 +50,18 @@ const Home = () => {
     </div>
     <div className="py-20 w-full flex flex-col items-center justify-center px-4 md:px-20">
   <h2 className="text-3xl font-bold text-center mb-6  anta-regular">
-    🎥 A Glimpse Into Our World
+    🎥 Our Framework
   </h2>
 
 <figure>
     <video src="/RadicalUnlearningIntro.mp4" width={'full'} controls>
     </video>
   </figure>
-
-  <p className="mt-6 max-w-xl text-center text-gray-700 italic text-base leading-relaxed">
-    “Sometimes, the best learning begins when we let go of what we thought we knew.”
-  </p>
 </div>
 <div>
-  <h2>What we offer</h2>
+   <h2 className="text-3xl font-bold text-center mb-6  anta-regular">
+     What we offer
+  </h2>
 <div className="flex flex-col md:flex-row justify-around max-w-[90vw] mx-auto gap-10 ">
   {offer.map((item, index) => (
     <div key={index} className="flex flex-col items-center text-start md:w-[30vw]">

@@ -45,6 +45,10 @@ const API = {
     url: `${backendDomain}/api/admin/deleteUser`,
     method: 'POST',
   },
+  suspendUser: { 
+    url: `${backendDomain}/api/admin/suspendUser`,
+    method: 'POST',
+  },
   fetchWithdrawelRequests: { 
     url: `${backendDomain}/api/admin/getWithdrawelRequests`,
   },

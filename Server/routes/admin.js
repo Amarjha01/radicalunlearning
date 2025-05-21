@@ -3,7 +3,7 @@ const adminRouter = Router();
 
 // middleware & controllers
 import {admin}  from "../middleware/Admin.js";
-import {getAllEducatorData , getAllLearnerData , deleteUser, approveEducator, getEducatorDataDetails, getWithdrawelRequests} from '../controllers/admin.js'
+import {getAllEducatorData , getAllLearnerData , deleteUser, approveEducator, getEducatorDataDetails, getWithdrawelRequests, suspendUser} from '../controllers/admin.js'
 
 
 // routes
@@ -13,5 +13,6 @@ adminRouter.delete('/deleteUser', admin, deleteUser);
 adminRouter.patch('/approveEducator', admin, approveEducator);
 adminRouter.post('/getEducatorDataDetails', admin, getEducatorDataDetails);
 adminRouter.get('/getWithdrawelRequests', admin, getWithdrawelRequests);
+adminRouter.post('/suspendUser', admin, suspendUser);
 
 export default adminRouter;

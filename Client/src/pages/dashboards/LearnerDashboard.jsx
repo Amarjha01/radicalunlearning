@@ -38,9 +38,7 @@ import { useDispatch } from "react-redux";
 import axios from "axios";
 import AIChat from "../../components/ChatBot/Aichat.jsx";
 import { loadStripe } from "@stripe/stripe-js";
-const stripePromise = loadStripe(
-  "pk_test_51RPi0BI60AmMhjB7QXOsnO1d7vsWW7XVoYZnDe4Al7ZoQ7PIgSBdF1l9SE5AekRVZQ1LIFlebCoyrfvFF1vqqgsw00tA0b6Wy1"
-);
+const stripePromise = loadStripe("pk_test_51RPi0BI60AmMhjB7QXOsnO1d7vsWW7XVoYZnDe4Al7ZoQ7PIgSBdF1l9SE5AekRVZQ1LIFlebCoyrfvFF1vqqgsw00tA0b6Wy1");
 
 import API from "../../common/apis/ServerBaseURL.jsx";
 import VideoCall from "../../p2p/VideoCall.jsx";
@@ -648,8 +646,8 @@ const handleProfileUpdate = async (e) => {
             onClick={() => setActiveSection(section.id)}
             className={`px-4 py-2 border-b-2 font-medium text-sm ${
               activeSection === section.id
-                ? "border-blue-500 text-blue-600 dark:text-blue-400"
-                : "border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+                ? "border-blue-500 text-blue-600 "
+                : "border-transparent text-black hover:text-blue-500 "
             }`}
           >
             {section.name}
@@ -824,7 +822,7 @@ const handleProfileUpdate = async (e) => {
               <div className="flex justify-end">
                 <button
                   type="submit"
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md"
+                  className="bg-[#f2c078] hover:bg-[#c5a271] text-black px-4 py-2 rounded-md"
                 >
                   Update Password
                 </button>
@@ -911,8 +909,8 @@ const LearnerDashboard = () => {
   return (
     <div className={`min-h-screen  text-gray-800`}>
       {/* Mobile Sidebar Toggle */}
-      <div className="md:hidden p-4 flex justify-between items-center  text-white">
-        <h1 className="font-bold">Radical Unlearning</h1>
+      <div className="md:hidden p-4 flex justify-between items-center  text-black">
+        <h1 className="font-bold ">Radical Unlearning</h1>
         <button
           onClick={() => setMobileSidebarOpen(!mobileSidebarOpen)}
           className={`p-2 rounded-md hover:bg-blue-700 text-xl cursor-pointer transition-all duration-500 transform ${
@@ -951,7 +949,7 @@ const LearnerDashboard = () => {
               className="w-10 h-10 rounded-full mr-3"
             />
             <div className=" flex flex-col">
-              <p className="text-xs text-gray-500 ">
+              <p className="text-xs text-black ">
                 {profileData?.name?.toUpperCase()}
               </p>
             </div>

@@ -33,14 +33,7 @@ import { clearUser } from "../../store/slices/userSlice.jsx";
 import GroupChat from "../../components/Chat/GroupChat.jsx";
 import { Outlet } from "react-router-dom";
 import { Link } from "react-router-dom";
-const dummyRevenueData = [
-  { month: "Jan", revenue: 4500 },
-  { month: "Feb", revenue: 5200 },
-  { month: "Mar", revenue: 6800 },
-  { month: "Apr", revenue: 7400 },
-  { month: "May", revenue: 9100 },
-  { month: "Jun", revenue: 8500 },
-];
+
 
 // Main App Component
 export default function AdminDashboard() {
@@ -53,16 +46,11 @@ export default function AdminDashboard() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [educatorDetailedData, setEducatorDetailedData] = useState({});
   const [withdrawalRequestsData , setWithdrawalRequestsData] = useState([])
-  console.log('lod', withdrawalRequestsData);
   
   // Calculate stats
   const totalEducators = educators.length;
   const totalLearners = learners.length;
-  const totalRevenue = dummyRevenueData.reduce(
-    (sum, data) => sum + data.revenue,
-    0
-  );
-  const monthlyRevenue = dummyRevenueData[dummyRevenueData.length - 1].revenue;
+  
 
   const [viewUserDetails, setViewUserDetails] = useState(false);
 
@@ -231,7 +219,14 @@ const getWithdrawelRequests = async() =>{
     console.log(error);
   }
 }
-    
+   const [revenueData , setRevenueData] = useState()
+ console.log('revenueData', revenueData);
+ 
+   useEffect(()=>{
+     setRevenueData(user.userData.user.revenue)
+   })
+  
+   
   return (
 
     <div className=" w-[100vw] min-h-screen flex max-w-[1680px] mx-auto ">
@@ -465,7 +460,7 @@ const getWithdrawelRequests = async() =>{
             />
             <StatCard
               title="Monthly Revenue"
-              value={`${monthlyRevenue}`}
+              value={`${user.userData.user.revenue[0].revenue} `}
               icon={<LuPoundSterling className="h-8 w-8 text-blue-500" />}
 
             />
@@ -476,7 +471,7 @@ const getWithdrawelRequests = async() =>{
               </h3>
               <div className="h-64">
                 <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={dummyRevenueData}>
+                  <LineChart data={revenueData}>
                     <XAxis
                       dataKey="month"
                       stroke={"#6b7280"}
@@ -847,13 +842,13 @@ const getWithdrawelRequests = async() =>{
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <StatCard
                 title="Total Revenue"
-                value={`$${totalRevenue}`}
+                value={`${user.userData.user.revenue[0].revenue}`}
                 icon={<LuPoundSterling className="h-8 w-8 text-green-500" />}
 
               />
               <StatCard
                 title="Monthly Revenue"
-                value={`$${monthlyRevenue}`}
+                value={`${user.userData.user.revenue[0].revenue}`}
                 icon={<LuPoundSterling className="h-8 w-8 text-blue-500" />}
 
               />
@@ -871,7 +866,7 @@ const getWithdrawelRequests = async() =>{
               </h3>
               <div className="h-64">
                 <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={dummyRevenueData}>
+                  <LineChart data={revenueData}>
                     <XAxis
                       dataKey="month"
                       stroke={"#6b7280"}

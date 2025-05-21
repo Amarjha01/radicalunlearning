@@ -241,7 +241,7 @@ const topicOptions = [
 
 <div>
         <label className="block font-medium text-sm w-full text-start ">
-          Select Your Country
+          Select Your country
         </label>
 
         <div className="flex items-center bg-[#868674] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500">
@@ -298,7 +298,7 @@ const topicOptions = [
 
 
       <div>
-      <label className="block font-medium text-sm w-full text-start ">Date of Birth</label>
+      <label className="block font-medium text-sm w-full text-start ">Date of birth</label>
     <div className="flex items-center bg-[#868674] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500">
     <input
         type="date"
@@ -315,27 +315,52 @@ const topicOptions = [
           </p>
         )}
       </div>
+<div>
+  <label className="block font-medium text-sm w-full text-start">
+    What do you want to learn?
+  </label>
+  <div className="bg-[#868674] rounded-lg px-4 py-3 border border-[#1e2a48]">
+    <input
+      list="topic-options"
+      value={selectedTopics.join(', ')} // Display selected topics as a comma-separated string
+      onChange={(e) => {
+        const inputValue = e.target.value;
 
-   <div>
-   <label className="block font-medium text-sm w-full text-start ">What do you want to learn?</label>
-    <div className=" bg-[#868674] rounded-lg px-4 py-3 border border-[#1e2a48]">
-    <Select
-        options={topicOptions}
-        isMulti
-        value={selectedTopics}
-        onChange={handleTopicChange}
-        placeholder="Select up to 10 topics"
-      />
-    </div>
-      {errors.whatToLearn && <p className="text-red-600 text-sm">{errors.whatToLearn.message}</p>}
-   </div>
-      {selectedTopics.length === 10 && (
-        <p className="text-blue-600 text-sm">You’ve selected the maximum number of topics (10)</p>
-      )}
+        const updatedTopics = inputValue
+          .split(',')
+          .map((topic) => topic.trim())
+          .filter((topic) => topic.length > 0);
+
+        if (updatedTopics.length <= 10) {
+          setSelectedTopics(updatedTopics);
+        }
+      }}
+      placeholder="Select or type up to 10 topics"
+      className="w-full bg-[#868674] rounded outline-none py-1 cursor-text"
+    />
+    <datalist id="topic-options">
+      {topicOptions.map((topic) => (
+        <option key={topic.value} value={topic.value} />
+      ))}
+    </datalist>
+  </div>
+  {errors.whatToLearn && (
+    <p className="text-red-600 text-sm">{errors.whatToLearn.message}</p>
+  )}
+</div>
+
+{selectedTopics.length === 10 && (
+  <p className="text-blue-600 text-sm">
+    You’ve selected the maximum number of topics (10)
+  </p>
+)}
+
+ 
+
 
 
 <div>
-<label className="block font-medium text-sm w-full text-start ">Do you need an Expert to help you out?</label>
+<label className="block font-medium text-sm w-full text-start ">Do you need an expert to help you out?</label>
       <span className="text-xs text-blue-600 block mb-1">
         *Expert is specialised in the learning area and has gained practical experience over several years of doing it
       </span>
@@ -350,7 +375,7 @@ const topicOptions = [
 </div>
 
     <div>
-    <label className="block font-medium text-sm w-full text-start ">Do you need a Coach to help you out?</label>
+    <label className="block font-medium text-sm w-full text-start ">Do you need a coach to help you out?</label>
       <span className="text-xs text-blue-600 block mb-1">
         *Coach is not specialised in the learning area but will help you with your overall wellbeing
       </span>
@@ -364,7 +389,7 @@ const topicOptions = [
       {errors.needCoach && <p className="text-red-600 text-sm">{errors.needCoach.message}</p>}
     </div>
 <div>
-<label className="block font-medium text-sm w-full text-start ">Write About Your Self</label>
+<label className="block font-medium text-sm w-full text-start ">Write about Your self</label>
 <div className="flex items-center bg-[#868674] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500">
 <textarea
         {...register("bio", { required: "Please tell us about yourself" })}
@@ -383,7 +408,7 @@ const topicOptions = [
               Create sign in password for this site
             </label>
             <div className="flex items-center gap-2 bg-[#868674] p-3 rounded-lg border border-gray-600 focus-within:border-blue-500">
-              <RiLockPasswordFill className="text-gray-400" />
+              <RiLockPasswordFill className="text-green-950" />
               <input
                 type={`${showPass ? 'text' : 'password'}`}
                 placeholder="Password"
@@ -406,7 +431,9 @@ const topicOptions = [
                <button
       type="button"
       onClick={handleShowPass}
-      className="text-xl text-gray-400 focus:outline-none cursor-pointer"
+      className={`text-xl focus:outline-none cursor-pointer ${
+        showPass ? "text-red-950" : "text-green-950"
+      }`}
     >
       {showPass ?  <IoMdEye /> : <IoMdEyeOff />}
     </button>
@@ -415,9 +442,10 @@ const topicOptions = [
               <p className="text-red-400 text-sm">{errors.password.message}</p>
             )}
           </div>
-
-      <fieldset className=" bg-[#868674] rounded-lg p-4 border border-[#1e2a48] focus-within:border-blue-500">
-        <legend className="font-bold">Accept Terms</legend>
+       
+     <div>
+       <legend className="font-bold">Accept Terms</legend>
+       <fieldset className=" bg-[#868674] rounded-lg p-4 border border-[#1e2a48] focus-within:border-blue-500">
         <label className="block cursor-pointer ">
           <input type="checkbox" {...register("terms1", { required: true })} /> My parents are aware I'm using this site.
         </label>
@@ -433,6 +461,7 @@ const topicOptions = [
         </label>
         {errors.terms3 && <p className="text-red-600 text-sm">Required</p>}
       </fieldset>
+     </div>
 
           {/* Submit Button */}
           <button

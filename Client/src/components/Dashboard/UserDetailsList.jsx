@@ -1,7 +1,8 @@
 import React from 'react';
+import API from '../../common/apis/ServerBaseURL';
+import axios from 'axios';
 
 const UserDetails = ({ user }) => {
-  console.log('user detailed called');
   
   if (!user || Object.keys(user).length === 0) {
     return (
@@ -10,7 +11,20 @@ const UserDetails = ({ user }) => {
       </div>
     );
   }
+const handleSuspendUser = async() => {
+try {
+  console.log(user);
+  
+  const response = await axios.post(API.suspendUser.url, {role:user.role , _id:user._id},
+  {withCredentials:true}
+)
+console.log('suspended', response);
 
+} catch (error) {
+  console.log(error);
+  
+}
+}
   return (
     <div className="p-4 w-full max-w-4xl">
       <div className="rounded-xl overflow-hidden shadow-lg bg-gradient-to-br from-indigo-900 to-slate-900 border border-indigo-500/30 backdrop-blur-sm">
@@ -21,6 +35,9 @@ const UserDetails = ({ user }) => {
             </svg>
             User Details
           </h2>
+          <button onClick={handleSuspendUser} className=' text-white px-2 py-0.5 bg-red-700 rounded-2xl cursor-pointer'>
+            suspend user
+          </button>
         </div>
         
         <div className="p-6">

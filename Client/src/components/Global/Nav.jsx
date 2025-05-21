@@ -61,7 +61,7 @@ const isUser = !!user?.userData?.user;
   const navRoutes = ['/', '/contact'];
 
   return (
-    <div className="relative w-full text-white flex justify-between items-center px-5 z-50">
+    <div className="relative w-full text-white flex justify-end md:justify-between md:items-center px-5 z-50 ">
       {/* Desktop Navbar */}
       <div className="   hidden lg:flex justify-center items-center">
   <ul className="flex">
@@ -97,7 +97,7 @@ const isUser = !!user?.userData?.user;
 </div>
 
       
-      <div className="flex items-center gap-3">
+      <div className="  flex items-center gap-3">
         <div className="relative button button-2 p-0.5 rounded-4xl cursor-pointer">
   {isUser ? (
     <button
@@ -116,7 +116,7 @@ const isUser = !!user?.userData?.user;
     </Link>
   )}
 </div>
-        <div className="block text-black font-bold lg:hidden">
+        <div className="block text-black font-bold lg:hidden ">
           {isOpen ? (
             <IoMdClose onClick={handleMenu} />
           ) : (
@@ -159,7 +159,7 @@ const isUser = !!user?.userData?.user;
                     : "text-gray-300 hover:text-white px-3 py-2"
                 }
               >
-                Dashboard
+                {user?.userData?.user?.role?.charAt(0).toUpperCase() + user?.userData?.user?.role?.slice(1).toLowerCase()} tools
               </NavLink>
             </li>
           )}

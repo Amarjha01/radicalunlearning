@@ -9,14 +9,14 @@ import API from "../common/apis/ServerBaseURL.jsx";
 import { useDispatch } from 'react-redux';
 import { userinfo } from "../store/slices/userSlice.jsx";
 import { useNavigate } from "react-router-dom";
-import NotificationSystem from "../notification/NotificationSystem.jsx";
-
+import { showSuccessToast, showErrorToast } from "../utils/Notification.jsx";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 const SignIn = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [submitting, isSubmitting] = useState(false);
   const [showPass, setShowPass] = useState(false);
-  const [notification, setNotification] = useState(null); // State for notification
 
   const handleShowPass = () => {
     setShowPass(!showPass);
@@ -29,7 +29,6 @@ const SignIn = () => {
   } = useForm();
 
   const [errorMessage, setErrorMessage] = useState("");
-  const [notificationTimeout, setNotificationTimeout] = useState(null);
 
   const onSubmit = async (data) => {
     try {
@@ -50,49 +49,36 @@ const SignIn = () => {
         };
         dispatch(userinfo(statePayload));
 
-        // Trigger success notification
-        setNotification({
-          type: "success",
-          message: "You have logged in successfully!",
-        });
-
-        // Set a 5-second timeout for navigation
+        if (response?.status === 200) {
+      showSuccessToast("Login successful.");
+  }
         const timeout = setTimeout(() => {
           navigate(`/dashboard/${userData.role.toLowerCase()}`);
         }, 1000);
 
-        setNotificationTimeout(timeout); 
       }
     } catch (error) {
       setErrorMessage(error.response?.data?.message || "Login failed.");
       console.log("error: ", error);
-
-      // Trigger error notification
-      setNotification({
-        type: "error",
-        message: error.response?.data?.message || "Login failed.",
-        duration: 5000,
-      });
     }
   };
 
-  const handleDismissNotification = () => {
-    if (notificationTimeout) {
-      clearTimeout(notificationTimeout); 
-    }
-    navigate("/");
-  };
-
-  useEffect(() => {
-    return () => {
-      if (notificationTimeout) {
-        clearTimeout(notificationTimeout);
-      }
-    };
-  }, [notificationTimeout]);
+ 
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4 py-10 text-black font-sans">
+         <ToastContainer
+  position="top-right"
+  autoClose={4000}
+  hideProgressBar={false}
+  newestOnTop={false}
+  closeOnClick
+  rtl={false}
+  pauseOnFocusLoss
+  draggable
+  pauseOnHover
+  theme="colored"
+/>
       <div className="relative w-full max-w-md bg-[#b4c0b2] p-8 rounded-2xl border border-white/10 shadow-lg glow-hover">
         <div className="" />
         <h2 className="text-3xl anta-regular text-center mb-6 ">Sign In</h2>
@@ -205,16 +191,6 @@ const SignIn = () => {
           </Link>
         </p>
       </div>
-
-      {/* Display Notifications */}
-      {notification && (
-        <NotificationSystem
-          type={notification.type}
-          message={notification.message}
-          duration={notification.duration}
-          onDismiss={handleDismissNotification}
-        />
-      )}
     </div>
   );
 };

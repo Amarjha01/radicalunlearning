@@ -6,7 +6,6 @@ import Home from '../pages/Home.jsx'
 import AdminDashboard from '../pages/dashboards/AdminDashboard.jsx'
 import EducatorDashboard from '../pages/dashboards/EducatorDashboard.jsx'
 import LearnerDashboard from '../pages/dashboards/LearnerDashboard.jsx'
-import About from '../pages/About.jsx'
 import App from '../App.jsx'
 import SignIn from '../pages/SignIn.jsx'
 import SignUp from '../pages/SignUp.jsx'
@@ -25,11 +24,6 @@ const routes = createBrowserRouter(
                 {
                     path: '/',
                     element: <Home />
-                },
-                
-                {
-                    path: 'about',
-                    element: <About />
                 },
                 {
                     path: 'contact',

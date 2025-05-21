@@ -8,7 +8,7 @@ function SchedulePage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const sessionId = searchParams.get("sessionId");
-  console.log(sessionId);
+  console.log('sessionId', sessionId);
   
   const [scheduledAt, setScheduledAt] = useState(null);
   const [selectedDate, setSelectedDate] = useState(null);

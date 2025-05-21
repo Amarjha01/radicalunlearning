@@ -80,25 +80,46 @@ export const deleteUser = async (req , resp) =>{
     }
 }
 // suspend user
-export const suspendUser = async (req , resp) =>{
-    try {
-        const { role , email} = req.body;
-        if(role === "EDUCATOR"){
-            const educatorData = await EducatorUserModel.findOneAndUpdate({email} , {suspended : 'YES'} , {new : true});
-            console.log("suspended user : ", educatorData)
-        }else {
-            const learnerData = await LearnerUserModel.findOneAndUpdate({email} , {suspended : 'YES'} , {new : true});
-            console.log("suspended user : ", learnerData)
-        }
-    } catch (error) {
-        resp.status(500).json({
-            message : 'something went wrong',
-            error : error,
-            success : false,
-            error : true
-        })
+export const suspendUser = async (req, resp) => {
+  try {
+    const { role, _id } = req.body;
+
+    if (role === "EDUCATOR" || "educator") {
+      const educatorData = await EducatorUserModel.findOneAndUpdate(
+        { _id },
+        { suspended: 'YES' },
+        { new: true }
+      );
+      console.log("suspended user: ", educatorData);
+      return resp.status(200).json({
+        message: "Educator suspended successfully",
+        user: educatorData,
+        success: true
+      });
+    } else {
+      const learnerData = await LearnerUserModel.findOneAndUpdate(
+        { _id },
+        { suspended: 'YES' },
+        { new: true }
+      );
+      console.log("suspended user: ", learnerData);
+      return resp.status(200).json({
+        message: "Learner suspended successfully",
+        user: learnerData,
+        success: true
+      });
     }
-}
+
+  } catch (error) {
+    console.error("Suspend error:", error);
+    return resp.status(500).json({
+      message: 'Something went wrong',
+      error: error.message || error,
+      success: false
+    });
+  }
+};
+
  
 // Approve educator
 export const approveEducator = async (req, res) => {

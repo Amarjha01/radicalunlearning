@@ -404,6 +404,7 @@ export async function signin(request, response) {
           theme: user.theme,
           wallet: user.wallet,
           avatar: user.avatar,
+          revenue: user.revenue,
           _id: user._id,
         },
         role: user.role,
@@ -451,26 +452,17 @@ export async function updateUserDetails(req, res) {
       );
     } else if (role === "EDUCATOR") {
       const {
-        name,
-        email,
-        subrole,
-        country,
-        language,
         bio,
         experience,
-        serviceType,
+        avatar
       } = req.body;
 
       updateUser = await EducatorUserModel.updateOne(
         { _id: userId },
         {
-          ...(name && { name }),
-          ...(email && { email }),
-          ...(subrole && { subrole }),
-          ...(country && { country }),
-          ...(language && { language }),
           ...(bio && { bio }),
           ...(experience && { experience }),
+          ...(avatar && { avatar }),
         }
       );
     }
@@ -525,33 +517,39 @@ export async function signout(request, response) {
 // -----------------------------search------------------------------------------------
 export async function searchEducator(req, res) {
   try {
-    const {searchKey} = req.query;
-    
+    const { searchKey } = req.query;
 
-const educators = await EducatorUserModel.find({
-  subjects: { $regex: searchKey, $options: 'i' }
-}).select('name  country  bio _id subjects documentUrl videoUrl' );
+    const educators = await EducatorUserModel.find({
+      subjects: { $regex: searchKey, $options: 'i' },
+      Approved: true,         // Ensures only approved educators are returned
+      suspended: 'NO'         // Ensures only non-suspended educators are returned
+    })
+    .select('name country bio _id subjects documentUrl videoUrl ');
 console.log(educators);
 
-if(educators){
-  res.status(200).json({
-    message:"here is this list of all educators",
-    data:educators,
-    error:false,
-    success:true
-  })
-}else{
-  res.status(404).json({
-     message:'no educator found'
-  })
-}
-
+    if (educators.length > 0) {
+      res.status(200).json({
+        message: "Here is the list of all educators",
+        data: educators,
+        error: false,
+        success: true
+      });
+    } else {
+      res.status(404).json({
+        message: 'No educator found'
+      });
+    }
 
   } catch (error) {
-    console.log('error', error);
-    
+    console.log('Error:', error);
+    res.status(500).json({
+      message: 'Something went wrong',
+      error: error.message || error,
+      success: false
+    });
   }
 }
+
 
 
 // ------------------------ToDos APIs --------------------------------------------------------

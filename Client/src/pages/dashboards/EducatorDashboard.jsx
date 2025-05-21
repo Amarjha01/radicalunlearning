@@ -112,11 +112,65 @@ export default function EducatorDashboard() {
       confirmPassword: "",
     });
   };
+const [editProfile, setEditProfile] = useState(false);
+  const [changedData, setChangedData] = useState({});
+  const [loading, setLoading] = useState(false);
+  const [file, setFile] = useState(null);
 
-  const handleProfileUpdate = () =>{
-    console.log(profileData);
-    alert("Currently We are not able to update your profile");
+ const handleImageUpload = async (file) => {
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("upload_preset", "radicalunlearning");
+
+  try {
+    const res = await axios.post(
+      "https://api.cloudinary.com/v1_1/dbnticsz8/image/upload",
+      formData
+    );
+    return res.data.secure_url;
+  } catch (err) {
+    console.error("Image upload failed", err);
+    return null;
   }
+};
+
+
+const handleProfileUpdate = async (e) => {
+  e.preventDefault();
+  setLoading(true);
+
+  let updatedData = { ...changedData };
+
+ if (file) {
+  const imageUrl = await handleImageUpload(file);
+  if (imageUrl) {
+    updatedData.avatar = imageUrl;
+  }
+  setFile(null); 
+}
+
+
+  try {
+    const response = await axios.patch(
+      API.updateUserDetails.url,
+      updatedData,
+      { withCredentials: true }
+    );
+
+    console.log(response);
+    setEditProfile(false);
+  } catch (error) {
+    console.error("Update failed:", error);
+  } finally {
+    setLoading(false);
+  }
+};
+
+
+  const handleChange = (field, value) => {
+    setChangedData((prev) => ({ ...prev, [field]: value }));
+  };
+
 
     const [sessionFee, setSessionFee] = useState("1000");
   const [isEditing, setIsEditing] = useState(false);
@@ -153,7 +207,7 @@ export default function EducatorDashboard() {
             <div className="px-4 py-6 flex items-center justify-center border-b border-gray-200 dark:border-gray-700">
               <div className="relative w-12 h-12 rounded-full overflow-hidden bg-[#e0e7ff]  mr-3">
                 <img
-                  src={profileData.avatar}
+                  src={profileData.avatar ||  "/default_userFrofile.webp"}
                   alt="Profile"
                   className="w-full h-full object-cover"
                 />
@@ -673,38 +727,28 @@ export default function EducatorDashboard() {
           <div className="bg-[#b4c0b2] shadow-md rounded-lg p-6">
             <div className="flex flex-col md:flex-row md:space-x-8">
               {/* Avatar Section */}
-              <div className="md:w-1/4 flex flex-col items-center mb-6 md:mb-0">
-                <div className="relative w-32 h-32 rounded-full overflow-hidden bg-[#faf3dd] mb-4">
-                  <img
-                    src={profileData.avatar}
-                    alt="Profile"
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity duration-300">
-                    <button className="p-2 bg-white dark:bg-gray-800 rounded-full"></button>
-                  </div>
-                </div>
-                <div>
-                  <input
-                    type="file"
-                    accept=".jpg,.jpeg"
-                    className="hidden"
-                    id="fileUpload"
-                    // onChange={handleFileChange}
-                  />
-
-                  <label htmlFor="fileUpload">
-                    <button
-                      type="button"
-                      className="group px-4 py-2 bg-indigo-50 text-black  rounded-md text-sm font-medium flex items-center justify-center cursor-pointer"
-                    >
-                      <span className="group-hover:hidden">
-                        Upload new photo
-                      </span>
-                      <Upload className="hidden group-hover:block h-5 w-5 text-black" />
-                    </button>
-                  </label>
-                </div>
+              <div className="md:w-1/4 flex flex-col items-center  mb-6 md:mb-0">
+              <div className="w-32 h-32 rounded-full overflow-hidden mb-4">
+                <img
+                  src={
+                    changedData.avatar ||
+                    (file && URL.createObjectURL(file)) ||
+                    profileData.avatar || "/default_userFrofile.webp"
+                  }
+                  alt="Profile Avatar"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <input
+               disabled={!editProfile}
+                type="file"
+                accept="image/*"
+                onChange={(e) => setFile(e.target.files[0])}
+                className={`w-48 md:w-40 lg:w-52 bg-yellow-200 flex items-center justify-center px-4 py-2 rounded-md text-sm text-gray-700  ${editProfile ? "hover:bg-yellow-300 cursor-pointer" : "cursor-not-allowed"}`}
+                id="avatarUpload"
+              />
+         
+             
               </div>
 
               {/* Profile Form */}
@@ -924,7 +968,7 @@ export default function EducatorDashboard() {
                     </div>
                   </div>
               <div className=" flex justify-end  item-center gap-5">
-              <FaUserEdit className=" text-4xl cursor-pointer text-white" />
+              <FaUserEdit onClick={!setEditProfile} className=" text-4xl cursor-pointer text-white" />
                   <button onSubmit={()=>{handleProfileUpdate(profileData)}}
                     type="submit"
                     disabled= {true}

@@ -6,13 +6,13 @@ export const showSuccessToast = (message) => {
     <div className="flex items-center">
       <FaCheckCircle className="text-green-500 text-xl mr-3" />
       <div>
-        <p className="font-semibold text-white">Success</p>
-        <p className="text-sm text-gray-200">{message}</p>
+        <p className="font-semibold text-green-600">Success</p>
+        <p className="text-sm text-green-800">{message}</p>
       </div>
     </div>,
     {
-      className: 'custom-toast custom-toast.pulse',
-      progressClassName: 'custom-toast-progress',
+      className: 'custom-toast',
+      progressClassName: '',
       closeButton: true,
       icon: false,
     }
@@ -24,13 +24,13 @@ export const showErrorToast = (message) => {
     <div className="flex items-center">
       <FaTimesCircle className="text-red-500 text-xl mr-3" />
       <div>
-        <p className="font-semibold text-white">Error</p>
-        <p className="text-sm text-gray-200">{message}</p>
+        <p className="font-semibold text-red-600">Error</p>
+        <p className="text-sm text-red-800">{message}</p>
       </div>
     </div>,
     {
       className: 'custom-toast',
-      progressClassName: 'custom-toast-progress',
+      progressClassName: '',
       closeButton: true,
       icon: false,
     }

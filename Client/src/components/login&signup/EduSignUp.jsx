@@ -8,6 +8,7 @@ import { IoMdEyeOff } from "react-icons/io";
 import { RiLockPasswordFill } from "react-icons/ri";
 import axios from "axios";
 import API from '../../common/apis/ServerBaseURL.jsx'
+import {countries} from "../../assets/data/countries.js";
 const subjectOptions = [
   { value: "Science", label: "Science" },
   { value: "Technology", label: "Technology" },
@@ -34,31 +35,7 @@ const subjectOptions = [
 
 
 
-// Add these arrays at the top of the documents
- const countryList = [
-  "Afghanistan", "Albania", "Algeria", "Andorra", "Angola", "Antigua and Barbuda", "Argentina", "Armenia", "Australia",
-  "Austria", "Azerbaijan", "Bahamas", "Bahrain", "Bangladesh", "Barbados", "Belarus", "Belgium", "Belize", "Benin",
-  "Bhutan", "Bolivia", "Bosnia and Herzegovina", "Botswana", "Brazil", "Brunei", "Bulgaria", "Burkina Faso",
-  "Burundi", "Cambodia", "Cameroon", "Canada", "Cape Verde", "Central African Republic", "Chad", "Chile", "China",
-  "Colombia", "Comoros", "Costa Rica", "Croatia", "Cuba", "Cyprus", "Czech Republic", "Democratic Republic of the Congo",
-  "Denmark", "Djibouti", "Dominica", "Dominican Republic", "East Timor", "Ecuador", "Egypt", "El Salvador",
-  "Equatorial Guinea", "Eritrea", "Estonia", "Eswatini", "Ethiopia", "Fiji", "Finland", "France", "Gabon", "Gambia",
-  "Georgia", "Germany", "Ghana", "Greece", "Grenada", "Guatemala", "Guinea", "Guinea-Bissau", "Guyana", "Haiti",
-  "Honduras", "Hungary", "Iceland", "India", "Indonesia", "Iran", "Iraq", "Ireland", "Israel", "Italy", "Ivory Coast",
-  "Jamaica", "Japan", "Jordan", "Kazakhstan", "Kenya", "Kiribati", "Kuwait", "Kyrgyzstan", "Laos", "Latvia", "Lebanon",
-  "Lesotho", "Liberia", "Libya", "Liechtenstein", "Lithuania", "Luxembourg", "Madagascar", "Malawi", "Malaysia",
-  "Maldives", "Mali", "Malta", "Marshall Islands", "Mauritania", "Mauritius", "Mexico", "Micronesia", "Moldova",
-  "Monaco", "Mongolia", "Montenegro", "Morocco", "Mozambique", "Myanmar", "Namibia", "Nauru", "Nepal", "Netherlands",
-  "New Zealand", "Nicaragua", "Niger", "Nigeria", "North Korea", "North Macedonia", "Norway", "Oman", "Pakistan",
-  "Palau", "Panama", "Papua New Guinea", "Paraguay", "Peru", "Philippines", "Poland", "Portugal", "Qatar", "Republic of the Congo",
-  "Romania", "Russia", "Rwanda", "Saint Kitts and Nevis", "Saint Lucia", "Saint Vincent and the Grenadines",
-  "San Marino", "Sao Tome and Principe", "Saudi Arabia", "Senegal", "Serbia", "Seychelles", "Sierra Leone",
-  "Singapore", "Slovakia", "Slovenia", "Solomon Islands", "Somalia", "South Africa", "South Korea", "South Sudan",
-  "Spain", "Sri Lanka", "Sudan", "Suriname", "Sweden", "Switzerland", "Syria", "Tajikistan", "Tanzania", "Thailand",
-  "Togo", "Tonga", "Trinidad and Tobago", "Tunisia", "Turkey", "Turkmenistan", "Tuvalu", "Uganda", "Ukraine",
-  "United Arab Emirates", "United Kingdom", "United States", "Uruguay", "Uzbekistan", "Vanuatu", "Vatican City",
-  "Venezuela", "Vietnam", "Yemen", "Zambia", "Zimbabwe"
-];
+
 
 
 const languageList = [
@@ -308,48 +285,7 @@ const onSubmit = async (data) => {
       className="w-full  bg-[#868674] outline-none rounded py-1 cursor-pointer"
     >
       <option value="">Select Country</option>
-      {[
-        { code: "US", name: "United States" },
-        { code: "GB", name: "United Kingdom" },
-        { code: "IN", name: "India" },
-        { code: "CA", name: "Canada" },
-        { code: "AU", name: "Australia" },
-        { code: "DE", name: "Germany" },
-        { code: "FR", name: "France" },
-        { code: "IT", name: "Italy" },
-        { code: "ES", name: "Spain" },
-        { code: "NL", name: "Netherlands" },
-        { code: "SG", name: "Singapore" },
-        { code: "AE", name: "United Arab Emirates" },
-        { code: "EG", name: "Egypt" },
-        { code: "ZA", name: "South Africa" },
-        { code: "BR", name: "Brazil" },
-        { code: "MX", name: "Mexico" },
-        { code: "JP", name: "Japan" },
-        { code: "CN", name: "China" },
-        { code: "HK", name: "Hong Kong" },
-        { code: "MY", name: "Malaysia" },
-        { code: "TH", name: "Thailand" },
-        { code: "NG", name: "Nigeria" },
-        { code: "KE", name: "Kenya" },
-        { code: "NZ", name: "New Zealand" },
-        { code: "IE", name: "Ireland" },
-        { code: "CH", name: "Switzerland" },
-        { code: "SE", name: "Sweden" },
-        { code: "BE", name: "Belgium" },
-        { code: "AT", name: "Austria" },
-        { code: "DK", name: "Denmark" },
-        { code: "FI", name: "Finland" },
-        { code: "NO", name: "Norway" },
-        { code: "PL", name: "Poland" },
-        { code: "PT", name: "Portugal" },
-        { code: "RU", name: "Russia" },
-        { code: "KR", name: "South Korea" },
-        { code: "ID", name: "Indonesia" },
-        { code: "PH", name: "Philippines" },
-        { code: "BD", name: "Bangladesh" },
-        { code: "PK", name: "Pakistan" },
-      ].map((c) => (
+   {countries.map((c) => (
         <option key={c.code} value={c.code}>
           {c.name}
         </option>
@@ -363,7 +299,7 @@ const onSubmit = async (data) => {
 {/* Phone Number */}
 <div>
   <label className="block font-medium text-sm w-full text-start ">
-    Phone Number
+    Phone number
   </label>
   <div className="flex items-center bg-[#868674] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500">
     <input
@@ -420,7 +356,7 @@ const onSubmit = async (data) => {
 
 {/* Address Line 1 */}
 <div className="mt-2">
-  <label className="block font-medium text-sm w-full text-start ">Address Line 1</label>
+  <label className="block font-medium text-sm w-full text-start ">Address line 1</label>
   <div className="flex items-center bg-[#868674] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500">
     <input
       {...register("address.line1", { required: true })}
@@ -456,7 +392,7 @@ const onSubmit = async (data) => {
 
 {/* Postal Code */}
 <div className="mt-2">
-  <label className="block font-medium text-sm w-full text-start ">Postal Code</label>
+  <label className="block font-medium text-sm w-full text-start ">Postal code</label>
   <div className="flex items-center bg-[#868674] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500">
     <input
       {...register("address.postal_code", { required: true })}
@@ -766,7 +702,7 @@ const onSubmit = async (data) => {
                    Create sign in password for this site
                   </label>
                   <div className="flex items-center gap-2 bg-[#868674]  p-3 rounded-lg border border-[#1e2a48] focus-within:border-blue-500  ">
-                    <RiLockPasswordFill className="text-gray-400" />
+                    <RiLockPasswordFill className="text-green-950" />
                     <input
                       type={`${showPass ? 'text' : 'password'}`}
                       placeholder="Password"
@@ -787,21 +723,24 @@ const onSubmit = async (data) => {
                       })}
                       className="bg-transparent outline-none  w-full"
                     />
-                     <button
-            type="button"
-            onClick={handleShowPass}
-            className="text-xl text-gray-400 focus:outline-none cursor-pointer"
-          >
-            {showPass ?  <IoMdEye /> : <IoMdEyeOff />}
-          </button>
+                      <button
+      type="button"
+      onClick={handleShowPass}
+      className={`text-xl focus:outline-none cursor-pointer ${
+        showPass ? "text-red-950" : "text-green-950"
+      }`}
+    >
+      {showPass ?  <IoMdEye /> : <IoMdEyeOff />}
+    </button>
                   </div>
                   {errors.password && (
                     <p className="text-red-400 text-sm">{errors.password.message}</p>
                   )}
                 </div>
 
-      <fieldset className="border border-blue-500 p-2 text-sm rounded-lg space-y-2 ">
-        <legend className="font-bold">Accept Terms</legend>
+     <div>
+      <legend className="font-bold">Accept Terms</legend>
+       <fieldset className="border border-blue-500 p-2 text-sm rounded-lg space-y-2 ">
         {[1, 2, 3, 4, 5].map((num) => (
           <label className="block cursor-pointer" key={num}>
             <input
@@ -823,10 +762,11 @@ const onSubmit = async (data) => {
           </label>
         ))}
       </fieldset>
+     </div>
  {/* PDF Upload */}
  <div>
         <label className="block font-medium text-sm w-full text-start ">
-          Upload Documents pdf only (optional) (Max 20 MB )
+          Upload documents pdf only (optional) (Max 20 MB )
         </label>
         <div className="flex items-center bg-[#868674] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500">
           <input
@@ -844,7 +784,7 @@ const onSubmit = async (data) => {
       {/* Video Upload */}
       <div>
         <label className="block font-medium text-sm w-full text-start ">
-          Upload Introduction Video (optional) (MP4 only, Max 100 MB)
+          Upload introduction video (optional) (MP4 only, Max 100 MB)
         </label>
         <div className="flex items-center bg-[#868674] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500">
           <input
