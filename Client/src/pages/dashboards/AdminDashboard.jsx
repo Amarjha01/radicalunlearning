@@ -45,6 +45,9 @@ export default function AdminDashboard() {
   const [subscriptionFee, setSubscriptionFee] = useState(49.99);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
  const [email , setEmail] = useState("");
+  const [role , setRole] = useState("");
+  console.log('khsjhf', email , role);
+  
   const [withdrawalRequestsData , setWithdrawalRequestsData] = useState([])
   
   // Calculate stats
@@ -127,9 +130,10 @@ export default function AdminDashboard() {
     }
   }, [user]);
 
-  const fetchEducatorsDetailedData = async (email) => {
-        setViewUserDetails(true);
+  const fetchEducatorsDetailedData = async (email , role) => {
         setEmail(email);
+        setRole(role);
+        setViewUserDetails(true);
   };
 
   // fetching learner data
@@ -217,7 +221,7 @@ const getWithdrawelRequests = async() =>{
     <div className=" w-[100vw] min-h-screen flex max-w-[1680px] mx-auto ">
            {
       viewUserDetails && (
-        <div className={` w-[100vw] absolute z-50  flex justify-center`}><UserDetailsList userEmail={email}/>
+        <div className={` w-[100vw] absolute z-50  flex justify-center`}><UserDetailsList userEmail={email} role={role}/>
         <span onClick={()=>{setViewUserDetails(false)}} className=' text-black absolute right-5 text-3xl top-0 cursor-pointer'>X</span>
         </div>
       )
@@ -615,7 +619,7 @@ const getWithdrawelRequests = async() =>{
       <th className="px-3 py-3 text-left text-xs font-medium text-black  uppercase tracking-wider  w-1/5 break-words">Sub-Role</th>
       <th className="px-3 py-3 text-left text-xs font-medium text-black  uppercase tracking-wider  w-1/5 break-words">Country</th>
       <th className="px-3 py-3 text-left text-xs font-medium text-black  uppercase tracking-wider  w-1/5 break-words">Join Date</th>
-      <th className="px-3 py-3 text-left text-xs font-medium text-black  uppercase tracking-wider  w-1/5 break-words">View</th>
+      <th className="px-3 py-3 text-left text-xs font-medium text-black  uppercase tracking-wider  w-1/5 break-words">Action</th>
     </tr>
   </thead>
   <tbody className=" divide-y divide-gray-200 ">
@@ -627,7 +631,7 @@ const getWithdrawelRequests = async() =>{
         <td className="px-3 py-4 text-sm text-black  break-words text-start">{educator.country}</td>
         <td className="px-3 py-4 text-sm text-black  break-words text-start">{new Date(educator.createdAt).toLocaleDateString()}</td>
         <td
-          onClick={() => fetchEducatorsDetailedData(educator.email)}
+           onClick={() => fetchEducatorsDetailedData(educator.email , educator.role)}
           className="px-3 py-4 text-sm text-green-700  cursor-pointer break-words"
         >
           View
@@ -805,13 +809,22 @@ const getWithdrawelRequests = async() =>{
                         {new Date(learner.createdAt).toLocaleDateString()}
                       </td>
                       <td className="px-3 py-4 font-medium text-gray-900  break-words  text-start ">
-                        <button
+                      <div className=" flex space-x-2">
+                          <button
                           onClick={() => deleteUser(learner.email)}
                           className="p-1 bg-red-100 text-red-600 rounded hover:bg-red-200 transition cursor-pointer "
                           title="Delete learner"
                         >
                           <Trash2 size={20} />
                         </button>
+                        <button
+                         onClick={() => fetchEducatorsDetailedData(learner.email, learner.role)}
+                          className="p-1 text-green-800    transition cursor-pointer "
+                          title="Delete learner"
+                        >
+                          view
+                        </button>
+                      </div>
                       </td>
                     </tr>
                   ))}

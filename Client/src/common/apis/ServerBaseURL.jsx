@@ -33,6 +33,10 @@ const API = {
     url: `${backendDomain}/api/admin/getEducatorDataDetails`,
     method: 'POST',
   },
+  getlearnerDataDetails: { 
+    url: `${backendDomain}/api/admin/getlearnerDataDetails`,
+    method: 'POST',
+  },
   learnersData: { 
     url: `${backendDomain}/api/admin/get-all-learner-data`,
     method: 'POST',

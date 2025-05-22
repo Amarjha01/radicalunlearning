@@ -2,12 +2,17 @@ import React, { use, useEffect, useState } from 'react';
 import API from '../../../common/apis/ServerBaseURL';
 import axios from 'axios';
 
-const UserDetails = ({ userEmail }) => {
+const UserDetails = ({ userEmail , role }) => {
   const [user, setUserData] = useState({});
 
-  const fetchEducatorsDetailedData = async () => {
+
+const fetchUserData = async (userEmail , role) => {
+  
+  try {
+    if(role === "educator"){
+const fetchEducatorsDetailedData = async () => {
     try {
-      const response = await axios.post(API.educatorsDetailedData.url, {email: userEmail,}, {
+      const response = await axios.post(API.educatorsDetailedData.url, {email: userEmail, }, {
         withCredentials:true
       });
 
@@ -18,9 +23,33 @@ const UserDetails = ({ userEmail }) => {
       console.error("Error fetching detailed data:", error);
     }
   };
+  fetchEducatorsDetailedData();
+}else{
+  const fetchLearnerDetailedData = async () => {
+    try {
+      const response = await axios.post(API.getlearnerDataDetails.url, {email: userEmail,}, {
+        withCredentials:true
+      });
+
+      if (response.status === 200) {
+        setUserData(response.data.data);
+      }
+    } catch (error) {
+      console.error("Error fetching detailed data:", error);
+    }
+  };
+  fetchLearnerDetailedData();
+}
+  } catch (error) {
+    console.log(error);
+    
+  }
+}
+
+  
 
   useEffect(() => {
- fetchEducatorsDetailedData()
+fetchUserData(userEmail , role)
   },[])
 
   if (!user || Object.keys(user).length === 0) {
