@@ -79,36 +79,47 @@ export const deleteUser = async (req , resp) =>{
         })
     }
 }
-// suspend user
+// suspend/unsuspend user
 export const suspendUser = async (req, resp) => {
   try {
     const { role, _id } = req.body;
 
-    if (role === "EDUCATOR" || "educator") {
-      const educatorData = await EducatorUserModel.findOneAndUpdate(
-        { _id },
-        { suspended: 'YES' },
-        { new: true }
-      );
-      console.log("suspended user: ", educatorData);
-      return resp.status(200).json({
-        message: "Educator suspended successfully",
-        user: educatorData,
-        success: true
-      });
+    let userModel;
+    let userType;
+
+    if (role?.toUpperCase() === "EDUCATOR") {
+      userModel = EducatorUserModel;
+      userType = "Educator";
     } else {
-      const learnerData = await LearnerUserModel.findOneAndUpdate(
-        { _id },
-        { suspended: 'YES' },
-        { new: true }
-      );
-      console.log("suspended user: ", learnerData);
-      return resp.status(200).json({
-        message: "Learner suspended successfully",
-        user: learnerData,
-        success: true
+      userModel = LearnerUserModel;
+      userType = "Learner";
+    }
+
+    // Find the user first
+    const user = await userModel.findById(_id);
+    if (!user) {
+      return resp.status(404).json({
+        message: `${userType} not found`,
+        success: false
       });
     }
+
+    // Toggle suspension status
+    const newStatus = user.suspended === 'YES' ? 'NO' : 'YES';
+
+    const updatedUser = await userModel.findOneAndUpdate(
+      { _id },
+      { suspended: newStatus },
+      { new: true }
+    );
+
+    // console.log(`${newStatus === 'YES' ? 'Suspended' : 'Unsuspended'} user: `, updatedUser);
+
+    return resp.status(200).json({
+      message: `${userType} ${newStatus === 'YES' ? 'suspended' : 'unsuspended'} successfully`,
+      user: updatedUser,
+      success: true
+    });
 
   } catch (error) {
     console.error("Suspend error:", error);
@@ -119,6 +130,7 @@ export const suspendUser = async (req, resp) => {
     });
   }
 };
+
 
  
 // Approve educator

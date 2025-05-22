@@ -1,9 +1,28 @@
-import React from 'react';
-import API from '../../common/apis/ServerBaseURL';
+import React, { use, useEffect, useState } from 'react';
+import API from '../../../common/apis/ServerBaseURL';
 import axios from 'axios';
 
-const UserDetails = ({ user }) => {
-  
+const UserDetails = ({ userEmail }) => {
+  const [user, setUserData] = useState({});
+
+  const fetchEducatorsDetailedData = async () => {
+    try {
+      const response = await axios.post(API.educatorsDetailedData.url, {email: userEmail,}, {
+        withCredentials:true
+      });
+
+      if (response.status === 200) {
+        setUserData(response.data.data);
+      }
+    } catch (error) {
+      console.error("Error fetching detailed data:", error);
+    }
+  };
+
+  useEffect(() => {
+ fetchEducatorsDetailedData()
+  },[])
+
   if (!user || Object.keys(user).length === 0) {
     return (
       <div className="p-6 rounded-xl bg-gradient-to-br from-slate-900 to-slate-800 text-center">
@@ -11,15 +30,17 @@ const UserDetails = ({ user }) => {
       </div>
     );
   }
+
 const handleSuspendUser = async() => {
 try {
-  console.log(user);
-  
   const response = await axios.post(API.suspendUser.url, {role:user.role , _id:user._id},
   {withCredentials:true}
 )
-console.log('suspended', response);
-
+  if (response.status === 200) {
+    const updatedUser = response.data.data;
+    console.log("Updated user data:", updatedUser);
+    
+  }
 } catch (error) {
   console.log(error);
   
@@ -36,7 +57,7 @@ console.log('suspended', response);
             User Details
           </h2>
           <button onClick={handleSuspendUser} className=' text-white px-2 py-0.5 bg-red-700 rounded-2xl cursor-pointer'>
-            suspend user
+            {user.suspended === "YES"? 'Unsuspend' : 'Suspend'}
           </button>
         </div>
         

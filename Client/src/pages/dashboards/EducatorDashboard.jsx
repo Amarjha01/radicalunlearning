@@ -198,7 +198,6 @@ const handleProfileUpdate = async (e) => {
         pauseOnFocusLoss
         draggable
         pauseOnHover
-        theme="colored"
       />
       {/* sidebar desktop */}
       <div className="hidden md:flex relative left-0 min-h-screen w-64 bg-[#f2c078] shadow-md flex-col">

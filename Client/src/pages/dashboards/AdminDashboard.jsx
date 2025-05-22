@@ -26,7 +26,7 @@ import { MdHome } from "react-icons/md";
 import { CiChat1 } from "react-icons/ci";
 import axios from "axios";
 import API from "../../common/apis/ServerBaseURL.jsx";
-import UserDetailsList from "../../components/Dashboard/UserDetailsList.jsx";
+import UserDetailsList from "../../components/Dashboard/admin/UserDetailsList.jsx";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { clearUser } from "../../store/slices/userSlice.jsx";
@@ -44,7 +44,7 @@ export default function AdminDashboard() {
   const [learners, setLearners] = useState([]);
   const [subscriptionFee, setSubscriptionFee] = useState(49.99);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [educatorDetailedData, setEducatorDetailedData] = useState({});
+ const [email , setEmail] = useState("");
   const [withdrawalRequestsData , setWithdrawalRequestsData] = useState([])
   
   // Calculate stats
@@ -70,11 +70,7 @@ export default function AdminDashboard() {
     FilterEducators();
   }, [educators]);
 
-  const updateSubscriptionFee = (e) => {
-    e.preventDefault();
-    // This would normally send to API, but we're just updating state
-    alert(`Subscription fee updated to $${subscriptionFee}`);
-  };
+
 
   const SidebarItem = ({ icon, label, active, onClick, }) => (
     <li
@@ -132,19 +128,8 @@ export default function AdminDashboard() {
   }, [user]);
 
   const fetchEducatorsDetailedData = async (email) => {
-    
-    try {
-      const response = await axios.post(API.educatorsDetailedData.url, {email: email,}, {
-        withCredentials:true
-      });
-
-      if (response.status === 200) {
-        setEducatorDetailedData(response.data.data);
         setViewUserDetails(true);
-      }
-    } catch (error) {
-      console.error("Error fetching detailed data:", error);
-    }
+        setEmail(email);
   };
 
   // fetching learner data
@@ -232,7 +217,7 @@ const getWithdrawelRequests = async() =>{
     <div className=" w-[100vw] min-h-screen flex max-w-[1680px] mx-auto ">
            {
       viewUserDetails && (
-        <div className={` w-[100vw] absolute z-50  flex justify-center`}><UserDetailsList user={educatorDetailedData} />
+        <div className={` w-[100vw] absolute z-50  flex justify-center`}><UserDetailsList userEmail={email}/>
         <span onClick={()=>{setViewUserDetails(false)}} className=' text-black absolute right-5 text-3xl top-0 cursor-pointer'>X</span>
         </div>
       )

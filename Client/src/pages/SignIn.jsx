@@ -77,7 +77,6 @@ const SignIn = () => {
   pauseOnFocusLoss
   draggable
   pauseOnHover
-  theme="colored"
 />
       <div className="relative w-full max-w-md bg-[#b4c0b2] p-8 rounded-2xl border border-white/10 shadow-lg glow-hover">
         <div className="" />
