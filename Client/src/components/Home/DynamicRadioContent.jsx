@@ -31,16 +31,16 @@ const radioOptions = [
   },
 ];
 
-const DynamicRadioContent = (theme) => {
+const DynamicRadioContent = () => {
   const [selected, setSelected] = useState("dsa");
   const current = radioOptions.find((opt) => opt.id === selected);
 
   return (
-    <section className="w-full min-h-fit  flex flex-col md:flex-row items-center justify-between gap-28 px-8 py-20 my-20">
+    <section className="w-full min-h-fit text-white flex flex-col md:flex-row items-center justify-between gap-28 px-8 py-20 my-20">
       {/* Left side - dynamic text */}
       <div className="max-w-xl text-left">
         <h2 className="text-3xl md:text-4xl font-bold mb-6">{current.title}</h2>
-        <p className={` text-lg ${theme === 'dark' ? 'text-gray-300' : 'text-blac'}`}>{current.content}</p>
+        <p className="text-gray-300 text-lg">{current.content}</p>
       </div>
 
       {/* Right side - futuristic card with layered background */}

@@ -6,14 +6,13 @@ import DynamicRadioContent from '../components/Home/DynamicRadioContent'
 import { useSelector } from "react-redux";
 const Home = () => {
 const user = useSelector((state) => state?.user);
-const theme = user?.userData?.user?.theme
   
   return (
     <div>
-      <Hero theme={theme}/>
-      <RediscoverCards  theme={theme}/>
+      <Hero />
+      <RediscoverCards />
       <Features />
-      <DynamicRadioContent theme={theme}/>
+      <DynamicRadioContent />
       <TestimonialCarousel />
     
     </div>
