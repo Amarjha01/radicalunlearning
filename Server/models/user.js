@@ -17,11 +17,12 @@ const Admin = new mongoose.Schema({
       type : String,
       required : true
   },
-  theme:{
-    type:String,
-    enum:['light' , 'dark'],
-    default:'light'
-  },
+  revenue:[
+    {
+      month: String,
+      revenue: Number
+    }
+  ],
   password : {
       type : String,
       required : true
@@ -61,6 +62,9 @@ const Lerner_userSchema = new mongoose.Schema({
   dob: {
     type: Date,
     required: true,
+  },
+   avatar: {
+    type: String,
   },
   subjects: {
     type: [String],
@@ -246,8 +250,8 @@ const Educator_userSchema = new mongoose.Schema({
   },
   videoUrl: {
     type: String,
-  },
-  profileUrl: {
+  }, 
+  avatar: {
     type: String,
   },
 

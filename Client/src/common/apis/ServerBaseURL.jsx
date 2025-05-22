@@ -33,6 +33,10 @@ const API = {
     url: `${backendDomain}/api/admin/getEducatorDataDetails`,
     method: 'POST',
   },
+  getlearnerDataDetails: { 
+    url: `${backendDomain}/api/admin/getlearnerDataDetails`,
+    method: 'POST',
+  },
   learnersData: { 
     url: `${backendDomain}/api/admin/get-all-learner-data`,
     method: 'POST',
@@ -43,6 +47,10 @@ const API = {
   },
   deleteUser: { 
     url: `${backendDomain}/api/admin/deleteUser`,
+    method: 'POST',
+  },
+  suspendUser: { 
+    url: `${backendDomain}/api/admin/suspendUser`,
     method: 'POST',
   },
   fetchWithdrawelRequests: { 
@@ -78,6 +86,9 @@ const API = {
   },
   WithdrawelRequest:{
     url: `${backendDomain}/api/user/WithdrawelRequest`,
+  },
+  fetchWalletAmount:{
+    url: `${backendDomain}/api/user/fetchWalletAmount`,
   },
 
 

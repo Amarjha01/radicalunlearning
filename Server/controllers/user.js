@@ -328,6 +328,21 @@ export async function signin(request, response) {
       });
     }
 
+    if(user?.Approved === false || user?.Approved === "false"){
+  return response.status(403).json({
+    message: "Your account is not approved yet",
+    error: true,
+    success: false,
+  });
+}
+    if(user?.suspended === "YES" || user?.suspended === true){
+  return response.status(403).json({
+    message: "Your account is suspended",
+    error: true,
+    success: false,
+  });
+}
+
     const checkPassword = await bcryptjs.compare(password, user.password);
 
     if (!checkPassword) {
@@ -388,6 +403,8 @@ export async function signin(request, response) {
           Approved: user.Approved,
           theme: user.theme,
           wallet: user.wallet,
+          avatar: user.avatar,
+          revenue: user.revenue,
           _id: user._id,
         },
         role: user.role,
@@ -419,7 +436,9 @@ export async function updateUserDetails(req, res) {
     let updateUser;
 
     if (role === "LEARNER") {
-      const { name, email, country, language, bio } = req.body;
+      const { name, email, country, language, bio , avatar } = req.body;
+      console.log("updateUserDetails:", req.body);
+      
       updateUser = await LearnerUserModel.updateOne(
         { _id: userId },
         {
@@ -428,30 +447,22 @@ export async function updateUserDetails(req, res) {
           ...(country && { country }),
           ...(language && { language }),
           ...(bio && { bio }),
+          ...(avatar && { avatar }),
         }
       );
     } else if (role === "EDUCATOR") {
       const {
-        name,
-        email,
-        subrole,
-        country,
-        language,
         bio,
         experience,
-        serviceType,
+        avatar
       } = req.body;
 
       updateUser = await EducatorUserModel.updateOne(
         { _id: userId },
         {
-          ...(name && { name }),
-          ...(email && { email }),
-          ...(subrole && { subrole }),
-          ...(country && { country }),
-          ...(language && { language }),
           ...(bio && { bio }),
           ...(experience && { experience }),
+          ...(avatar && { avatar }),
         }
       );
     }
@@ -506,33 +517,39 @@ export async function signout(request, response) {
 // -----------------------------search------------------------------------------------
 export async function searchEducator(req, res) {
   try {
-    const {searchKey} = req.query;
-    
+    const { searchKey } = req.query;
 
-const educators = await EducatorUserModel.find({
-  subjects: { $regex: searchKey, $options: 'i' }
-}).select('name  country  bio _id subjects documentUrl videoUrl' );
+    const educators = await EducatorUserModel.find({
+      subjects: { $regex: searchKey, $options: 'i' },
+      Approved: true,         // Ensures only approved educators are returned
+      suspended: 'NO'         // Ensures only non-suspended educators are returned
+    })
+    .select('name country bio _id subjects documentUrl videoUrl ');
 console.log(educators);
 
-if(educators){
-  res.status(200).json({
-    message:"here is this list of all educators",
-    data:educators,
-    error:false,
-    success:true
-  })
-}else{
-  res.status(404).json({
-     message:'no educator found'
-  })
-}
-
+    if (educators.length > 0) {
+      res.status(200).json({
+        message: "Here is the list of all educators",
+        data: educators,
+        error: false,
+        success: true
+      });
+    } else {
+      res.status(404).json({
+        message: 'No educator found'
+      });
+    }
 
   } catch (error) {
-    console.log('error', error);
-    
+    console.log('Error:', error);
+    res.status(500).json({
+      message: 'Something went wrong',
+      error: error.message || error,
+      success: false
+    });
   }
 }
+
 
 
 // ------------------------ToDos APIs --------------------------------------------------------
@@ -813,5 +830,32 @@ return res.status(200).json({message:"Withdrawel request submitted successfully.
   } catch (error) {
     console.error(error); 
     return res.status(500).json({ message: "Internal server error. Please try again later." });
+  }
+}
+
+export async function fetchWalletAmount(req , res) {
+  try {
+    const { token }= req.cookies()
+    if(!token) {
+      res.status(401).json({
+        message:"Unauthorised"
+      })
+    }
+    const {id} = jwt.verify(token , process.env.JWT_SECRET);
+    const walletAmount = await EducatorUserModel.findById(id).select(wallet);
+
+    res.status(200).json({
+      message:"wallet data fetched successfully",
+      data:walletAmount,
+      error:false,
+      success:true
+    })
+  } catch (error) {
+    res.status(500).json({
+      message:"Unable to fetch wallet data",
+      data:error,
+      error:true,
+      success:false
+    })
   }
 }

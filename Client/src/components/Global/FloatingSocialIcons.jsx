@@ -31,14 +31,14 @@ export default function FloatingSocialIcons() {
       {/* Toggle Button */}
       <button
         onClick={() => setIsCollapsed(!isCollapsed)}
-        className="bg-[#F2C078] text-white h-10 w-6 flex items-center justify-center self-center rounded-l-md"
+        className="bg-[#002b65] text-white h-10 w-6 flex items-center justify-center self-center rounded-l-md cursor-pointer"
         aria-label={isCollapsed ? "Expand social icons" : "Collapse social icons"}
       >
         {isCollapsed ? <FaChevronLeft size={12} /> : <FaChevronRight size={12} />}
       </button>
 
       {/* Social Icons Container */}
-      <div className="bg-[#F2C078] py-2 px-3 rounded-l-lg flex flex-col gap-4">
+      <div className="bg-[#002b65] py-2 px-3 rounded-l-lg flex flex-col gap-4">
         {socialLinks.map((link, index) => (
           <a
             key={index}

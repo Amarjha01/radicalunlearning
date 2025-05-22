@@ -79,26 +79,59 @@ export const deleteUser = async (req , resp) =>{
         })
     }
 }
-// suspend user
-export const suspendUser = async (req , resp) =>{
-    try {
-        const { role , email} = req.body;
-        if(role === "EDUCATOR"){
-            const educatorData = await EducatorUserModel.findOneAndUpdate({email} , {suspended : 'YES'} , {new : true});
-            console.log("suspended user : ", educatorData)
-        }else {
-            const learnerData = await LearnerUserModel.findOneAndUpdate({email} , {suspended : 'YES'} , {new : true});
-            console.log("suspended user : ", learnerData)
-        }
-    } catch (error) {
-        resp.status(500).json({
-            message : 'something went wrong',
-            error : error,
-            success : false,
-            error : true
-        })
+// suspend/unsuspend user
+export const suspendUser = async (req, resp) => {
+  try {
+    const { role, _id } = req.body;
+
+    let userModel;
+    let userType;
+
+    if (role?.toUpperCase() === "EDUCATOR") {
+      userModel = EducatorUserModel;
+      userType = "Educator";
+    } else {
+      userModel = LearnerUserModel;
+      userType = "Learner";
     }
-}
+
+    // Find the user first
+    const user = await userModel.findById(_id);
+    if (!user) {
+      return resp.status(404).json({
+        message: `${userType} not found`,
+        success: false
+      });
+    }
+
+    // Toggle suspension status
+    const newStatus = user.suspended === 'YES' ? 'NO' : 'YES';
+
+    const updatedUser = await userModel.findOneAndUpdate(
+      { _id },
+      { suspended: newStatus },
+      { new: true }
+    );
+
+    // console.log(`${newStatus === 'YES' ? 'Suspended' : 'Unsuspended'} user: `, updatedUser);
+
+    return resp.status(200).json({
+      message: `${userType} ${newStatus === 'YES' ? 'suspended' : 'unsuspended'} successfully`,
+      user: updatedUser,
+      success: true
+    });
+
+  } catch (error) {
+    console.error("Suspend error:", error);
+    return resp.status(500).json({
+      message: 'Something went wrong',
+      error: error.message || error,
+      success: false
+    });
+  }
+};
+
+
  
 // Approve educator
 export const approveEducator = async (req, res) => {
@@ -193,8 +226,28 @@ await educator.save();
 export const getEducatorDataDetails = async(req, res) =>{
     try {
         const {email , _id} = req.body;
-        console.log(email,_id)
+        console.log("educ",email,_id)
         const response = await EducatorUserModel.findOne({email:email});
+        console.log(response)
+        res.status(200).json({
+            message:`fetched user details successfully for this email ${email} `,
+            data:response,
+            success:true,
+            error:false
+        })
+    } catch (error) {
+        res.status(500).json({
+            message:"failed to fetch data",
+            error:true,
+            success:false
+        })
+    }
+}
+export const getlearnerDataDetails = async(req, res) =>{
+    try {
+        const {email , _id} = req.body;
+        console.log("learner : ",email,_id)
+        const response = await LearnerUserModel.findOne({email:email});
         console.log(response)
         res.status(200).json({
             message:`fetched user details successfully for this email ${email} `,
