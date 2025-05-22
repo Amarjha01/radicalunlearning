@@ -1,36 +1,31 @@
 import { useEffect, useRef, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { Link } from "react-router-dom";
+import axios from "axios";
+
+// Icons
 import {
   Calendar,
   Clock,
   Users,
   User,
-  Settings,
-  Bell,
   LogOut,
-  Moon,
-  Sun,
-  Eye,
-  MoreVertical,
-  Edit,
-  ChevronDown,
-  Upload,
   Search,
   X,
 } from "lucide-react";
-import { FaCheck } from "react-icons/fa";
-import { LuPoundSterling } from "react-icons/lu";
-import { LuBotMessageSquare } from "react-icons/lu";
+import { FaCheck, FaUserEdit } from "react-icons/fa";
+import { LuPoundSterling, LuBotMessageSquare } from "react-icons/lu";
 import { IoWalletOutline } from "react-icons/io5";
-import {FaUserEdit } from 'react-icons/fa';
-import axios from "axios";
-import API from "../../common/apis/ServerBaseURL.jsx";
-import { useSelector } from "react-redux";
-import { useDispatch } from "react-redux";
-import { clearUser } from "../../store/slices/userSlice.jsx";
-import GroupChat from "../../components/Chat/GroupChat.jsx";
 import { MdHome } from "react-icons/md";
 import { CiChat1 } from "react-icons/ci";
-import { Link } from "react-router-dom";
+
+// API & Redux
+import API from "../../common/apis/ServerBaseURL.jsx";
+import { clearUser } from "../../store/slices/userSlice.jsx";
+
+// Components
+import GroupChat from "../../components/Chat/GroupChat.jsx";
+
 import EducatorWallet from "../../components/Dashboard/Educator/EducatorWallet.jsx";
 import AIChat from '../../components/ChatBot/Aichat.jsx';
 import { ToastContainer } from 'react-toastify';
@@ -44,7 +39,7 @@ export default function EducatorDashboard() {
   const [profileData, setProfileData] = useState({});
   const [sessions, setSessions] = useState({previous:[],upcoming:[]});
   const [isChangePasswordOpen, setIsChangePasswordOpen] = useState(false);
-  console.log(activeTab);
+  const [walletAmount , setWalletAmount] = useState()
   
   const dispatch = useDispatch();
 
@@ -172,7 +167,7 @@ const handleProfileUpdate = async (e) => {
   };
 
 
-    const [sessionFee, setSessionFee] = useState("1000");
+  const [sessionFee, setSessionFee] = useState("1000");
   const [isEditing, setIsEditing] = useState(false);
   const [tempFee, setTempFee] = useState(sessionFee);
 
@@ -183,17 +178,25 @@ const handleProfileUpdate = async (e) => {
     }
   };
 
-const fetchWalletAmount = async() =>{
-  try {
-    const response = await axios.get(API.fetchWalletAmount.url, {
-      withCredentials:true
-    })
-    
-  } catch (error) {
-    
-  }
-}
+useEffect(() => {
+  const fetchWalletAmount = async () => {
+    try {
+      const response = await axios.get(API.fetchWalletAmount.url, {
+        withCredentials: true,
+      });
 
+      const walletAmount = response?.data?.data;
+      setWalletAmount(walletAmount);
+    } catch (error) {
+      console.error(
+        "Failed to fetch wallet amount:",
+        error?.response?.data?.message || error.message
+      );
+    }
+  };
+
+  fetchWalletAmount(); 
+}, [sessions]); 
 
   return (
     <div className="w-[100vw] min-h-screen flex max-w-[1680px] mx-auto">
@@ -1052,7 +1055,7 @@ const fetchWalletAmount = async() =>{
           </div>
         )}
         {activeTab === "Wallet" &&(
-         <EducatorWallet wallet={profileData.wallet} />
+         <EducatorWallet wallet={walletAmount} />
         )}
       </div>
     </div>

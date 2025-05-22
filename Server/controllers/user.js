@@ -833,29 +833,45 @@ return res.status(200).json({message:"Withdrawel request submitted successfully.
   }
 }
 
-export async function fetchWalletAmount(req , res) {
+export async function fetchWalletAmount(req, res) {
   try {
-    const { token }= req.cookies()
-    if(!token) {
-      res.status(401).json({
-        message:"Unauthorised"
-      })
+    const token = req.cookies?.accessToken;
+    
+    if (!token) {
+      return res.status(401).json({
+        message: "Unauthorized",
+        error: true,
+        success: false
+      });
     }
-    const {id} = jwt.verify(token , process.env.JWT_SECRET);
-    const walletAmount = await EducatorUserModel.findById(id).select(wallet);
+
+    let decoded;
+    try {
+      decoded = jwt.verify(token, process.env.JWT_SECRET);
+    } catch (err) {
+      return res.status(403).json({
+        message: "Invalid or expired token",
+        error: true,
+        success: false
+      });
+    }
+
+    const walletData = await EducatorUserModel.findById(decoded.id).select('wallet');
 
     res.status(200).json({
-      message:"wallet data fetched successfully",
-      data:walletAmount,
-      error:false,
-      success:true
-    })
+      message: "Wallet data fetched successfully",
+      data: walletData.wallet,
+      error: false,
+      success: true
+    });
+
   } catch (error) {
+    console.error("Error fetching wallet data:", error);
     res.status(500).json({
-      message:"Unable to fetch wallet data",
-      data:error,
-      error:true,
-      success:false
-    })
+      message: "Unable to fetch wallet data",
+      data: null,
+      error: true,
+      success: false
+    });
   }
 }
