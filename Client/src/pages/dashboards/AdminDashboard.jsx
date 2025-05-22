@@ -540,14 +540,14 @@ const getWithdrawelRequests = async() =>{
           </thead>
           <tbody className="divide-y divide-gray-200 ">
             {withdrawalRequestsData?.map((request) => (
-              <tr key={request.id} className={`hover:bg-black`}>
+              <tr key={request.id} className={`hover:bg-[#b4c0b2]`}>
                 <td className="px-4 py-3 text-sm ">{request._id}</td>
                 <td className="px-4 py-3 text-sm ">{request.educator.name}</td>
                 <td className="px-4 py-3 text-sm font-medium  flex items-center">< LuPoundSterling />{request.amount.toFixed(2)}</td>
                 <td className="px-4 py-3 text-sm "> {new Date(request.createdAt).toLocaleDateString()}</td>
                 <td className="px-4 py-3 text-sm ">{request.educator.payoutMethod}</td>
                 <td className="px-4 py-3 text-sm">
-                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full  font-bold text-xl text-yellow-500 `}>
+                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full  font-bold text-xl text-yellow-300 `}>
                     {request.status.charAt(0).toUpperCase() + request.status.slice(1)}
                   </span>
                 </td>

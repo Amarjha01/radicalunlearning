@@ -92,43 +92,51 @@ try {
         
         <div className="p-6">
           <div className="space-y-4">
-            {Object.entries(user).map(([key, value]) => {
-              if (key === 'password' || key === 'otp') return null;
-              
-              let displayValue;
-              
-              if (Array.isArray(value)) {
-                displayValue = value.length ? value.join(', ') : 'N/A';
-              } else if (typeof value === 'boolean') {
-                displayValue = value ? 
-                  <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">Yes</span> : 
-                  <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">No</span>;
-              } else if (typeof value === 'string' && value.startsWith('http')) {
-                displayValue = (
-                  <a
-                    href={value}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-cyan-400 hover:text-cyan-300 underline transition-colors"
-                  >
-                    {value}
-                  </a>
-                );
-              } else {
-                displayValue = value || 'N/A';
-              }
-              
-              const formattedKey = key
-                .replace(/([A-Z])/g, ' $1')
-                .replace(/^./, str => str.toUpperCase());
-              
-              return (
-                <div key={key} className="bg-indigo-900/20 p-3 rounded-lg border border-indigo-500/20 backdrop-blur-sm">
-                  <div className="text-xs font-medium text-indigo-300 mb-1">{formattedKey}</div>
-                  <div className="text-gray-200 font-medium">{displayValue}</div>
-                </div>
-              );
-            })}
+  {Object.entries(user).map(([key, value]) => {
+  if (key === 'password' || key === 'otp') return null;
+  
+  let displayValue;
+
+  if (Array.isArray(value)) {
+    displayValue = value.length ? value.join(', ') : 'N/A';
+  } else if (typeof value === 'boolean') {
+    displayValue = value ? 
+      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">Yes</span> : 
+      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">No</span>;
+  } else if (typeof value === 'string' && value.startsWith('http')) {
+    displayValue = (
+      <a
+        href={value}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-cyan-400 hover:text-cyan-300 underline transition-colors"
+      >
+        {value}
+      </a>
+    );
+  } else if (typeof value === 'object' && value !== null) {
+    // Handle the object, for example, a date object
+    if (value.day && value.month && value.year) {
+      displayValue = `${value.day}/${value.month}/${value.year}`;
+    } else {
+      displayValue = JSON.stringify(value); // Fallback for general objects
+    }
+  } else {
+    displayValue = value || 'N/A';
+  }
+
+  const formattedKey = key
+    .replace(/([A-Z])/g, ' $1')
+    .replace(/^./, str => str.toUpperCase());
+
+  return (
+    <div key={key} className="bg-indigo-900/20 p-3 rounded-lg border border-indigo-500/20 backdrop-blur-sm">
+      <div className="text-xs font-medium text-indigo-300 mb-1">{formattedKey}</div>
+      <div className="text-gray-200 font-medium">{displayValue}</div>
+    </div>
+  );
+})}
+
           </div>
         </div>
       </div>

@@ -183,7 +183,16 @@ const handleProfileUpdate = async (e) => {
     }
   };
 
-
+const fetchWalletAmount = async() =>{
+  try {
+    const response = await axios.get(API.fetchWalletAmount.url, {
+      withCredentials:true
+    })
+    
+  } catch (error) {
+    
+  }
+}
 
 
   return (

@@ -87,6 +87,9 @@ const API = {
   WithdrawelRequest:{
     url: `${backendDomain}/api/user/WithdrawelRequest`,
   },
+  fetchWalletAmount:{
+    url: `${backendDomain}/api/user/fetchWalletAmount`,
+  },
 
 
   // -------------payment------------------------
