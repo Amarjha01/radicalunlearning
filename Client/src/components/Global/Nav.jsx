@@ -129,7 +129,7 @@ const isUser = !!user?.userData?.user;
       <div
         ref={menuRef}
         className={`absolute lg:hidden right-0 top-[10vh] rounded-2xl border 
-          bg-radial from-[#020817] to-[#4635a0] uppercase w-auto p-10 
+          bg-[#b4c0b2] uppercase w-auto p-10 z-50
           ${isOpen ? "-translate-x-5" : "translate-x-full"} transition duration-500`}
       >
         <ul className="flex flex-col gap-5">
@@ -140,8 +140,8 @@ const isUser = !!user?.userData?.user;
                 onClick={handleNavClick}
                 className={({ isActive }) =>
                   isActive
-                    ? "text-white border-b-2 border-white px-3 py-2 rounded-xl"
-                    : "text-gray-300 hover:text-white px-3 py-2"
+                    ? "text-black border-b-2 border-white px-3 py-2 rounded-xl"
+                    : "text-black hover:text-white px-3 py-2"
                 }
               >
                 {["Home", "Contact Us"][idx]}
@@ -155,8 +155,8 @@ const isUser = !!user?.userData?.user;
                 onClick={handleNavClick}
                 className={({ isActive }) =>
                   isActive
-                    ? "text-white border-b-2 border-white px-3 py-2 rounded-xl"
-                    : "text-gray-300 hover:text-white px-3 py-2"
+                    ? "text-black border-b-2 border-white px-3 py-2 rounded-xl"
+                    : "text-black hover:text-white px-3 py-2"
                 }
               >
                 {user?.userData?.user?.role?.charAt(0).toUpperCase() + user?.userData?.user?.role?.slice(1).toLowerCase()} tools

@@ -9,7 +9,7 @@ import API from "../common/apis/ServerBaseURL.jsx";
 import { useDispatch } from 'react-redux';
 import { userinfo } from "../store/slices/userSlice.jsx";
 import { useNavigate } from "react-router-dom";
-import { showSuccessToast, showErrorToast } from "../utils/Notification.jsx";
+import { showSuccessToast, showErrorToast, showNetworkErrorToast } from "../utils/Notification.jsx";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 const SignIn = () => {
@@ -60,6 +60,11 @@ const SignIn = () => {
     } catch (error) {
       setErrorMessage(error.response?.data?.message || "Login failed.");
       console.log("error: ", error);
+       if (error.message === "Network Error") {
+              showNetworkErrorToast(
+                "Your Network connection Is Unstable OR Disconected"
+              );
+            }
     }
   };
 

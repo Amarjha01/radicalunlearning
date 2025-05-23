@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import axios from 'axios';
 import API from "../../common/apis/ServerBaseURL";
+import { showNetworkErrorToast } from "../../utils/Notification";
 const AIChat = () => {
   const [message, setMessage] = useState("");
   const [responses, setResponses] = useState(() => {
@@ -36,6 +37,11 @@ const AIChat = () => {
         setResponses((prev) => [...prev, aiMsg]);
       }
     } catch (error) {
+       if (error.message === "Network Error") {
+              showNetworkErrorToast(
+                "Your Network connection Is Unstable OR Disconected"
+              );
+            }
       console.error("AI chat error:", error);
       setResponses((prev) => [
         ...prev,

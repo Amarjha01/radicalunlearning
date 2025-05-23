@@ -10,6 +10,7 @@ import API from '../../common/apis/ServerBaseURL.jsx'
 import "react-country-state-city/dist/react-country-state-city.css";
 // import API from "../../common/apis/ServerBaseURL";
 import axios from "axios";
+import { showNetworkErrorToast } from "../../utils/Notification.jsx";
 
 
 const LerSignUp = () => {
@@ -168,7 +169,11 @@ const topicOptions = [
       // reset(); // optional
     } catch (error) {
       console.log("Error in registration:", error);
-      alert("Something went wrong. Please try again.");
+       if (error.message === "Network Error") {
+              showNetworkErrorToast(
+                "Your Network connection Is Unstable OR Disconected"
+              );
+            }
     } finally {
       setIsSubmitting(false);
     }

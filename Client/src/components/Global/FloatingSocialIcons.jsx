@@ -21,7 +21,7 @@ export default function FloatingSocialIcons() {
 
   return (
     <div 
-      className={`fixed right-0 top-1/3 z-50 flex transition-all duration-300 ${
+      className={`fixed right-0 top-1/3 z-10 flex transition-all duration-300 ${
         isCollapsed ? 'translate-x-12' : 'translate-x-0'
       }`}
     >

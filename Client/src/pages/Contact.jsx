@@ -4,6 +4,7 @@ import { FaEnvelope, FaUserAlt, FaRegCommentDots } from "react-icons/fa";
 import { MdSubject } from "react-icons/md";
 import axios from "axios";
 import API from "../common/apis/ServerBaseURL.jsx";
+import { showNetworkErrorToast } from "../utils/Notification.jsx";
 const ContactUs = () => {
   const [isLoading, setIsLoading] = React.useState(false);
   const {
@@ -22,6 +23,11 @@ const ContactUs = () => {
       }
     } catch (error) {
       console.log(error);
+       if (error.message === "Network Error") {
+              showNetworkErrorToast(
+                "Your Network connection Is Unstable OR Disconected"
+              );
+            }
     }
     reset();
   };

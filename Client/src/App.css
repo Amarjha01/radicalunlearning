@@ -82,28 +82,36 @@ body{
 }
 
 .custome-toast-border-success{
-border-left: 5px solid #22c55e; /* Tailwind green-500 */
+border-left: 5px solid #22c55e; 
 border-radius: 9px;
 background: rgba(34, 197, 94, 0.2);
 }
 .custome-toast-border-error{
-border-left: 5px solid #ec7564; /* Tailwind green-500 */
+border-left: 5px solid #ec7564; 
 border-radius: 9px;
 background:rgba(236, 118, 100, 0.2);
 }
 .custome-toast-border-warn{
-border-left: 5px solid #f4cf42; /* Tailwind green-500 */
+border-left: 5px solid #f4cf42; 
 border-radius: 9px;
 background:rgba(244, 208, 66, 0.2);
 }
 .custome-toast-security-alert{
-border-left: 5px solid #00b8db; /* Tailwind green-500 */
+border-left: 5px solid #00b8db; 
 border-radius: 9px;
 background:rgba(0, 183, 219, 0.2);
+}
+.custome-toast-network-alert{
+border-left: 5px solid #ad3bea; 
+border-radius: 9px;
+background:rgba(152, 16, 250, 0.2);
 }
 
 .cyan{
 background-color: #00b8db;
+}
+.purple{
+background-color: #9500ff;
 }
 
 .icon1{

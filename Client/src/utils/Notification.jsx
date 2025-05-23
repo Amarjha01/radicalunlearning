@@ -125,5 +125,22 @@ export const showSecurityAlertToast = (message) => {
     }
   );
 };
+export const showNetworkErrorToast = (message) => {
+  toast.warn(
+    <div className="flex items-center">
+      <FiWifi className="text-purple-500 text-2xl mr-3 icon5" />
+      <div>
+        <p className="font-semibold text-purple-600">Network Status</p>
+        <p className="text-sm text-purple-800">{message}</p>
+      </div>
+    </div>,
+    {
+      className: 'custom-toast custome-toast-network-alert',
+      progressClassName: 'purple',
+      closeButton: true,
+      icon: false,
+    }
+  );
+};
 
 

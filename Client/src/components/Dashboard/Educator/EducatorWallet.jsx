@@ -3,7 +3,7 @@ import { BookOpen, Wallet, Calendar, ArrowDownRight, Plus, ChevronRight, Users, 
 import { LuPoundSterling } from "react-icons/lu";
 import axios from 'axios';
 import API from '../../../common/apis/ServerBaseURL';
-import { showSuccessToast, showErrorToast } from '../../../utils/Notification.jsx';
+import { showSuccessToast, showErrorToast, showNetworkErrorToast } from '../../../utils/Notification.jsx';
 export default function EducatorWallet(wallet) {
   
   const [balance, setBalance] = useState(wallet.wallet);
@@ -14,7 +14,7 @@ try {
   const response = await axios.post(API.WithdrawelRequest.url,{amount} ,{
     withCredentials:true
   })
-  console.log(response);
+  console.log('response' , response);
   
   if (response?.status === 200) {
 showSuccessToast("Withdrawal request submitted successfully.");
@@ -22,8 +22,12 @@ showSuccessToast("Withdrawal request submitted successfully.");
    
   
 } catch (error) {
-  console.log(error);
-   
+  console.log('error' , error);
+   if (error.message === "Network Error") {
+        showNetworkErrorToast(
+          "Your Network connection Is Unstable OR Disconected"
+        );
+      }
 }
 }
 
@@ -44,7 +48,7 @@ showSuccessToast("Withdrawal request submitted successfully.");
       {/* Balance Card */}
       <div className="bg-[#faf3dd] rounded-xl p-5 backdrop-blur-sm mb-6">
         <p className="text-blue-900 text-sm mb-1">Total Earnings</p>
-        <h2 className="text-3xl font-bold flex justify-center items-center"><LuPoundSterling />{balance.toLocaleString('en-US', { minimumFractionDigits: 2 })}</h2>
+        <h2 className="text-3xl font-bold flex justify-center items-center"><LuPoundSterling />{balance?.toLocaleString('en-US', { minimumFractionDigits: 2 })}</h2>
         
         {/* Stats Row */}
         <div className="flex justify-center mt-4 mb-5">

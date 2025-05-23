@@ -1,8 +1,3 @@
-import Hero from "../components/Home/Hero";
-import TestimonialCarousel from "../components/Global/TestimonialCarousel";
-import RediscoverCards from "../components/Home/RediscoverCards";
-import Features from "../components/Home/Features";
-import DynamicRadioContent from "../components/Home/DynamicRadioContent";
 import { FaLightbulb } from 'react-icons/fa';
 import { Link } from "react-router-dom";
 
@@ -16,10 +11,10 @@ const Home = () => {
   return (
     <div>
         <div className=" w-full flex flex-col items-center justify-center px-4 md:px-20 py-5 ">
-      <img src="/logo.webp" alt="" className="h-full z-50 cursor-pointer  "/>
+      <img src="/logo.webp" alt="" className="h-full  cursor-pointer  "/>
       <div className={` text-md md:text-xl lg:text-2xl font-semibold uppercase anta-regular cursor-pointer z-20  text-[#575757]`}>
        <span className=" block">Radical Unlearning </span>
-       <span className=" block translate-x-[50%]">- A revolution in education</span>
+       <span className=" block  md:translate-x-[50%]">- A revolution in education</span>
       </div>
     </div>
     <div className="max-w-4xl mx-auto my-16 px-6 sm:px-10 py-10 bg-[#b4c0b2] rounded-xl shadow-md">
@@ -69,11 +64,6 @@ const Home = () => {
 </div>
 
 </div>
-      {/* <Hero /> */}
-      {/* <RediscoverCards  /> */}
-      {/* <Features /> */}
-      {/* <DynamicRadioContent /> */}
-      {/* <TestimonialCarousel /> */}
     </div>
   );
 };

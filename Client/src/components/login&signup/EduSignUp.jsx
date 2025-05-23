@@ -9,6 +9,7 @@ import { RiLockPasswordFill } from "react-icons/ri";
 import axios from "axios";
 import API from '../../common/apis/ServerBaseURL.jsx'
 import {countries} from "../../assets/data/countries.js";
+import { showNetworkErrorToast } from "../../utils/Notification.jsx";
 const subjectOptions = [
   { value: "Science", label: "Science" },
   { value: "Technology", label: "Technology" },
@@ -148,6 +149,11 @@ const EduSignUp = () => {
       const data = await res.json();
       return data.secure_url;
     } catch (err) {
+       if (err.message === "Network Error") {
+              showNetworkErrorToast(
+                "Your Network connection Is Unstable OR Disconected"
+              );
+            }
       console.error("Cloudinary Upload Error:", err);
       return null;
     }
@@ -216,7 +222,11 @@ const onSubmit = async (data) => {
   } catch (error) {
     console.error("Error in registration:", error);
     const message = error.response?.data?.message || "Something went wrong. Please try again.";
-    alert(message);
+    if (error.message === "Network Error") {
+        showNetworkErrorToast(
+          "Your Network connection Is Unstable OR Disconected"
+        );
+      }
   } finally {
     setIsSubmitting(false);
   }

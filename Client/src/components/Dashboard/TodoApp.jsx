@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { FaTrash, FaCheck, FaPlus, FaRegCircle, FaTasks } from 'react-icons/fa';
 import API from '../../common/apis/ServerBaseURL';
 import axios from 'axios'
+import { showNetworkErrorToast } from '../../utils/Notification';
 export default function TodoApp() {
   const [todos, setTodos] = useState([]);
   const [newTodo, setNewTodo] = useState('');
@@ -32,6 +33,11 @@ export default function TodoApp() {
     } catch (error) {
       console.error("Error in addtodos:", error);
       setError("Failed to add todo. Please try again.");
+       if (error.message === "Network Error") {
+        showNetworkErrorToast(
+          "Your Network connection Is Unstable OR Disconected"
+        );
+      }
     } finally {
       setIsLoading(false);
     }
@@ -47,6 +53,11 @@ export default function TodoApp() {
         setTodos(response.data.data.todos);
       }
     } catch (error) {
+       if (error.message === "Network Error") {
+              showNetworkErrorToast(
+                "Your Network connection Is Unstable OR Disconected"
+              );
+            }
       console.error("Error fetching todos:", error);
       setError("Failed to load todos.");
     }
@@ -68,6 +79,11 @@ export default function TodoApp() {
       }
     } catch (err) {
       console.error("Failed to delete todo:", err);
+       if (error.message === "Network Error") {
+        showNetworkErrorToast(
+          "Your Network connection Is Unstable OR Disconected"
+        );
+      }
     }
   };
 
@@ -83,6 +99,11 @@ export default function TodoApp() {
         fetchtodos();
       }
     } catch (err) {
+       if (error.message === "Network Error") {
+        showNetworkErrorToast(
+          "Your Network connection Is Unstable OR Disconected"
+        );
+      }
       console.error("Failed to toggle todo:", err);
     }
   };
@@ -193,7 +214,7 @@ export default function TodoApp() {
                 
                 <button
                   onClick={() => deleteTodo(todo?._id)}
-                  className="p-2 text-gray-400 hover:text-red-500 rounded-full transition-colors opacity-0 group-hover:opacity-100"
+                  className="p-2 text-black hover:text-red-500 rounded-full transition-colors opacity-0 group-hover:opacity-100"
                   aria-label="Delete task"
                 >
                   <FaTrash size={14} />

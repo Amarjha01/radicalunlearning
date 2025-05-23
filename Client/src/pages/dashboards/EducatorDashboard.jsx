@@ -2,17 +2,9 @@ import { useEffect, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import axios from "axios";
-
+import { useNavigate } from "react-router-dom";
 // Icons
-import {
-  Calendar,
-  Clock,
-  Users,
-  User,
-  LogOut,
-  Search,
-  X,
-} from "lucide-react";
+import { Calendar, Clock, Users, User, LogOut, Search, X } from "lucide-react";
 import { FaCheck, FaUserEdit } from "react-icons/fa";
 import { LuPoundSterling, LuBotMessageSquare } from "react-icons/lu";
 import { IoWalletOutline } from "react-icons/io5";
@@ -27,9 +19,10 @@ import { clearUser } from "../../store/slices/userSlice.jsx";
 import GroupChat from "../../components/Chat/GroupChat.jsx";
 
 import EducatorWallet from "../../components/Dashboard/Educator/EducatorWallet.jsx";
-import AIChat from '../../components/ChatBot/Aichat.jsx';
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import AIChat from "../../components/ChatBot/Aichat.jsx";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { showNetworkErrorToast } from "../../utils/Notification.jsx";
 // Main Component
 export default function EducatorDashboard() {
   const [activeTab, setActiveTab] = useState("dashboard");
@@ -37,40 +30,58 @@ export default function EducatorDashboard() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [viewMode, setViewMode] = useState("list"); // list or calendar
   const [profileData, setProfileData] = useState({});
-  const [sessions, setSessions] = useState({previous:[],upcoming:[]});
+  const [sessions, setSessions] = useState({ previous: [], upcoming: [] });
   const [isChangePasswordOpen, setIsChangePasswordOpen] = useState(false);
-  const [walletAmount , setWalletAmount] = useState()
-  
-  const dispatch = useDispatch();
+  const [walletAmount, setWalletAmount] = useState();
 
+  const dispatch = useDispatch();
+  const Navigate = useNavigate();
   const user = useSelector((state) => state.user);
 
   useEffect(() => {
     if (user?.userData?.user) {
       setProfileData(user.userData.user);
     }
-  }, ); 
-  
-  useEffect(()=>{
-    const getEducatorSessions = async () =>{
+  });
+
+  useEffect(() => {
+    const getEducatorSessions = async () => {
       try {
         const response = await axios.get(API.getEducatorSessions.url, {
-          withCredentials:true
-        })
-        
-        if(response.status===200){
-          setSessions(response.data)
-          console.log('today');
+          withCredentials: true,
+        });
+
+        if (response.status === 200) {
+          setSessions(response.data);
+          console.log("today", response);
         }
       } catch (error) {
-        
+        if (error.message === "Network Error") {
+          showNetworkErrorToast(
+            "Your Network connection Is Unstable OR Disconected"
+          );
+        }
+      }
+    };
+    getEducatorSessions();
+  }, []);
+
+  const handleSignOut = async () => {
+    try {
+      const response = await axios.post(API.signout.url, {
+        withCredentials: true,
+      });
+      if (response.status === 200) {
+        dispatch(clearUser());
+        Navigate("/signin");
+      }
+    } catch (error) {
+      if (error.message === "Network Error") {
+        showNetworkErrorToast(
+          "Your Network connection Is Unstable OR Disconected"
+        );
       }
     }
-    getEducatorSessions()
-  },[])
-
-  const handleLogout = () => {
-    dispatch(clearUser());
   };
 
   // For password change form
@@ -79,9 +90,6 @@ export default function EducatorDashboard() {
     newPassword: "",
     confirmPassword: "",
   });
-
-
-
 
   // Handle session cancellation
   const handleCancelSession = (sessionId) => {
@@ -107,65 +115,71 @@ export default function EducatorDashboard() {
       confirmPassword: "",
     });
   };
-const [editProfile, setEditProfile] = useState(false);
+  const [editProfile, setEditProfile] = useState(false);
   const [changedData, setChangedData] = useState({});
   const [loading, setLoading] = useState(false);
   const [file, setFile] = useState(null);
 
- const handleImageUpload = async (file) => {
-  const formData = new FormData();
-  formData.append("file", file);
-  formData.append("upload_preset", "radicalunlearning");
+  const handleImageUpload = async (file) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", "radicalunlearning");
 
-  try {
-    const res = await axios.post(
-      "https://api.cloudinary.com/v1_1/dbnticsz8/image/upload",
-      formData
-    );
-    return res.data.secure_url;
-  } catch (err) {
-    console.error("Image upload failed", err);
-    return null;
-  }
-};
+    try {
+      const res = await axios.post(
+        "https://api.cloudinary.com/v1_1/dbnticsz8/image/upload",
+        formData
+      );
+      return res.data.secure_url;
+    } catch (err) {
+      console.error("Image upload failed", err);
+      if (err.message === "Network Error") {
+        showNetworkErrorToast(
+          "Your Network connection Is Unstable OR Disconected"
+        );
+      }
+      return null;
+    }
+  };
 
+  const handleProfileUpdate = async (e) => {
+    e.preventDefault();
+    setLoading(true);
 
-const handleProfileUpdate = async (e) => {
-  e.preventDefault();
-  setLoading(true);
+    let updatedData = { ...changedData };
 
-  let updatedData = { ...changedData };
+    if (file) {
+      const imageUrl = await handleImageUpload(file);
+      if (imageUrl) {
+        updatedData.avatar = imageUrl;
+      }
+      setFile(null);
+    }
 
- if (file) {
-  const imageUrl = await handleImageUpload(file);
-  if (imageUrl) {
-    updatedData.avatar = imageUrl;
-  }
-  setFile(null); 
-}
+    try {
+      const response = await axios.patch(
+        API.updateUserDetails.url,
+        updatedData,
+        { withCredentials: true }
+      );
 
-
-  try {
-    const response = await axios.patch(
-      API.updateUserDetails.url,
-      updatedData,
-      { withCredentials: true }
-    );
-
-    console.log(response);
-    setEditProfile(false);
-  } catch (error) {
-    console.error("Update failed:", error);
-  } finally {
-    setLoading(false);
-  }
-};
-
+      console.log(response);
+      setEditProfile(false);
+    } catch (error) {
+      console.error("Update failed:", error);
+      if (error.message === "Network Error") {
+        showNetworkErrorToast(
+          "Your Network connection Is Unstable OR Disconected"
+        );
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleChange = (field, value) => {
     setChangedData((prev) => ({ ...prev, [field]: value }));
   };
-
 
   const [sessionFee, setSessionFee] = useState("1000");
   const [isEditing, setIsEditing] = useState(false);
@@ -178,29 +192,34 @@ const handleProfileUpdate = async (e) => {
     }
   };
 
-useEffect(() => {
-  const fetchWalletAmount = async () => {
-    try {
-      const response = await axios.get(API.fetchWalletAmount.url, {
-        withCredentials: true,
-      });
+  useEffect(() => {
+    const fetchWalletAmount = async () => {
+      try {
+        const response = await axios.get(API.fetchWalletAmount.url, {
+          withCredentials: true,
+        });
 
-      const walletAmount = response?.data?.data;
-      setWalletAmount(walletAmount);
-    } catch (error) {
-      console.error(
-        "Failed to fetch wallet amount:",
-        error?.response?.data?.message || error.message
-      );
-    }
-  };
+        const walletAmount = response?.data?.data;
+        setWalletAmount(walletAmount);
+      } catch (error) {
+        if (err.message === "Network Error") {
+        showNetworkErrorToast(
+          "Your Network connection Is Unstable OR Disconected"
+        );
+      }
+        console.error(
+          "Failed to fetch wallet amount:",
+          error?.response?.data?.message || error.message
+        );
+      }
+    };
 
-  fetchWalletAmount(); 
-}, [sessions]); 
+    fetchWalletAmount();
+  }, [sessions]);
 
   return (
-    <div className="w-[100vw] min-h-screen flex max-w-[1680px] mx-auto">
-         <ToastContainer
+    <div className="w-[100vw] min-h-screen flex max-w-[1280px] mx-auto">
+      <ToastContainer
         position="top-right"
         autoClose={4000}
         hideProgressBar={false}
@@ -212,13 +231,13 @@ useEffect(() => {
         pauseOnHover
       />
       {/* sidebar desktop */}
-      <div className="hidden md:flex relative left-0 min-h-screen w-64 bg-[#f2c078] shadow-md flex-col">
+      <div className="hidden fixed md:flex  left-0 min-h-screen w-64 bg-[#f2c078] shadow-md flex-col">
         <aside className="min-h-screen inset-y-0 left-0 z-10 w-64 shadow-lg transform transition-transform duration-300 md:translate-x-0 hidden md:block">
           <div className="flex flex-col h-full">
             <div className="px-4 py-6 flex items-center justify-center border-b border-gray-200 dark:border-gray-700">
               <div className="relative w-12 h-12 rounded-full overflow-hidden bg-[#e0e7ff]  mr-3">
                 <img
-                  src={profileData.avatar ||  "/default_userFrofile.webp"}
+                  src={profileData.avatar || "/default_userFrofile.webp"}
                   alt="Profile"
                   className="w-full h-full object-cover"
                 />
@@ -227,9 +246,7 @@ useEffect(() => {
                 <h2 className="text-lg font-semibold text-black">
                   Educator Tools
                 </h2>
-                <p className="text-sm text-gray-600 -300">
-                  {profileData.name}
-                </p>
+                <p className="text-sm text-gray-600 -300">{profileData.name}</p>
               </div>
             </div>
 
@@ -308,9 +325,11 @@ useEffect(() => {
             </nav>
 
             <div className="px-4 py-6 border-t border-gray-200 dark:border-gray-700">
-              <div className="flex items-center justify-between mb-4">
-              </div>
-              <button className="flex items-center w-full px-3 py-2 text-sm font-medium text-black hover:text-red-600 dark:hover:text-red-400">
+              <div className="flex items-center justify-between mb-4"></div>
+              <button
+                onClick={handleSignOut}
+                className="flex items-center w-full px-3 py-2 text-sm font-medium text-black hover:text-red-600 dark:hover:text-red-400 cursor-pointer"
+              >
                 <LogOut className="h-5 w-5 mr-2" />
                 <span>Logout</span>
               </button>
@@ -318,132 +337,140 @@ useEffect(() => {
           </div>
         </aside>
       </div>
-              {/* Mobile Sidebar */}
-              {mobileMenuOpen && (
-          <div className="fixed inset-0 z-30 md:hidden">
-            <div className="absolute inset-0 bg-gray-600 opacity-75" onClick={() => setMobileMenuOpen(false)}></div>
-            <div className="absolute inset-y-0 left-0 w-64 bg-[#f2c078]  shadow-lg transform transition-transform duration-300">
-              <div className="flex flex-col h-full">
-                <div className="px-4 py-6 flex items-center border-b border-gray-200 dark:border-gray-700">
-                  <div className="relative w-10 h-10 rounded-full overflow-hidden bg-[#e0e7ff]  mr-3">
-                    <img 
-                      src={profileData.avatar} 
-                      alt="Profile" 
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div>
-                    <h2 className="text-lg font-semibold text-black">Educator Portal</h2>
-                    <p className="text-sm text-gray-600 -300">{profileData.name}</p>
-                  </div>
+      {/* Mobile Sidebar */}
+      {mobileMenuOpen && (
+        <div className="fixed inset-0 z-30 md:hidden">
+          <div
+            className="absolute inset-0 bg-gray-600 opacity-75"
+            onClick={() => setMobileMenuOpen(false)}
+          ></div>
+          <div className="absolute inset-y-0 left-0 w-64 bg-[#f2c078]  shadow-lg transform transition-transform duration-300">
+            <div className="flex flex-col h-full">
+              <div className="px-4 py-6 flex items-center border-b border-gray-200 dark:border-gray-700">
+                <div className="relative w-10 h-10 rounded-full overflow-hidden bg-[#e0e7ff]  mr-3">
+                  <img
+                    src={profileData.avatar}
+                    alt="Profile"
+                    className="w-full h-full object-cover"
+                  />
                 </div>
-                
-                <nav className="flex-1 px-4 py-6 space-y-1">
-                  <button 
-                    onClick={() => {
-                      setActiveTab("dashboard");
-                      setMobileMenuOpen(false);
-                    }}
-                    className={`flex items-center px-3 py-2 w-full text-left rounded-md text-sm font-medium ${
-                      activeTab === "dashboard" 
-                      ? "bg-[#e0e7ff] text-black " 
-                      : "text-black hover:bg-gray-100 "
-                    }`}
-                  >
-                    <Calendar className="mr-3 h-5 w-5" />
-                    <span>Dashboard</span>
-                  </button>
-                  
-                  <button 
-                    onClick={() => {
-                      setActiveTab("profile");
-                      setMobileMenuOpen(false);
-                    }}
-                    className={`flex items-center px-3 py-2 w-full text-left rounded-md text-sm font-medium ${
-                      activeTab === "profile" 
-                      ? "bg-[#e0e7ff] text-black " 
-                      : "text-black hover:bg-gray-100 "
-                    }`}
-                  >
-                    <User className="mr-3 h-5 w-5" />
-                    <span>Profile</span>
-                  </button>
-                  <button 
-                    onClick={() => {
-                      setActiveTab("Community Chat");
-                      setMobileMenuOpen(false);
-                    }}
-                    className={`flex items-center px-3 py-2 w-full text-left rounded-md text-sm font-medium ${
-                      activeTab === "Community Chat" 
-                      ? "bg-[#e0e7ff] text-black " 
-                      : "text-black hover:bg-gray-100 "
-                    }`}
-                  >
-                    <CiChat1 className="mr-3 h-5 w-5" />
-                    <span>Community Chat</span>
-                  </button>
-                  
-                  <button 
-                    onClick={() => {
-                      setActiveTab("payment");
-                      setMobileMenuOpen(false);
-                    }}
-                    className={`flex items-center px-3 py-2 w-full text-left rounded-md text-sm font-medium ${
-                      activeTab === "payment" 
-                      ? "bg-[#e0e7ff] text-black " 
-                      : "text-black hover:bg-gray-100 "
-                    }`}
-                  >
-                    <LuPoundSterling className="mr-3 h-5 w-5" />
-                    <span>Payment Settings</span>
-                  </button>
-
-                  <button 
-                    onClick={() => {
-                      setActiveTab("AIbot");
-                      setMobileMenuOpen(false);
-                    }}
-                    className={`flex items-center px-3 py-2 w-full text-left rounded-md text-sm font-medium ${
-                      activeTab === "AIbot" 
-                      ? "bg-[#e0e7ff] text-black " 
-                      : "text-black hover:bg-gray-100 "
-                    }`}
-                  >
-                    <LuPoundSterling className="mr-3 h-5 w-5" />
-                    <span>AI ChatBot</span>
-                  </button>
-
-                  <button 
-                    onClick={() => {
-                      setActiveTab("Wallet");
-                      setMobileMenuOpen(false);
-                    }}
-                    className={`flex items-center px-3 py-2 w-full text-left rounded-md text-sm font-medium ${
-                      activeTab === "Wallet" 
-                      ? "bg-[#e0e7ff] text-black " 
-                      : "text-black hover:bg-gray-100 "
-                    }`}
-                  >
-                    <IoWalletOutline className="mr-3 h-5 w-5" />
-                    <span>Wallet</span>
-                  </button>
-                </nav>
-                
-                <div className="px-4 py-6 border-t border-gray-200 dark:border-gray-700">
-                  <button 
-                    className="flex items-center w-full px-3 py-2 text-sm font-medium text-black hover:text-red-600 dark:hover:text-red-400"
-                  >
-                    <LogOut className="h-5 w-5 mr-2" />
-                    <span>Logout</span>
-                  </button>
+                <div>
+                  <h2 className="text-lg font-semibold text-black">
+                    Educator Portal
+                  </h2>
+                  <p className="text-sm text-gray-600 -300">
+                    {profileData.name}
+                  </p>
                 </div>
+              </div>
+
+              <nav className="flex-1 px-4 py-6 space-y-1">
+                <button
+                  onClick={() => {
+                    setActiveTab("dashboard");
+                    setMobileMenuOpen(false);
+                  }}
+                  className={`flex items-center px-3 py-2 w-full text-left rounded-md text-sm font-medium ${
+                    activeTab === "dashboard"
+                      ? "bg-[#e0e7ff] text-black "
+                      : "text-black hover:bg-gray-100 "
+                  }`}
+                >
+                  <Calendar className="mr-3 h-5 w-5" />
+                  <span>Dashboard</span>
+                </button>
+
+                <button
+                  onClick={() => {
+                    setActiveTab("profile");
+                    setMobileMenuOpen(false);
+                  }}
+                  className={`flex items-center px-3 py-2 w-full text-left rounded-md text-sm font-medium ${
+                    activeTab === "profile"
+                      ? "bg-[#e0e7ff] text-black "
+                      : "text-black hover:bg-gray-100 "
+                  }`}
+                >
+                  <User className="mr-3 h-5 w-5" />
+                  <span>Profile</span>
+                </button>
+                <button
+                  onClick={() => {
+                    setActiveTab("Community Chat");
+                    setMobileMenuOpen(false);
+                  }}
+                  className={`flex items-center px-3 py-2 w-full text-left rounded-md text-sm font-medium ${
+                    activeTab === "Community Chat"
+                      ? "bg-[#e0e7ff] text-black "
+                      : "text-black hover:bg-gray-100 "
+                  }`}
+                >
+                  <CiChat1 className="mr-3 h-5 w-5" />
+                  <span>Community Chat</span>
+                </button>
+
+                <button
+                  onClick={() => {
+                    setActiveTab("payment");
+                    setMobileMenuOpen(false);
+                  }}
+                  className={`flex items-center px-3 py-2 w-full text-left rounded-md text-sm font-medium ${
+                    activeTab === "payment"
+                      ? "bg-[#e0e7ff] text-black "
+                      : "text-black hover:bg-gray-100 "
+                  }`}
+                >
+                  <LuPoundSterling className="mr-3 h-5 w-5" />
+                  <span>Payment Settings</span>
+                </button>
+
+                <button
+                  onClick={() => {
+                    setActiveTab("AIbot");
+                    setMobileMenuOpen(false);
+                  }}
+                  className={`flex items-center px-3 py-2 w-full text-left rounded-md text-sm font-medium ${
+                    activeTab === "AIbot"
+                      ? "bg-[#e0e7ff] text-black "
+                      : "text-black hover:bg-gray-100 "
+                  }`}
+                >
+                  <LuPoundSterling className="mr-3 h-5 w-5" />
+                  <span>AI ChatBot</span>
+                </button>
+
+                <button
+                  onClick={() => {
+                    setActiveTab("Wallet");
+                    setMobileMenuOpen(false);
+                  }}
+                  className={`flex items-center px-3 py-2 w-full text-left rounded-md text-sm font-medium ${
+                    activeTab === "Wallet"
+                      ? "bg-[#e0e7ff] text-black "
+                      : "text-black hover:bg-gray-100 "
+                  }`}
+                >
+                  <IoWalletOutline className="mr-3 h-5 w-5" />
+                  <span>Wallet</span>
+                </button>
+              </nav>
+
+              <div className="px-4 py-6 border-t border-gray-200 dark:border-gray-700">
+                <button
+                  onClick={handleSignOut}
+                  className="flex items-center w-full px-3 py-2 text-sm font-medium text-black hover:text-red-600 dark:hover:text-red-400"
+                >
+                  <LogOut className="h-5 w-5 mr-2" />
+                  <span>Logout</span>
+                </button>
               </div>
             </div>
           </div>
-        )}
+        </div>
+      )}
 
       {/* Main Content Area */}
-      <div className=" grow-1 min-h-screen bg-[#faf3dd] p-5">
+      <div className="md:ml-[28%] lg:ml-[20%] 2xl:ml-[0%] grow-1 min-h-screen bg-[#faf3dd] p-5">
         <div className="  hidden md:flex justify-between items-center mb-6  px-6 py-3 rounded-lg shadow">
           <h1 className="text-2xl font-bold text-black ">
             {activeTab === "dashboard" && "My Scheduled Sessions"}
@@ -456,11 +483,11 @@ useEffect(() => {
 
           <div className="flex items-center space-x-4">
             <div className="relative">
-             <Link to={'/'}>
-             <button className="p-2 rounded-full text-gray-600 -300 hover:bg-[#f2c078]">
-                <MdHome className="h-7 w-7 cursor-pointer" />
-              </button>
-             </Link>
+              <Link to={"/"}>
+                <button className="p-2 rounded-full text-gray-600 -300 hover:bg-[#f2c078]">
+                  <MdHome className="h-7 w-7 cursor-pointer" />
+                </button>
+              </Link>
             </div>
           </div>
         </div>
@@ -495,11 +522,11 @@ useEffect(() => {
               </h1>
             </div>
             <div className="flex items-center space-x-3">
-            <Link to={'/'}>
-              <div className="relative">
-                <MdHome className="h-5 w-5 text-gray-600 -300" />
-              </div>
-            </Link>
+              <Link to={"/"}>
+                <div className="relative">
+                  <MdHome className="h-5 w-5 text-gray-600 -300" />
+                </div>
+              </Link>
             </div>
           </div>
         </div>
@@ -507,10 +534,9 @@ useEffect(() => {
         {/* Mobile Content Title */}
         <div className="md:hidden mb-4">
           <h1 className="text-xl font-bold text-black ">
-          {activeTab === "dashboard" && "My Scheduled Sessions"}
+            {activeTab === "dashboard" && "My Scheduled Sessions"}
             {activeTab === "profile" && "My Profile"}
             {activeTab === "Community Chat" && "Comunity Chat"}
-            {activeTab === "AIbot" && "AI ChatBot"}
             {activeTab === "Wallet" && "Wallet"}
             {activeTab === "payment" && "Payment Settings"}
           </h1>
@@ -520,11 +546,11 @@ useEffect(() => {
         {activeTab === "dashboard" && (
           <div className="space-y-4">
             {/* View Toggle and Search Bar */}
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center space-y-4 md:space-y-0 mb-4">
+            <div className=" flex flex-col md:flex-row justify-between items-start md:items-center space-y-4 md:space-y-0 mb-4">
               <div className="flex space-x-2">
                 <button
                   onClick={() => setViewMode("list")}
-                  className={`px-3 py-1.5 rounded-md text-sm font-medium ${
+                  className={`px-3 py-1.5 rounded-md text-sm font-medium cursor-pointer ${
                     viewMode === "list"
                       ? "bg-[#e0e7ff] text-black "
                       : "text-black hover:bg-gray-100 "
@@ -534,7 +560,7 @@ useEffect(() => {
                 </button>
                 <button
                   onClick={() => setViewMode("calendar")}
-                  className={`px-3 py-1.5 rounded-md text-sm font-medium ${
+                  className={`px-3 py-1.5 rounded-md text-sm font-medium cursor-pointer ${
                     viewMode === "calendar"
                       ? "bg-[#e0e7ff] text-black "
                       : "text-black hover:bg-gray-100 "
@@ -639,9 +665,12 @@ useEffect(() => {
                             {session.status !== "Completed" &&
                               session.status !== "Cancelled" && (
                                 <div className="flex space-x-2">
-                                 <a href={session.zoomJoinUrl} className="px-4 py-2 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 transition-colors cursor-pointer">
-                               Join
-                                 </a>
+                                  <a
+                                    href={session.zoomJoinUrl}
+                                    className="px-4 py-2 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 transition-colors cursor-pointer"
+                                  >
+                                    Join
+                                  </a>
                                   <button
                                     className="text-black hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300"
                                     onClick={() =>
@@ -651,11 +680,6 @@ useEffect(() => {
                                     }
                                   >
                                     Reschedule
-                                  </button>
-                                  <button
-                                    className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300"
-                                  >
-                                    Cancel
                                   </button>
                                 </div>
                               )}
@@ -683,19 +707,13 @@ useEffect(() => {
 
             {/* Upcoming Sessions Overview */}
             <div className="bg-[#faf3dd] shadow-lg rounded-lg p-4">
-              <h2 className="text-lg font-medium text-black mb-4">
-                 
-              </h2>
+              <h2 className="text-lg font-medium text-black mb-4"></h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="bg-[#b4c0b2]  p-4 rounded-md">
                   <div className="flex justify-between items-center">
                     <div>
-                      <p className="text-sm text-black">
-                        Today's Sessions
-                      </p>
-                      <p className="text-2xl font-bold text-black">
-                        
-                      </p>
+                      <p className="text-sm text-black">Today's Sessions</p>
+                      <p className="text-2xl font-bold text-black"></p>
                     </div>
                     <Calendar className="h-8 w-8  dark:text-indigo-900" />
                   </div>
@@ -704,12 +722,8 @@ useEffect(() => {
                 <div className="bg-[#b4c0b2] p-4 rounded-md">
                   <div className="flex justify-between items-center">
                     <div>
-                      <p className="text-sm text-black">
-                        This Week
-                      </p>
-                      <p className="text-2xl font-bold text-black ">
-                        4
-                      </p>
+                      <p className="text-sm text-black">This Week</p>
+                      <p className="text-2xl font-bold text-black ">4</p>
                     </div>
                     <Clock className="h-8 w-8 text-green-800" />
                   </div>
@@ -718,12 +732,8 @@ useEffect(() => {
                 <div className="bg-[#b4c0b2] p-4 rounded-md">
                   <div className="flex justify-between items-center">
                     <div>
-                      <p className="text-sm text-black">
-                        Total Learners
-                      </p>
-                      <p className="text-2xl font-bold text-black">
-                        5
-                      </p>
+                      <p className="text-sm text-black">Total Learners</p>
+                      <p className="text-2xl font-bold text-black">5</p>
                     </div>
                     <Users className="h-8 w-8 text-blue-900" />
                   </div>
@@ -739,27 +749,30 @@ useEffect(() => {
             <div className="flex flex-col md:flex-row md:space-x-8">
               {/* Avatar Section */}
               <div className="md:w-1/4 flex flex-col items-center  mb-6 md:mb-0">
-              <div className="w-32 h-32 rounded-full overflow-hidden mb-4">
-                <img
-                  src={
-                    changedData.avatar ||
-                    (file && URL.createObjectURL(file)) ||
-                    profileData.avatar || "/default_userFrofile.webp"
-                  }
-                  alt="Profile Avatar"
-                  className="w-full h-full object-cover"
+                <div className="w-32 h-32 rounded-full overflow-hidden mb-4">
+                  <img
+                    src={
+                      changedData.avatar ||
+                      (file && URL.createObjectURL(file)) ||
+                      profileData.avatar ||
+                      "/default_userFrofile.webp"
+                    }
+                    alt="Profile Avatar"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <input
+                  disabled={!editProfile}
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => setFile(e.target.files[0])}
+                  className={`w-48 md:w-40 lg:w-52 bg-yellow-200 flex items-center justify-center px-4 py-2 rounded-md text-sm text-gray-700  ${
+                    editProfile
+                      ? "hover:bg-yellow-300 cursor-pointer"
+                      : "cursor-not-allowed"
+                  }`}
+                  id="avatarUpload"
                 />
-              </div>
-              <input
-               disabled={!editProfile}
-                type="file"
-                accept="image/*"
-                onChange={(e) => setFile(e.target.files[0])}
-                className={`w-48 md:w-40 lg:w-52 bg-yellow-200 flex items-center justify-center px-4 py-2 rounded-md text-sm text-gray-700  ${editProfile ? "hover:bg-yellow-300 cursor-pointer" : "cursor-not-allowed"}`}
-                id="avatarUpload"
-              />
-         
-             
               </div>
 
               {/* Profile Form */}
@@ -937,9 +950,7 @@ useEffect(() => {
                         }
                         className="h-4 w-4 text-black border-gray-300 rounded"
                       />
-                      <label className="text-sm text-black">
-                        Approved
-                      </label>
+                      <label className="text-sm text-black">Approved</label>
                     </div>
 
                     {/* Experience */}
@@ -978,85 +989,90 @@ useEffect(() => {
                       />
                     </div>
                   </div>
-              <div className=" flex justify-end  item-center gap-5">
-              <FaUserEdit onClick={!setEditProfile} className=" text-4xl cursor-pointer text-white" />
-                  <button onSubmit={()=>{handleProfileUpdate(profileData)}}
-                    type="submit"
-                    disabled= {true}
-                    className="px-6 py-2 bg-gray-500 cursor-not-allowed text-white rounded-md font-medium "
-                  >
-                    Save Profile
-                  </button>
-              </div>
+                  <div className=" flex justify-end  item-center gap-5">
+                    <FaUserEdit
+                      onClick={!setEditProfile}
+                      className=" text-4xl cursor-pointer text-white"
+                    />
+                    <button
+                      onSubmit={() => {
+                        handleProfileUpdate(profileData);
+                      }}
+                      type="submit"
+                      disabled={true}
+                      className="px-6 py-2 bg-gray-500 cursor-not-allowed text-white rounded-md font-medium "
+                    >
+                      Save Profile
+                    </button>
+                  </div>
                 </form>
               </div>
             </div>
           </div>
         )}
 
-
-{activeTab === "Community Chat" && (
+        {activeTab === "Community Chat" && (
           <div className=" w-[50%]">
-            <GroupChat  className='w-[50%]'/>
+            <GroupChat className="w-[50%]" />
           </div>
         )}
 
- {activeTab === "payment" && (
-        <div className="p-4 md:p-6 max-w-md mx-auto bg-[#faf3dd] rounded-2xl shadow-md border mt-4">
-          <h2 className="text-xl font-semibold mb-4 text-center">Session Fee</h2>
+        {activeTab === "payment" && (
+          <div className="p-4 md:p-6 max-w-md mx-auto bg-[#faf3dd] rounded-2xl shadow-md border mt-4">
+            <h2 className="text-xl font-semibold mb-4 text-center">
+              Session Fee
+            </h2>
 
-          {!isEditing ? (
-            <div className="flex items-center justify-between">
-              <div className="flex items-center text-lg font-medium">
-                <LuPoundSterling className="text-gray-600 mr-1" />
-                {sessionFee}
-              </div>
-              <button
-                onClick={() => {
-                  setTempFee(sessionFee);
-                  setIsEditing(true);
-                }}
-                className="text-sm bg-[#f2c078] hover:bg-[#d0a871] text-black cursor-pointer px-4 py-2 rounded-lg transition"
-              >
-                Edit
-              </button>
-            </div>
-          ) : (
-            <div className="space-y-3">
-              <input
-                type="text"
-                value={tempFee}
-                onChange={(e) => setTempFee(e.target.value)}
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-                placeholder="Enter new session fee"
-              />
-              <div className="flex gap-3 justify-end">
+            {!isEditing ? (
+              <div className="flex items-center justify-between">
+                <div className="flex items-center text-lg font-medium">
+                  <LuPoundSterling className="text-gray-600 mr-1" />
+                  {sessionFee}
+                </div>
                 <button
-                  onClick={() => setIsEditing(false)}
-                  className="text-sm bg-gray-300 hover:bg-gray-400 cursor-pointer text-gray-800 px-4 py-2 rounded-lg transition"
+                  onClick={() => {
+                    setTempFee(sessionFee);
+                    setIsEditing(true);
+                  }}
+                  className="text-sm bg-[#f2c078] hover:bg-[#d0a871] text-black cursor-pointer px-4 py-2 rounded-lg transition"
                 >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleSave}
-                  className="text-sm bg-green-900 hover:bg-green-950 cursor-pointer text-white px-4 py-2 rounded-lg flex items-center gap-2 transition"
-                >
-                  <FaCheck />
-                  Save
+                  Edit
                 </button>
               </div>
-            </div>
-          )}
-        </div>
-      )}
+            ) : (
+              <div className="space-y-3">
+                <input
+                  type="text"
+                  value={tempFee}
+                  onChange={(e) => setTempFee(e.target.value)}
+                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  placeholder="Enter new session fee"
+                />
+                <div className="flex gap-3 justify-end">
+                  <button
+                    onClick={() => setIsEditing(false)}
+                    className="text-sm bg-gray-300 hover:bg-gray-400 cursor-pointer text-gray-800 px-4 py-2 rounded-lg transition"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleSave}
+                    className="text-sm bg-green-900 hover:bg-green-950 cursor-pointer text-white px-4 py-2 rounded-lg flex items-center gap-2 transition"
+                  >
+                    <FaCheck />
+                    Save
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
         {activeTab === "AIbot" && (
           <div className="">
             <AIChat />
           </div>
         )}
-        {activeTab === "Wallet" &&(
-         <EducatorWallet wallet={walletAmount} />
-        )}
+        {activeTab === "Wallet" && <EducatorWallet wallet={walletAmount} />}
       </div>
     </div>
   );

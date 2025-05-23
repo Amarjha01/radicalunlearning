@@ -423,21 +423,28 @@ export async function signin(request, response) {
 export async function updateUserDetails(req, res) {
   try {
     const token = req.cookies.accessToken;
-    console.log(token);
 
     if (!token) {
-      return res.status(400).json({ message: "Missing token or todo" });
+      return res.status(401).json({ message: "Missing access token", error: true, success: false });
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    let decoded;
+    try {
+      decoded = jwt.verify(token, process.env.JWT_SECRET);
+    } catch (err) {
+      if (err.name === "TokenExpiredError") {
+        return res.status(401).json({ message: "Access token expired, please login again", error: true, success: false });
+      }
+      return res.status(403).json({ message: "Invalid token", error: true, success: false });
+    }
+
     const userId = decoded.id;
     const role = decoded.role.toUpperCase();
 
     let updateUser;
 
     if (role === "LEARNER") {
-      const { name, email, country, language, bio , avatar } = req.body;
-      console.log("updateUserDetails:", req.body);
+      const { name, email, country, language, bio, avatar } = req.body;
       
       updateUser = await LearnerUserModel.updateOne(
         { _id: userId },
@@ -451,11 +458,7 @@ export async function updateUserDetails(req, res) {
         }
       );
     } else if (role === "EDUCATOR") {
-      const {
-        bio,
-        experience,
-        avatar
-      } = req.body;
+      const { bio, experience, avatar } = req.body;
 
       updateUser = await EducatorUserModel.updateOne(
         { _id: userId },
@@ -467,20 +470,22 @@ export async function updateUserDetails(req, res) {
       );
     }
 
-    return res.json({
+    return res.status(200).json({
       message: "Updated successfully",
       error: false,
       success: true,
       data: updateUser,
     });
   } catch (error) {
+    console.error("Error updating user:", error);
     return res.status(500).json({
-      message: error.message || error,
+      message: "Internal server error",
       error: true,
       success: false,
     });
   }
 }
+
 
 export async function signout(request, response) {
   console.log('sign out');
@@ -525,7 +530,6 @@ export async function searchEducator(req, res) {
       suspended: 'NO'         // Ensures only non-suspended educators are returned
     })
     .select('name country bio _id subjects documentUrl videoUrl ');
-console.log(educators);
 
     if (educators.length > 0) {
       res.status(200).json({
@@ -558,68 +562,100 @@ export async function addtodos(req, res) {
   const { newtodo } = req.body;
 
   if (!token || !newtodo?.trim()) {
-    return res.status(400).json({ message: "Missing token or todo" });
+    return res.status(400).json({ message: "Missing token or todo", success: false, error: true });
+  }
+
+  let decoded;
+  try {
+    decoded = jwt.verify(token, process.env.JWT_SECRET);
+  } catch (err) {
+    if (err.name === "TokenExpiredError") {
+      return res.status(401).json({ message: "Access token expired", success: false, error: true });
+    }
+    return res.status(403).json({ message: "Invalid access token", success: false, error: true });
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const userId = decoded.id;
 
     const todoItem = {
       text: newtodo.trim(),
-      completed: false
+      completed: false,
     };
 
     const learner = await LearnerUserModel.findByIdAndUpdate(
       userId,
-      { $push: { todos: todoItem } }, 
+      { $push: { todos: todoItem } },
       { new: true, runValidators: true }
     );
 
     if (!learner) {
-      return res.status(404).json({ message: "Learner not found" });
+      return res.status(404).json({ message: "Learner not found", success: false, error: true });
     }
 
     res.status(200).json({
       message: "Todo added successfully",
       data: learner.todos,
       success: true,
-      error: false
+      error: false,
     });
   } catch (error) {
     console.error("Error updating todos:", error);
-    res.status(500).json({ 
+    res.status(500).json({
       message: "Server error",
       error: error.message,
-      success: false 
+      success: false,
     });
   }
 }
 
 export async function fetchtodos(req, res) {
   const token = req.cookies.accessToken;
-  
+
   if (!token) {
-    return res.status(400).json({ message: "Missing token or todo" });
+    return res.status(400).json({
+      message: "Missing access token",
+      success: false,
+      error: true,
+    });
   }
+
+  let decoded;
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const userId = decoded.id
-    const alltodos = await LearnerUserModel.findById(userId).select('todos')
-   
+    decoded = jwt.verify(token, process.env.JWT_SECRET);
+  } catch (err) {
+    if (err.name === "TokenExpiredError") {
+      return res.status(401).json({
+        message: "Access token expired",
+        success: false,
+        error: true,
+      });
+    }
+    return res.status(403).json({
+      message: "Invalid access token",
+      success: false,
+      error: true,
+    });
+  }
+
+  try {
+    const userId = decoded.id;
+    const alltodos = await LearnerUserModel.findById(userId).select("todos");
+
     res.status(200).json({
-      message:'fetched all todos successfuly',
-      data:alltodos,
-      error:false,
-      success:true
-    })
+      message: "Fetched all todos successfully",
+      data: alltodos,
+      success: true,
+      error: false,
+    });
   } catch (error) {
+    console.error("Failed to fetch todos:", error);
     res.status(500).json({
-      message:'failed to fetch all todos',
-      error:true,
-      success:false,
-      error
-    })
+      message: "Failed to fetch todos",
+      error: true,
+      success: false,
+      data: null,
+    });
   }
 }
 
@@ -628,35 +664,44 @@ export async function deletetodos(req, res) {
   const { todoid } = req.body;
 
   if (!token || !todoid) {
-    return res.status(400).json({ message: "Missing token or todo ID" });
+    return res.status(400).json({ message: "Missing token or todo ID", success: false, error: true });
+  }
+
+  let decoded;
+  try {
+    decoded = jwt.verify(token, process.env.JWT_SECRET);
+  } catch (err) {
+    if (err.name === "TokenExpiredError") {
+      return res.status(401).json({ message: "Access token expired", success: false, error: true });
+    }
+    return res.status(403).json({ message: "Invalid access token", success: false, error: true });
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const userId = decoded.id;
 
     const learner = await LearnerUserModel.findByIdAndUpdate(
       userId,
-      { $pull: { todos: { _id: todoid } } }, // <- remove by matching _id
+      { $pull: { todos: { _id: todoid } } },
       { new: true }
     );
 
     if (!learner) {
-      return res.status(404).json({ message: "Learner not found" });
+      return res.status(404).json({ message: "Learner not found", success: false, error: true });
     }
 
-    res.status(200).json({ 
-      message: "Todo deleted successfully", 
+    res.status(200).json({
+      message: "Todo deleted successfully",
       todos: learner.todos,
       success: true,
-      error: false
+      error: false,
     });
   } catch (error) {
     console.error("Error deleting todo:", error);
-    res.status(500).json({ 
-      message: "Server error", 
+    res.status(500).json({
+      message: "Server error",
       error: error.message,
-      success: false
+      success: false,
     });
   }
 }
@@ -666,212 +711,249 @@ export async function toggleTodoComplete(req, res) {
   const { todoid } = req.body;
 
   if (!token || !todoid) {
-    return res.status(400).json({ message: "Missing token or todo ID" });
+    return res.status(400).json({ message: "Missing token or todo ID", success: false, error: true });
+  }
+
+  let decoded;
+  try {
+    decoded = jwt.verify(token, process.env.JWT_SECRET);
+  } catch (err) {
+    if (err.name === "TokenExpiredError") {
+      return res.status(401).json({ message: "Access token expired", success: false, error: true });
+    }
+    return res.status(403).json({ message: "Invalid access token", success: false, error: true });
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const userId = decoded.id;
 
     const learner = await LearnerUserModel.findById(userId);
     if (!learner) {
-      return res.status(404).json({ message: "Learner not found" });
+      return res.status(404).json({ message: "Learner not found", success: false, error: true });
     }
 
-    const todoIndex = learner.todos.findIndex(t => t._id.toString() === todoid);
+    const todoIndex = learner.todos.findIndex((t) => t._id.toString() === todoid);
     if (todoIndex === -1) {
-      return res.status(404).json({ message: "Todo not found" });
+      return res.status(404).json({ message: "Todo not found", success: false, error: true });
     }
 
-    // Toggle the completed field
     learner.todos[todoIndex].completed = !learner.todos[todoIndex].completed;
-
-    // Save the updated learner document
     await learner.save();
 
     res.status(200).json({
       message: "Todo completion toggled successfully",
       data: learner.todos,
       success: true,
-      error: false
+      error: false,
     });
   } catch (error) {
     console.error("Error toggling todo:", error);
-    res.status(500).json({ message: "Server error", error: error.message });
+    res.status(500).json({
+      message: "Server error",
+      error: error.message,
+      success: false,
+    });
   }
 }
 
-// ---------------------ToggleTheme---------------------------------------------------------------
-
-export const toggleTheme = async (req, res) => {
-  try {
-    // Get token from cookies
-    const token = req.cookies.accessToken;
-    if (!token) {
-      return res.status(401).json({ message: "Access token missing" });
-    }
-
-    // Verify and decode token
-    const decoded = jwt.verify(token, process.env.JWT_SECRET); 
-    const { role, id } = decoded;
-
-
-    if (!role || !id) {
-      return res.status(400).json({ message: "Invalid token payload" });
-    }
-
-    let UserModel;
-
-    // Pick the correct model based on role
-    if (role === "learner") {
-      UserModel = LearnerUserModel;
-    } else if (role === "educator") {
-      UserModel = EducatorUserModel;
-    } else if (role === "admin") {
-      UserModel = AdminModel;
-    } else {
-      return res.status(400).json({ message: "Invalid role" });
-    }
-
-    // Find the user
-    const user = await UserModel.findById(id);
-
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    // Toggle theme
-    const newTheme = user.theme === "light" ? "dark" : "light";
-    user.theme = newTheme;
-    await user.save();
-console.log('all done');
-
-    return res.status(200).json({ message: `Theme updated to ${newTheme}`, theme: newTheme });
-
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ message: "Something went wrong" });
-  }
-};
+// ---------------------fetch sessions---------------------------------------
 
 export async function getEducatorSessions(req, res) {
   const token = req.cookies.accessToken;
-  if (!token) return res.status(401).json({ message: "Unauthorized" });
 
-  const { id: educatorId } = jwt.verify(token, process.env.JWT_SECRET);
+  if (!token) {
+    return res.status(401).json({ message: "Unauthorized", success: false, error: true });
+  }
+
+  let decoded;
+  try {
+    decoded = jwt.verify(token, process.env.JWT_SECRET);
+  } catch (err) {
+    return res.status(err.name === "TokenExpiredError" ? 401 : 403).json({
+      message: err.name === "TokenExpiredError" ? "Token expired" : "Invalid token",
+      success: false,
+      error: true
+    });
+  }
 
   try {
+    const educatorId = decoded.id;
     const now = new Date();
 
     const sessions = await SessionModel.find({ educatorId }).populate("learnerId", "name");
-
     const upcoming = sessions.filter(s => new Date(s.scheduledAt) > now);
     const previous = sessions.filter(s => new Date(s.scheduledAt) <= now);
 
-    res.json({ upcoming, previous });
+    res.status(200).json({
+      message: "Educator sessions fetched successfully",
+      upcoming,
+      previous,
+      success: true,
+      error: false
+    });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Failed to fetch educator sessions" });
+    console.error("Error fetching educator sessions:", err);
+    res.status(500).json({
+      message: "Failed to fetch educator sessions",
+      error: true,
+      success: false
+    });
   }
 }
 
 export async function getLearnerSessions(req, res) {
   const token = req.cookies.accessToken;
-  
-  if (!token) return res.status(401).json({ message: "Unauthorized" });
 
-  const { id: learnerId } = jwt.verify(token, process.env.JWT_SECRET);
+  if (!token) {
+    return res.status(401).json({ message: "Unauthorized", success: false, error: true });
+  }
+
+  let decoded;
+  try {
+    decoded = jwt.verify(token, process.env.JWT_SECRET);
+  } catch (err) {
+    return res.status(err.name === "TokenExpiredError" ? 401 : 403).json({
+      message: err.name === "TokenExpiredError" ? "Token expired" : "Invalid token",
+      success: false,
+      error: true
+    });
+  }
 
   try {
+    const learnerId = decoded.id;
     const now = new Date();
 
     const sessions = await SessionModel.find({ learnerId }).populate("educatorId", "name");
-
     const upcoming = sessions.filter(s => new Date(s.scheduledAt) > now);
     const previous = sessions.filter(s => new Date(s.scheduledAt) <= now);
 
-    res.json({ upcoming, previous });
+    res.status(200).json({
+      message: "Learner sessions fetched successfully",
+      upcoming,
+      previous,
+      success: true,
+      error: false
+    });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Failed to fetch learner sessions" });
+    console.error("Error fetching learner sessions:", err);
+    res.status(500).json({
+      message: "Failed to fetch learner sessions",
+      error: true,
+      success: false
+    });
   }
 }
 
 // -------------------------EducatorWallet-----------------------------------------------------
 
-export async function WithdrawelRequest(req , res) {
-  console.log('WithdrawelRequest initiated');
-  
-  try {
-    const token = req.cookies.accessToken;
+export async function WithdrawelRequest(req, res) {
+  console.log("WithdrawelRequest initiated");
 
-    if(!token){
-      return res.status(401).json({
-        message:"Unauthorised access. Try again or contact to Help@radical-unlearning.com"
-      })
+  const token = req.cookies?.accessToken;
+
+  if (!token) {
+    return res.status(401).json({
+      message: "Unauthorized access. Try again or contact Help@radical-unlearning.com",
+      success: false,
+      error: true,
+    });
+  }
+
+  let decoded;
+  try {
+    decoded = jwt.verify(token, process.env.JWT_SECRET);
+  } catch (err) {
+    return res.status(403).json({
+      message: err.name === "TokenExpiredError" ? "Session expired. Please login again." : "Invalid token.",
+      success: false,
+      error: true,
+    });
+  }
+
+  try {
+    const { amount } = req.body;
+
+    if (!amount || amount <= 0) {
+      return res.status(400).json({ message: "Invalid withdrawal amount", success: false, error: true });
     }
 
-    const {id} = jwt.verify(token , process.env.JWT_SECRET);
+    const user = await EducatorUserModel.findById(decoded.id).select("wallet");
 
-    const user = await EducatorUserModel.findById(id).select('wallet');
-    const { amount } = req.body;
-if (user.wallet < amount) {
-  return res.status(400).json({ message: "Insufficient wallet balance" });
-  
-}
+    if (!user) {
+      return res.status(404).json({ message: "Educator not found", success: false, error: true });
+    }
 
-await WithdrawelRequestModel.create({
-  educator: id,
-  amount,
-});
+    if (user.wallet < amount) {
+      return res.status(400).json({ message: "Insufficient wallet balance", success: false, error: true });
+    }
 
-return res.status(200).json({message:"Withdrawel request submitted successfully."})
-    
+    await WithdrawelRequestModel.create({
+      educator: decoded.id,
+      amount,
+    });
+
+    return res.status(200).json({
+      message: "Withdrawal request submitted successfully.",
+      success: true,
+      error: false,
+    });
   } catch (error) {
-    console.error(error); 
-    return res.status(500).json({ message: "Internal server error. Please try again later." });
+    console.error("Error in WithdrawelRequest:", error);
+    return res.status(500).json({
+      message: "Internal server error. Please try again later.",
+      success: false,
+      error: true,
+    });
   }
 }
 
 export async function fetchWalletAmount(req, res) {
+  const token = req.cookies?.accessToken;
+
+  if (!token) {
+    return res.status(401).json({
+      message: "Unauthorized",
+      error: true,
+      success: false,
+    });
+  }
+
+  let decoded;
   try {
-    const token = req.cookies?.accessToken;
-    
-    if (!token) {
-      return res.status(401).json({
-        message: "Unauthorized",
+    decoded = jwt.verify(token, process.env.JWT_SECRET);
+  } catch (err) {
+    return res.status(403).json({
+      message: err.name === "TokenExpiredError" ? "Token expired" : "Invalid token",
+      error: true,
+      success: false,
+    });
+  }
+
+  try {
+    const walletData = await EducatorUserModel.findById(decoded.id).select("wallet");
+
+    if (!walletData) {
+      return res.status(404).json({
+        message: "Educator not found",
+        data: null,
         error: true,
-        success: false
+        success: false,
       });
     }
-
-    let decoded;
-    try {
-      decoded = jwt.verify(token, process.env.JWT_SECRET);
-    } catch (err) {
-      return res.status(403).json({
-        message: "Invalid or expired token",
-        error: true,
-        success: false
-      });
-    }
-
-    const walletData = await EducatorUserModel.findById(decoded.id).select('wallet');
 
     res.status(200).json({
       message: "Wallet data fetched successfully",
       data: walletData.wallet,
       error: false,
-      success: true
+      success: true,
     });
-
   } catch (error) {
     console.error("Error fetching wallet data:", error);
     res.status(500).json({
       message: "Unable to fetch wallet data",
       data: null,
       error: true,
-      success: false
+      success: false,
     });
   }
 }

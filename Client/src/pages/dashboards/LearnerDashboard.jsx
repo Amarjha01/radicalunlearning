@@ -41,9 +41,9 @@ import { loadStripe } from "@stripe/stripe-js";
 const stripePromise = loadStripe("pk_test_51RPi0BI60AmMhjB7QXOsnO1d7vsWW7XVoYZnDe4Al7ZoQ7PIgSBdF1l9SE5AekRVZQ1LIFlebCoyrfvFF1vqqgsw00tA0b6Wy1");
 
 import API from "../../common/apis/ServerBaseURL.jsx";
-import VideoCall from "../../p2p/VideoCall.jsx";
 import TodoApp from "../../components/Dashboard/TodoApp.jsx";
 import { Link } from "react-router-dom";
+import { showNetworkErrorToast } from "../../utils/Notification.jsx";
 // Dummy data for development
 const dummyUser = {
   name: "Alex Thompson",
@@ -89,6 +89,11 @@ const OverviewTab = ({ darkMode, sessions }) => {
     } catch (error) {
       console.error("Error fetching todos:", error);
       setError("Failed to load todos.");
+       if (error.message === "Network Error") {
+              showNetworkErrorToast(
+                "Your Network connection Is Unstable OR Disconected"
+              );
+            }
     }
   };
 
@@ -173,6 +178,11 @@ const SearchTab = ({ darkMode, userData }) => {
       }
     } catch (error) {
       console.error("Error fetching educators:", error);
+       if (error.message === "Network Error") {
+              showNetworkErrorToast(
+                "Your Network connection Is Unstable OR Disconected"
+              );
+            }
     }
   };
 
@@ -195,6 +205,11 @@ const SearchTab = ({ darkMode, userData }) => {
       await stripe.redirectToCheckout({ sessionId: res.data.sessionId });
     } catch (error) {
       console.error("Payment error", error);
+       if (error.message === "Network Error") {
+        showNetworkErrorToast(
+          "Your Network connection Is Unstable OR Disconected"
+        );
+      }
     }
   };
 
@@ -589,6 +604,11 @@ const SettingsTab = ({ userData }) => {
     );
     return res.data.secure_url;
   } catch (err) {
+     if (err.message === "Network Error") {
+        showNetworkErrorToast(
+          "Your Network connection Is Unstable OR Disconected"
+        );
+      }
     console.error("Image upload failed", err);
     return null;
   }
@@ -621,6 +641,11 @@ const handleProfileUpdate = async (e) => {
     setEditProfile(false);
   } catch (error) {
     console.error("Update failed:", error);
+     if (error.message === "Network Error") {
+        showNetworkErrorToast(
+          "Your Network connection Is Unstable OR Disconected"
+        );
+      }
   } finally {
     setLoading(false);
   }
