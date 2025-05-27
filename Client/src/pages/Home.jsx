@@ -37,7 +37,7 @@ const Home = () => {
     </div>
     <div className="py-20 w-full flex flex-col items-center justify-center px-4 md:px-20">
   <h2 className="text-3xl font-bold text-center mb-6  anta-regular">
-    🎥 Our Framework
+    Our Framework
   </h2>
 
 <figure>
