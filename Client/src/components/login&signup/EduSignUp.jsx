@@ -8,6 +8,7 @@ import { IoMdEyeOff } from "react-icons/io";
 import { RiLockPasswordFill } from "react-icons/ri";
 import axios from "axios";
 import API from '../../common/apis/ServerBaseURL.jsx'
+import { countries } from "../../assets/data/countries.jsx";
 const subjectOptions = [
   { value: "Science", label: "Science" },
   { value: "Technology", label: "Technology" },
@@ -61,34 +62,35 @@ const subjectOptions = [
 ];
 
 
-const languageList = [
-  "English",
-  "Hindi",
-  "Spanish",
-  "French",
-  "Mandarin",
-  "Arabic",
-  "Bengali",
-  "Portuguese",
-  "Russian",
-  "Urdu",
-  "German",
-  "Japanese",
-  "Punjabi",
-  "Korean",
-  "Italian",
-  "Turkish",
-  "Vietnamese",
-  "Persian",
-  "Swahili",
-  "Tamil",
-  "Telugu",
-  "Malay",
-  "Javanese",
-  "Marathi",
-  "Thai",
-  "Gujarati",
+const languageOptions = [
+  { value: "arabic", label: "Arabic" },
+  { value: "bengali", label: "Bengali" },
+  { value: "english", label: "English" },
+  { value: "french", label: "French" },
+  { value: "german", label: "German" },
+  { value: "gujarati", label: "Gujarati" },
+  { value: "hindi", label: "Hindi" },
+  { value: "italian", label: "Italian" },
+  { value: "japanese", label: "Japanese" },
+  { value: "javanese", label: "Javanese" },
+  { value: "korean", label: "Korean" },
+  { value: "malay", label: "Malay" },
+  { value: "mandarin", label: "Mandarin" },
+  { value: "marathi", label: "Marathi" },
+  { value: "persian", label: "Persian" },
+  { value: "portuguese", label: "Portuguese" },
+  { value: "punjabi", label: "Punjabi" },
+  { value: "russian", label: "Russian" },
+  { value: "spanish", label: "Spanish" },
+  { value: "swahili", label: "Swahili" },
+  { value: "tamil", label: "Tamil" },
+  { value: "telugu", label: "Telugu" },
+  { value: "thai", label: "Thai" },
+  { value: "turkish", label: "Turkish" },
+  { value: "urdu", label: "Urdu" },
+  { value: "vietnamese", label: "Vietnamese" },
 ];
+
 
 const EduSignUp = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -294,7 +296,7 @@ const onSubmit = async (data) => {
       </div>
 
 <div>
-  <label className="block font-medium text-sm w-full text-start text-white">
+  <label className="block font-medium text-sm w-full text-start text-white ">
     Select your country:
   </label>
   <div className="anta-regular flex items-center bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500">
@@ -305,51 +307,10 @@ const onSubmit = async (data) => {
         setCountry(e.target.value);
         setCountryError(false);
       }}
-      className="w-full text-white bg-[#0e142a] outline-none rounded py-1 cursor-pointer"
+      className="w-full  bg-[#0e142a] outline-none rounded py-1 cursor-pointe text-white"
     >
       <option value="">Select Country</option>
-      {[
-        { code: "US", name: "United States" },
-        { code: "GB", name: "United Kingdom" },
-        { code: "IN", name: "India" },
-        { code: "CA", name: "Canada" },
-        { code: "AU", name: "Australia" },
-        { code: "DE", name: "Germany" },
-        { code: "FR", name: "France" },
-        { code: "IT", name: "Italy" },
-        { code: "ES", name: "Spain" },
-        { code: "NL", name: "Netherlands" },
-        { code: "SG", name: "Singapore" },
-        { code: "AE", name: "United Arab Emirates" },
-        { code: "EG", name: "Egypt" },
-        { code: "ZA", name: "South Africa" },
-        { code: "BR", name: "Brazil" },
-        { code: "MX", name: "Mexico" },
-        { code: "JP", name: "Japan" },
-        { code: "CN", name: "China" },
-        { code: "HK", name: "Hong Kong" },
-        { code: "MY", name: "Malaysia" },
-        { code: "TH", name: "Thailand" },
-        { code: "NG", name: "Nigeria" },
-        { code: "KE", name: "Kenya" },
-        { code: "NZ", name: "New Zealand" },
-        { code: "IE", name: "Ireland" },
-        { code: "CH", name: "Switzerland" },
-        { code: "SE", name: "Sweden" },
-        { code: "BE", name: "Belgium" },
-        { code: "AT", name: "Austria" },
-        { code: "DK", name: "Denmark" },
-        { code: "FI", name: "Finland" },
-        { code: "NO", name: "Norway" },
-        { code: "PL", name: "Poland" },
-        { code: "PT", name: "Portugal" },
-        { code: "RU", name: "Russia" },
-        { code: "KR", name: "South Korea" },
-        { code: "ID", name: "Indonesia" },
-        { code: "PH", name: "Philippines" },
-        { code: "BD", name: "Bangladesh" },
-        { code: "PK", name: "Pakistan" },
-      ].map((c) => (
+   {countries.map((c) => (
         <option key={c.code} value={c.code}>
           {c.name}
         </option>
@@ -470,23 +431,40 @@ const onSubmit = async (data) => {
   <label className="block font-medium text-sm w-full text-start text-white">
     Select your language:
   </label>
-  <div className="anta-regular flex items-center bg-[#0e142a] rounded-lg px-4 py-3 border border-[#1e2a48] focus-within:border-blue-500">
-    <input
-      list="language-options"
-      value={language}
-      onChange={(e) => {
-        setLanguage(e.target.value);
-        setLanguageError(false);
-      }}
-      placeholder="Type or select a language"
-      className="w-full text-white bg-[#0e142a] rounded outline-none py-1 cursor-text"
-    />
-    <datalist id="language-options">
-      {languageList.map((lang) => (
-        <option key={lang} value={lang} />
-      ))}
-    </datalist>
-  </div>
+<CreatableSelect
+        options={languageOptions}
+        onChange={(selectedOption) => {
+          setLanguage(selectedOption ? selectedOption.label : '');
+        }}
+        value={language ? { label: language, value: language.toLowerCase() } : null}
+        placeholder="Type or select a language"
+        isClearable
+        className="text-black"
+        styles={{
+          control: (base) => ({
+            ...base,
+            backgroundColor: '#0e142a',
+            borderColor: '#1e2a48',
+            padding: '4px 6px',
+            boxShadow: 'none',
+            color: 'white',
+          }),
+          singleValue: (base) => ({
+            ...base,
+            color: 'white',
+          }),
+          menu: (base) => ({
+            ...base,
+            backgroundColor: '#0e142a',
+            color: 'white',
+          }),
+          option: (base, state) => ({
+            ...base,
+            backgroundColor: state.isFocused ? '#1e2a48' : '#0e142a',
+            color: 'white',
+          }),
+        }}
+      />
   {languageError && (
     <span className="text-sm text-red-800">
       Please select or enter your language.
