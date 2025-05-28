@@ -1,5 +1,15 @@
 import { toast } from 'react-toastify';
-import { FaCheckCircle, FaTimesCircle } from 'react-icons/fa';
+import { 
+  FiAlertCircle, 
+  FiCheckCircle, 
+  FiLock, 
+  FiInfo, 
+  FiX,
+  FiWifi,
+  FiShield
+} from 'react-icons/fi';
+import { FaShieldAlt } from 'react-icons/fa';
+// Notification types with their properties
 
 export const showSuccessToast = (message) => {
   toast.success(

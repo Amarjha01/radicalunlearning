@@ -33,7 +33,10 @@ import { clearUser } from "../../store/slices/userSlice.jsx";
 import GroupChat from "../../components/Chat/GroupChat.jsx";
 import { Outlet } from "react-router-dom";
 import { Link } from "react-router-dom";
-
+import Loader from "../../components/Global/Loader.jsx";
+import { ToastContainer } from "react-toastify";
+import { showErrorToast, showSuccessToast } from "../../utils/Notification.jsx";
+import "react-toastify/dist/ReactToastify.css";
 
 // Main App Component
 export default function AdminDashboard() {
@@ -46,8 +49,8 @@ export default function AdminDashboard() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
  const [email , setEmail] = useState("");
   const [role , setRole] = useState("");
-  console.log('khsjhf', email , role);
-  
+  const [loader , SetLoader] = useState(false)
+const [expandedRequestId, setExpandedRequestId] = useState(null);
   const [withdrawalRequestsData , setWithdrawalRequestsData] = useState([])
   
   // Calculate stats
@@ -114,13 +117,13 @@ export default function AdminDashboard() {
       const response = await axios.post(API.educatorsData.url, {},{
         withCredentials:true
       });
-      console.log("response", user.userData.user._id);
 
       if (response.status === 200) {
         setEducators(response.data.data);
       }
     } catch (error) {
       console.log("error in fetching data of educator:", error);
+      showErrorToast(`${error.response.data.message}`)
     }
   };
 
@@ -158,17 +161,21 @@ export default function AdminDashboard() {
 
   //  approve user
   const approveEducator = async (email) => {
-    console.log(email);
+    SetLoader(true)
     try {
       const response = await axios.patch(API.approveEducator.url, {email: email} , {
         withCredentials:true
       });
 
       if (response.status === 200) {
-        fetchEducatorsData(); // Refresh list after approval
+        SetLoader(false)
+        showSuccessToast('Educator Approved successfully')
+        fetchEducatorsData(); 
       }
       console.log("response approve", response);
     } catch (error) {
+      SetLoader(false)
+      showErrorToast(error.response.data.message)
       console.log("approve error", error);
     }
   };
@@ -176,6 +183,7 @@ export default function AdminDashboard() {
   //  delete user
   const deleteUser = async (email, role) => {
     try {
+      SetLoader(true)
       const response = await axios.delete(API.deleteUser.url, {
         params: {
           email: email,
@@ -185,11 +193,14 @@ export default function AdminDashboard() {
       });
 
       if (response.status === 200) {
+        SetLoader(false)
+        showSuccessToast("user Deleted successfully")
         fetchEducatorsData();
         fetchLearnersData();
       }
     } catch (error) {
-      alirt(response.message);
+      SetLoader(false)
+      showErrorToast(`${response.message}`)
       console.log(error);
     }
   };
@@ -201,7 +212,7 @@ const getWithdrawelRequests = async() =>{
       withCredentials:true
     })
     if(response.status === 200){
-      console.log(response);
+      console.log(response,"getWithdrawelRequests");
       setWithdrawalRequestsData(response.data)
     }
   } catch (error) {
@@ -209,7 +220,6 @@ const getWithdrawelRequests = async() =>{
   }
 }
    const [revenueData , setRevenueData] = useState()
- console.log('revenueData', revenueData);
  
    useEffect(()=>{
      setRevenueData(user.userData.user.revenue)
@@ -219,6 +229,22 @@ const getWithdrawelRequests = async() =>{
   return (
 
     <div className=" w-[100vw] min-h-screen flex max-w-[1680px] mx-auto ">
+          <ToastContainer
+        position="top-right"
+        autoClose={4000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
+      {
+        loader && (
+          <Loader />
+        )
+      }
            {
       viewUserDetails && (
         <div className={` w-[100vw] absolute z-50  flex justify-center`}><UserDetailsList userEmail={email} role={role}/>
@@ -563,9 +589,29 @@ const getWithdrawelRequests = async() =>{
                         </button>
                       </>
                     )}
-                    <button className="p-1 rounded-full text-black hover:bg-gray-100 ">
-                      <MoreVertical className="h-5 w-5" />
-                    </button>
+ <button
+          onClick={() =>
+            setExpandedRequestId(expandedRequestId === request._id ? null : request._id)
+          }
+          className="p-1 rounded-full text-black hover:bg-gray-100"
+        >
+          <MoreVertical className="h-5 w-5" />
+        </button>
+
+        {expandedRequestId === request._id && (
+          <div className="absolute right-0 mt-2 z-10 flex flex-col w-40 bg-[#b4c0b2] rounded shadow-md p-4 space-y-2">
+            <button
+              onClick={() => setExpandedRequestId(null)}
+              className="text-xs text-red-600 self-end hover:underline cursor-pointer"
+            >
+              Close
+            </button>
+            <button className="cursor-pointer hover:text-[#2b7fff]">Mark As Paid</button>
+            <button className="cursor-pointer hover:text-[#2b7fff]"
+             onClick={() => fetchEducatorsDetailedData(request.educator.email , "educator")}
+            >View Details</button>
+          </div>
+        )}
                   </div>
                 </td>
               </tr>

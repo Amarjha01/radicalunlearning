@@ -147,12 +147,12 @@ export const approveEducator = async (req, res) => {
         error: true,
       });
     }
-
+if(educator.serviceType === "Paid"){
     // If Stripe account doesn't exist, create one
 // 1. Create the Custom Connect account
 const account = await stripe.accounts.create({
   type: 'custom',
-  country: educator.country || 'GB',
+  country: educator.country ,
   email: educator.email,
   business_type: 'individual',
   individual: {
@@ -169,7 +169,7 @@ const account = await stripe.accounts.create({
       line1: educator.address?.line1,
       city: educator.address?.city,
       postal_code: educator.address?.postal_code,
-      country: educator.address?.country || 'GB',
+      country: educator.address?.country ,
     },
   },
   capabilities: {
@@ -201,6 +201,8 @@ await stripe.accounts.createExternalAccount(account.id, {
 // 4. Save the account ID in your DB (optional but highly recommended)
 educator.stripeAccountId = account.id;
 await educator.save();
+}
+
 
     // ✅ Mark educator as approved
     educator.Approved = true;
@@ -212,11 +214,11 @@ await educator.save();
       error: false,
     });
   } catch (error) {
-    console.error('Error approving educator:', error);
     res.status(500).json({
-      message: 'Error while approving educator',
+      message: `Error while approving educator: ${error}`,
       success: false,
       error: true,
+      
     });
   }
 };
@@ -313,10 +315,68 @@ export async function getWithdrawelRequests(req, res) {
     try {
       const pendingRequests = await WithdrawelRequestModel.find({ status: 'pending' })
       .populate('educator', 'name email payoutMethod');
+      
       res.status(200).json(pendingRequests);
     } catch (error) {
       console.error('Error fetching pending withdrawal requests:', error);
       res.status(500).json({ message: 'Internal server error' });
     }
   }
+
+  export async function  markAsPaid(req , res) {
+    try {
+      const {RequestID} = req.body;
+      const markaspaid = await WithdrawelRequestModel.findOneAndUpdate({RequestID},  {status : "Paid"})
+      res.status(200).json({
+        message:"paid successfully",
+        status: true,
+        error:false
+      })
+        if (!updatedRequest) {
+      return res.status(404).json({
+        message: "Withdrawal request not found",
+        status: false,
+        error: true
+      });
+    }
+    } catch (error) {
+       console.error("Error in markAsPaid:", error);
+    res.status(500).json({
+      message: "Internal Server Error",
+      status: false,
+      error: true
+    });
+      
+    }
+  }
+
+  export async function  markAsRejected(req , res) {
+    try {
+      const {RequestID} = req.body;
+      const markaspaid = await WithdrawelRequestModel.findOneAndUpdate({RequestID},  {status : "rejected"})
+      res.status(200).json({
+        message:"rejected successfully",
+        status: true,
+        error:false
+      })
+        if (!updatedRequest) {
+      return res.status(404).json({
+        message: "Withdrawal request not found",
+        status: false,
+        error: true
+      });
+    }
+    } catch (error) {
+       console.error("Error in markAseRjected:", error);
+    res.status(500).json({
+      message: "Internal Server Error",
+      status: false,
+      error: true
+    });
+      
+    }
+  }
   
+export async function initiate(params) {
+  
+}
