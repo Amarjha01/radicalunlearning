@@ -226,6 +226,18 @@ const getWithdrawelRequests = async() =>{
    })
   
    
+   const handlePayout = async(requestId, action)=>{
+    try {
+      const response = await axios.post(API.processWithdrawRequest.url , {requestId , action} ,
+        {withCredentials:true}
+      )
+      console.log(response);
+      
+    } catch (error) {
+      console.log(error);
+      
+    }
+   }
   return (
 
     <div className=" w-[100vw] min-h-screen flex max-w-[1680px] mx-auto ">
@@ -581,7 +593,7 @@ const getWithdrawelRequests = async() =>{
                   <div className="flex justify-end items-center gap-2">
                     {request.status === 'pending' && (
                       <>
-                        <button className="p-1 rounded-full text-green-600 hover:bg-green-100 ">
+                        <button onClick={()=>{handlePayout(request?._id , "approve")}} className="p-1 rounded-full text-green-600 hover:bg-green-100 ">
                           <CheckCircle className="h-5 w-5" />
                         </button>
                         <button className="p-1 rounded-full text-red-600 hover:bg-red-100 ">

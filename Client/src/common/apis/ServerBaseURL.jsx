@@ -56,6 +56,9 @@ const API = {
   fetchWithdrawelRequests: { 
     url: `${backendDomain}/api/admin/getWithdrawelRequests`,
   },
+  processWithdrawRequest: { 
+    url: `${backendDomain}/api/admin/processWithdrawRequest`,
+  },
 
   // --------------------APIs for learner------------------
   searchEducator:{

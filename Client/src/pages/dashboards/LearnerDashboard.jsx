@@ -26,6 +26,7 @@ import {
   FaBookOpen,
   FaUserEdit,
 } from "react-icons/fa";
+import { LuPoundSterling } from "react-icons/lu";
 import { LuBotMessageSquare } from "react-icons/lu";
 import { IoMdClose } from "react-icons/io";
 import GroupChat from "../../components/Chat/GroupChat.jsx";
@@ -164,8 +165,10 @@ const OverviewTab = ({ darkMode, sessions }) => {
 const SearchTab = ({ darkMode, userData }) => {
   const [searchKey, setSearchKey] = useState("");
   const [allEducator, setAllEducator] = useState([]);
+  const [loadingEducatorId, setLoadingEducatorId] = useState(null);
 
   const searcheducator = async () => {
+    
     try {
       const response = await axios.get(API.searchEducator.url, {
         params: {
@@ -186,32 +189,35 @@ const SearchTab = ({ darkMode, userData }) => {
     }
   };
 
-  const handlePay = async (educatorId, amount) => {
-    try {
-      const res = await axios.post(
-        API.createCheckoutSession.url,
-        {
-          learnerName: userData.name,
-          amount,
-          educatorId,
-          topic: searchKey,
-        },
-        {
-          withCredentials: true,
-        }
-      );
+ const handlePay = async (educatorId, amount) => {
+  try {
+    setLoadingEducatorId(educatorId); // Start loading
 
-      const stripe = await stripePromise;
-      await stripe.redirectToCheckout({ sessionId: res.data.sessionId });
-    } catch (error) {
-      console.error("Payment error", error);
-       if (error.message === "Network Error") {
-        showNetworkErrorToast(
-          "Your Network connection Is Unstable OR Disconected"
-        );
+    const res = await axios.post(
+      API.createCheckoutSession.url,
+      {
+        learnerName: userData.name,
+        amount,
+        educatorId,
+        topic: searchKey,
+      },
+      {
+        withCredentials: true,
       }
+    );
+
+    const stripe = await stripePromise;
+    await stripe.redirectToCheckout({ sessionId: res.data.sessionId });
+  } catch (error) {
+    console.error("Payment error", error);
+    if (error.message === "Network Error") {
+      showNetworkErrorToast("Your Network connection Is Unstable OR Disconnected");
     }
-  };
+  } finally {
+    setLoadingEducatorId(null); // Reset loading state
+  }
+};
+
 
   return (
     <div className="w-full h-auto flex flex-col">
@@ -336,18 +342,33 @@ const SearchTab = ({ darkMode, userData }) => {
                         Session Fee
                       </span>
                     </div>
-                    <span className="text-lg font-bold text-blue-600">
-                      $513
+                    <span className="text-lg font-bold text-blue-600 flex justify-center items-center">
+                      <LuPoundSterling />{educator?.sessionFee || 10}
                     </span>
                   </div>
 
-                  <button
-                    onClick={() => handlePay(educator._id, 513)}
-                    className="w-full py-3 px-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-medium rounded-lg flex items-center justify-center transition-all hover:from-blue-700 hover:to-purple-700"
-                  >
-                    <CiLock className="mr-2 text-lg" />
-                    Pay to Book Session
-                  </button>
+                <button
+  onClick={() => handlePay(educator._id, educator?.sessionFee || 10 )}
+  disabled={loadingEducatorId === educator._id}
+  className={`w-full py-3 px-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-medium rounded-lg flex items-center justify-center transition-all 
+    ${loadingEducatorId === educator._id ? 'opacity-50 cursor-not-allowed' : 'hover:from-blue-700 hover:to-purple-700'}`}
+>
+  {loadingEducatorId === educator._id ? (
+    <>
+      <svg className="animate-spin h-5 w-5 mr-2 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
+      </svg>
+      Processing...
+    </>
+  ) : (
+    <>
+      <CiLock className="mr-2 text-lg" />
+      Pay to Book Session
+    </>
+  )}
+</button>
+
                 </div>
               </div>
             </div>

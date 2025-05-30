@@ -13,7 +13,7 @@ export default function TodoApp() {
     if (e) e.preventDefault();
 
     if (!newTodo.trim()) {
-      setError("Todo cannot be empty.");
+      setError("Goal cannot be empty.");
       return;
     }
 
@@ -32,7 +32,7 @@ export default function TodoApp() {
       }
     } catch (error) {
       console.error("Error in addtodos:", error);
-      setError("Failed to add todo. Please try again.");
+      setError("Failed to add goal. Please try again.");
        if (error.message === "Network Error") {
         showNetworkErrorToast(
           "Your Network connection Is Unstable OR Disconected"
@@ -165,7 +165,7 @@ export default function TodoApp() {
               value={newTodo}
               onChange={(e) => setNewTodo(e.target.value)}
               onKeyPress={handleKeyPress}
-              placeholder="Add a new task..."
+              placeholder="Type here to create a goal."
               className="flex-1 p-3 border border-gray-200 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
             <button 

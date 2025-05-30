@@ -14,6 +14,8 @@ import {
 
 export async function createCheckoutSession(req , res) {
   const { learnerName, amount, educatorId, topic } = req.body;
+  console.log('amount', amount);
+  
   const token = req.cookies.accessToken;
 
   if (!token) {
@@ -33,7 +35,7 @@ export async function createCheckoutSession(req , res) {
             product_data: {
               name: `Session Booking Fee - ${learnerName}`,
             },
-            unit_amount: amount,
+            unit_amount: amount*100,
           },
           quantity: 1,
         },

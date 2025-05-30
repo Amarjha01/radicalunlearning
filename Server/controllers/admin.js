@@ -1,4 +1,4 @@
-import { EducatorUserModel , LearnerUserModel ,  WithdrawelRequestModel} from "../models/user.js";
+import { EducatorUserModel , LearnerUserModel ,  WithdrawelRequestModel , WalletTransactionModel} from "../models/user.js";
 import jwt from 'jsonwebtoken'
 
 import Stripe from 'stripe';
@@ -268,53 +268,71 @@ export const getlearnerDataDetails = async(req, res) =>{
 
 // processWithdrawRequest
 export async function processWithdrawRequest(req, res) {
-    const { requestId, action } = req.body; // action = "approve" or "reject"
+  const { requestId, action } = req.body;
+
+  const request = await WithdrawelRequestModel.findById(requestId).populate('educator', 'stripeAccountId');
+  console.log('processWithdrawRequest', request );
+  console.log('amount', request.amount );
   
-    const request = await WithdrawelRequestModel.findById(requestId);
-    if (!request || request.status !== 'pending') {
-      return res.status(404).json({ message: 'Request not found or already processed' });
+  if (!request || request.status !== 'pending') {
+    return res.status(404).json({ message: 'Request not found or already processed' });
+  }
+
+  const educator = await EducatorUserModel.findById(request.educator);
+  if (!educator) {
+    return res.status(404).json({ message: 'Educator not found' });
+  }
+
+  if (action === 'approve') {
+    if (educator.wallet < request.amount) {
+      return res.status(400).json({ message: 'Wallet balance is insufficient' });
     }
-  
-    const educator = await EducatorUserModel.findById(request.educator);
-    if (!educator) {
-      return res.status(404).json({ message: 'Educator not found' });
-    }
-  
-    if (action === 'approve') {
-      // Debit wallet
-      if (educator.wallet < request.amount) {
-        return res.status(400).json({ message: 'Wallet balance is insufficient' });
-      }
-  
+
+    try {
+      // 💸 Stripe Payout
+      const balance = await stripe.balance.retrieve();
+console.log(balance);
+
+      const transfer = await stripe.transfers.create({
+        amount: Math.round(request.amount * 100), 
+        currency: 'GBP',
+        destination: educator.stripeAccountId, 
+        description: `Payout for withdrawal request ${request._id}`,
+      });
+
+      // Update wallet and DB
       educator.wallet -= request.amount;
       await educator.save();
-  
+
       await WalletTransactionModel.create({
         educator: educator._id,
         type: 'debit',
         reason: 'withdrawal',
-        amount: request.amount
+        amount: request.amount,
+        stripeTransferId: transfer.id // optional: save Stripe transfer ID
       });
-  
+
       request.status = 'paid';
       request.processedAt = new Date();
       await request.save();
-  
-      // Later, you can integrate actual payment API like Razorpay/PayPal here
-  
-      return res.json({ message: 'Withdrawal approved and processed' });
-    } else {
-      request.status = 'rejected';
-      await request.save();
-      return res.json({ message: 'Withdrawal rejected' });
+
+      return res.json({ message: 'Withdrawal approved and payout completed via Stripe' });
+    } catch (error) {
+      console.error('Stripe payout error:', error);
+      return res.status(500).json({ message: 'Payout failed', error: error.message });
     }
+  } else {
+    request.status = 'rejected';
+    await request.save();
+    return res.json({ message: 'Withdrawal rejected' });
   }
+}
   
 //   view  withdrawel requests
 export async function getWithdrawelRequests(req, res) {
     try {
       const pendingRequests = await WithdrawelRequestModel.find({ status: 'pending' })
-      .populate('educator', 'name email payoutMethod');
+      .populate('educator', 'name email payoutMethod ');
       
       res.status(200).json(pendingRequests);
     } catch (error) {

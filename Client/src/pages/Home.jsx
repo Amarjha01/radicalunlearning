@@ -21,7 +21,7 @@ const Home = () => {
       
       <div className="flex items-center mb-6">
         <FaLightbulb className="text-[#faf3dd] text-3xl mr-3" />
-        <h2 className="text-3xl font-semibold text-gray-800">
+        <h2 className="text-3xl font-semibold text-gray-800 anta-regular">
           About Radical Unlearning
         </h2>
       </div>
@@ -47,7 +47,7 @@ const Home = () => {
 </div>
 <div>
    <h2 className="text-3xl font-bold text-center mb-6  anta-regular">
-     What we offer
+     What We Offer
   </h2>
 <div className="flex flex-col md:flex-row justify-around max-w-[90vw] mx-auto gap-10 ">
   {offer.map((item, index) => (
