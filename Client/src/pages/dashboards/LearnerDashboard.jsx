@@ -104,7 +104,7 @@ const OverviewTab = ({ darkMode, sessions }) => {
 
   return (
     <div className="bg-[#faf3dd]">
-      <h1 className="text-2xl font-bold mb-6 ">Dashboard Overview</h1>
+      <h1 className="text-2xl font-bold mb-6 ">Overview</h1>
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
