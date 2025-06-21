@@ -214,7 +214,7 @@ export default function TodoApp() {
                 
                 <button
                   onClick={() => deleteTodo(todo?._id)}
-                  className="p-2 text-black hover:text-red-500 rounded-full transition-colors opacity-0 group-hover:opacity-100"
+                  className="p-2 text-[#ff6b6b] hover:text-red-500 rounded-full transition-colors  group-hover:opacity-100 cursor-pointer"
                   aria-label="Delete task"
                 >
                   <FaTrash size={14} />

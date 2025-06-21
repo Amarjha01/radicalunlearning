@@ -233,7 +233,7 @@ export default function EducatorDashboard() {
       {/* sidebar desktop */}
       <div className="hidden fixed md:flex  left-0 min-h-screen w-64 bg-[#f2c078] shadow-md flex-col">
         <aside className="min-h-screen inset-y-0 left-0 z-10 w-64 shadow-lg transform transition-transform duration-300 md:translate-x-0 hidden md:block">
-          <div className="flex flex-col h-full">
+          <div className="flex flex-col  h-full">
             <div className="px-4 py-6 flex items-center justify-center border-b border-gray-200 dark:border-gray-700">
               <div className="relative w-12 h-12 rounded-full overflow-hidden bg-[#e0e7ff]  mr-3">
                 <img
@@ -649,13 +649,13 @@ export default function EducatorDashboard() {
                           <td className="px-6 py-4 whitespace-nowrap">
                             <span
                               className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                                session.status === "Confirmed"
-                                  ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
+                                session.status === "scheduled"
+                                  ? "bg-green-100 text-green-800  "
                                   : session.status === "Pending"
-                                  ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200"
+                                  ? "bg-yellow-100 text-yellow-800  "
                                   : session.status === "Completed"
-                                  ? "bg-gray-100 text-gray-800 dark:bg-gray-700 -300"
-                                  : "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200"
+                                  ? "bg-gray-100 text-gray-800 "
+                                  : "bg-red-100 text-red-800  "
                               }`}
                             >
                               {session.status}
@@ -672,7 +672,7 @@ export default function EducatorDashboard() {
                                     Join
                                   </a>
                                   <button
-                                    className="text-black hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300"
+                                    className="text-white px-4 py-1 bg-purple-700 rounded-sm cursor-pointer hover:bg-purple-400 "
                                     onClick={() =>
                                       alert(
                                         `Reschedule session: ${session.title}`

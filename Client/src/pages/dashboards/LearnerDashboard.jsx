@@ -34,8 +34,8 @@ import { MdHome } from "react-icons/md";
 import { CiChat1, CiMenuFries, CiLock } from "react-icons/ci";
 import { TbUserSearch } from "react-icons/tb";
 import { MdOutlineSearch } from "react-icons/md";
-import { useSelector } from "react-redux";
-import { useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { clearUser } from "../../store/slices/userSlice.jsx";
 import axios from "axios";
 import AIChat from "../../components/ChatBot/Aichat.jsx";
 import { loadStripe } from "@stripe/stripe-js";
@@ -458,7 +458,7 @@ const SessionsTab = ({ darkMode, sessions }) => {
                         </a>
                         <button
                           onClick={() => handleReschedule(session)}
-                          className="px-3 py-1 text-xs bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 rounded-md"
+                          className="px-3 py-1 text-xs text-white bg-purple-700 hover:bg-purple-400 cursor-pointer  rounded-md"
                         >
                           Reschedule
                         </button>
@@ -476,7 +476,7 @@ const SessionsTab = ({ darkMode, sessions }) => {
 
         {/* Reschedule Form Modal */}
         {showRescheduleForm && selectedSession && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="fixed inset-0 bg-amber-100 bg-opacity-50 flex items-center justify-center p-4 z-50">
             <div className={`w-full max-w-md p-6 rounded-lg `}>
               <h2 className="text-xl font-semibold mb-4">
                 Reschedule: {selectedSession.title}
@@ -942,15 +942,18 @@ const LearnerDashboard = () => {
     setDarkMode(!darkMode);
   };
 
-  const handleSignOut = async () => {
+    const handleSignOut = async() => {
     try {
-      const response = await axios.post(API.signout.url, {
-        withCredentials: true,
-      });
-      if (response.status === 200) {
+      const response = await axios.post(API.signout.url , {
+        withCredentials:true
+      })
+      if(response.status ===200){
         dispatch(clearUser());
       }
-    } catch (error) {}
+    } catch (error) {
+      
+    }
+    
   };
   return (
     <div className={`min-h-screen  text-gray-800`}>
@@ -1039,7 +1042,7 @@ const LearnerDashboard = () => {
               className="flex items-center text-red-500 hover:text-red-600 px-3 py-2 rounded-md w-full cursor-pointer"
             >
               <LogOut size={18} className="mr-2" />
-              signOut
+              Sign Out
             </button>
           </div>
         </div>
@@ -1048,28 +1051,28 @@ const LearnerDashboard = () => {
         <div className="flex-1 overflow-x-hidden p-4 md:p-8 md:pl-[35vw] lg:pl-[23vw]">
           {activeTab === "Overview" && (
             <OverviewTab
-              darkMode={darkMode}
+              
               sessions={sessions}
               userData={profileData}
             />
           )}
           {activeTab === "Search For Expert" && (
-            <SearchTab darkMode={darkMode} userData={profileData} />
+            <SearchTab  userData={profileData} />
           )}
           {activeTab === "My Goals" && (
-            <GoalsTab darkMode={darkMode} userData={profileData} />
+            <GoalsTab  userData={profileData} />
           )}
           {activeTab === "Sessions" && (
             <SessionsTab
-              darkMode={darkMode}
+              
               sessions={sessions}
               userData={profileData}
             />
           )}
-          {activeTab === "Community Chat" && <ChatTab darkMode={darkMode} />}
-          {activeTab === "AI Chat Bot" && <ChatBot darkMode={darkMode} />}
+          {activeTab === "Community Chat" && <ChatTab  />}
+          {activeTab === "AI Chat Bot" && <ChatBot  />}
           {activeTab === "Settings" && (
-            <SettingsTab darkMode={darkMode} userData={profileData} />
+            <SettingsTab  userData={profileData} />
           )}
         </div>
       </div>
