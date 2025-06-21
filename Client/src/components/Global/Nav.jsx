@@ -104,7 +104,7 @@ const isUser = !!user?.userData?.user;
       onClick={handleSignOut}
       className={`bg-[#F2C078]  border-[#D0E1D4] text-black rounded-4xl px-6 py-2 border-2 cursor-pointer`}
     >
-      sign Out
+      Sign Out
     </button>
   ) : (
     <Link to="/signin">

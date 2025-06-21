@@ -1,5 +1,5 @@
-// const backendDomain = "http://localhost:3000";
-const backendDomain = "https://api.radical-unlearning.com";
+const backendDomain = "http://localhost:3000";
+// const backendDomain = "https://api.radical-unlearning.com";
 
 const API = {
 
