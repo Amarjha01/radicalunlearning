@@ -24,8 +24,7 @@ import { IoWalletOutline } from "react-icons/io5";
 import {FaUserEdit } from 'react-icons/fa';
 import axios from "axios";
 import API from "../../common/apis/ServerBaseURL.jsx";
-import { useSelector } from "react-redux";
-import { useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { clearUser, updateUser } from "../../store/slices/userSlice.jsx";
 import GroupChat from "../../components/Chat/GroupChat.jsx";
 import { MdHome } from "react-icons/md";
@@ -42,7 +41,7 @@ export default function EducatorDashboard() {
   const [activeTab, setActiveTab] = useState("dashboard");
   const [darkMode, setDarkMode] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [viewMode, setViewMode] = useState("list"); // list or calendar
+  const [viewMode, setViewMode] = useState("list"); 
   const [profileData, setProfileData] = useState({});
   const [sessions, setSessions] = useState({previous:[],upcoming:[]});
   const [isChangePasswordOpen, setIsChangePasswordOpen] = useState(false);
@@ -56,7 +55,7 @@ export default function EducatorDashboard() {
   if (user?. userData?.user) {
     setProfileData(user.userData.user);
   }
-}, [user]); // ✅ Add [user] dependency
+}, [user]); 
   
   useEffect(()=>{
     const getEducatorSessions = async () =>{
@@ -183,21 +182,70 @@ const [editProfile, setEditProfile] = useState(false);
   };
 
 
-  const handleChange = (field, value) => {
-    setChangedData((prev) => ({ ...prev, [field]: value }));
-  };
+
+const handleChange = (field, value) => {
+  setChangedData((prev) => ({ ...prev, [field]: value }));
+};
 
 
-    const [sessionFee, setSessionFee] = useState("1000");
-  const [isEditing, setIsEditing] = useState(false);
-  const [tempFee, setTempFee] = useState(sessionFee);
+const [sessionFee, setSessionFee] = useState(null);
+const [isEditing, setIsEditing] = useState(false);
+const [tempFee, setTempFee] = useState('');
+const [feeLoading, setFeeLoading] = useState(true);
 
-  const handleSave = () => {
-    if (!isNaN(tempFee) && tempFee.trim() !== "") {
+
+useEffect(() => {
+  if (profileData && Object.keys(profileData).length > 0) {
+    const feeFromDB = profileData.sessionfee;
+    
+    console.log("📊 Session Fee from Database:", feeFromDB);
+
+    if (feeFromDB !== undefined && feeFromDB !== null) {
+      const feeString = String(feeFromDB);
+      setSessionFee(feeString);
+      setTempFee(feeString);
+    } else {
+      setSessionFee('1000');
+      setTempFee('1000');
+    }
+    
+    setFeeLoading(false);
+  }
+}, [profileData]);
+
+
+const handleSave = async () => {
+  if (!tempFee || isNaN(tempFee) || Number(tempFee) <= 0) {
+    showErrorToast("Please enter a valid amount greater than 0");
+    return;
+  }
+
+  try {
+    const feePayload = { sessionfee: Number(tempFee) };
+
+    const response = await axios.patch(
+      API. updateUserDetails. url,
+      feePayload,
+      { withCredentials: true }
+    );
+
+    if (response.status === 200) {
+      // ✅ Update Redux store
+      dispatch(updateUser({ sessionfee: Number(tempFee) }));
+      
+      // ✅ Update local state
       setSessionFee(tempFee);
       setIsEditing(false);
+      
+      showSuccessToast("Session fee updated successfully!");
+      
+      console.log("✅ Fee updated:", tempFee);
     }
-  };
+  } catch (error) {
+    console.error("❌ Fee update failed:", error);
+    showErrorToast(error.response?.data?.message || "Failed to update fee");
+  }
+};
 
 const fetchWalletAmount = async() =>{
   try {
@@ -1023,54 +1071,65 @@ const fetchWalletAmount = async() =>{
           </div>
         )}
 
- {activeTab === "payment" && (
-        <div className="p-4 md:p-6 max-w-md mx-auto bg-[#faf3dd] rounded-2xl shadow-md border mt-4">
-          <h2 className="text-xl font-semibold mb-4 text-center">Session Fee</h2>
+{activeTab === "payment" && (
+  <div className="p-4 md:p-6 max-w-md mx-auto bg-[#faf3dd] rounded-2xl shadow-md border mt-4">
+    <h2 className="text-xl font-semibold mb-4 text-center">Session Fee</h2>
 
-          {!isEditing ? (
-            <div className="flex items-center justify-between">
-              <div className="flex items-center text-lg font-medium">
-                <LuPoundSterling className="text-gray-600 mr-1" />
-                {sessionFee}
-              </div>
-              <button
-                onClick={() => {
-                  setTempFee(sessionFee);
-                  setIsEditing(true);
-                }}
-                className="text-sm bg-[#f2c078] hover:bg-[#d0a871] text-black cursor-pointer px-4 py-2 rounded-lg transition"
-              >
-                Edit
-              </button>
-            </div>
-          ) : (
-            <div className="space-y-3">
-              <input
-                type="text"
-                value={tempFee}
-                onChange={(e) => setTempFee(e.target.value)}
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-                placeholder="Enter new session fee"
-              />
-              <div className="flex gap-3 justify-end">
-                <button
-                  onClick={() => setIsEditing(false)}
-                  className="text-sm bg-gray-300 hover:bg-gray-400 cursor-pointer text-gray-800 px-4 py-2 rounded-lg transition"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleSave}
-                  className="text-sm bg-green-900 hover:bg-green-950 cursor-pointer text-white px-4 py-2 rounded-lg flex items-center gap-2 transition"
-                >
-                  <FaCheck />
-                  Save
-                </button>
-              </div>
-            </div>
-          )}
+    {feeLoading ? (
+      <div className="flex items-center justify-center py-8">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+        <span className="ml-3 text-gray-600">Loading...</span>
+      </div>
+    ) : !isEditing ? (
+      <div className="flex items-center justify-between">
+        <div className="flex items-center text-lg font-medium">
+          <LuPoundSterling className="text-gray-600 mr-1" />
+          {sessionFee || 'Not Set'}
         </div>
-      )}
+        <button
+          onClick={() => {
+            setTempFee(sessionFee);
+            setIsEditing(true);
+          }}
+          className="text-sm bg-[#f2c078] hover:bg-[#d0a871] text-black cursor-pointer px-4 py-2 rounded-lg transition"
+        >
+          Edit
+        </button>
+      </div>
+    ) : (
+      <div className="space-y-3">
+        <input
+          type="number"
+          value={tempFee}
+          onChange={(e) => setTempFee(e.target.value)}
+          className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+          placeholder="Enter new session fee"
+          min="1"
+        />
+        <div className="flex gap-3 justify-end">
+          <button
+            onClick={() => {
+              setTempFee(sessionFee);
+              setIsEditing(false);
+            }}
+            className="text-sm bg-gray-300 hover:bg-gray-400 cursor-pointer text-gray-800 px-4 py-2 rounded-lg transition"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={handleSave}
+            className="text-sm bg-green-900 hover:bg-green-950 cursor-pointer text-white px-4 py-2 rounded-lg flex items-center gap-2 transition"
+          >
+            <FaCheck />
+            Save
+          </button>
+        </div>
+      </div>
+    )}
+  </div>
+)}
+
+
         {activeTab === "AIbot" && (
           <div className="">
             <AIChat />
