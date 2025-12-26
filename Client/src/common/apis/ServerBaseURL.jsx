@@ -24,6 +24,18 @@ const API = {
     url: `${backendDomain}/api/user/updateUserDetails`,
   },
 
+  // Update Password Endpoint
+  updatePassword: { 
+  url: `${backendDomain}/api/user/updatePassword`,
+  method: 'PATCH',
+},
+
+// Delete Account Endpoint
+deleteAccount: { 
+  url: `${backendDomain}/api/user/deleteAccount`,
+  method: 'DELETE',
+},
+
   // ------------------------APIs for Admin dashboard---------------------------
   educatorsData: { 
     url: `${backendDomain}/api/admin/get-all-educator-data`,
