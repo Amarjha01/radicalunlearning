@@ -497,6 +497,7 @@ export async function signin(request, response) {
           experience: user.experience,
           subjects: user.subjects,
           serviceType: user.serviceType,
+          sessionfee: user.sessionfee, 
           payoutMethod: user.payoutMethod,
           upiID: user.upiId,
           Approved: user.Approved,
@@ -554,10 +555,11 @@ export async function updateUserDetails(req, res) {
           ...(language && { language }),
           ...(bio && { bio }),
           ...(avatar && { avatar }),
-        }
+        },
+        { new: true }
       );
     } else if (role === "EDUCATOR") {
-      const { name, bio, experience, avatar, subrole, language, serviceType } = req.body;
+      const { name, bio, experience, avatar, subrole, language, serviceType, sessionfee } = req.body;
 
       updateUser = await EducatorUserModel.updateOne(
         { _id: userId },
@@ -569,8 +571,16 @@ export async function updateUserDetails(req, res) {
           ...(subrole && { subrole }),
           ...(language && { language }),
           ...(serviceType && { serviceType }),
-        }
+          ...(sessionfee && { sessionfee: Number(sessionfee) }),
+        },
+        { new: true }
       );
+      if (sessionfee) {
+        await SessionModel.updateMany(
+          { educatorId: userId }, 
+          { $set: { sessionfee: Number(sessionfee) } },
+        );
+      }
     }
 
     return res.status(200).json({
@@ -629,10 +639,10 @@ export async function searchEducator(req, res) {
 
     const educators = await EducatorUserModel.find({
       subjects: { $regex: searchKey, $options: 'i' },
-      Approved: true,         // Ensures only approved educators are returned
-      suspended: 'NO'         // Ensures only non-suspended educators are returned
+      Approved: true,
+      suspended: 'NO'
     })
-    .select('name country bio _id subjects documentUrl videoUrl ');
+    .select('name country bio _id subjects documentUrl videoUrl sessionfee');
 
     if (educators.length > 0) {
       res.status(200).json({
