@@ -632,7 +632,7 @@ const handleYearChange = (year) => {
               ) : (
                 <>
                   {/* Summary Stats Above Chart */}
-                  <div className="grid grid-cols-1 sm: grid-cols-3 gap-4 mb-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
                     <div className="bg-gradient-to-br from-green-50 to-emerald-50 p-4 rounded-lg border border-green-100">
                       <p className="text-xs font-medium text-green-600 uppercase tracking-wider mb-1">
                         Total Revenue
