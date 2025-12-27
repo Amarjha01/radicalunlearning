@@ -47,6 +47,8 @@ import { Link } from "react-router-dom";
 import { showErrorToast, showNetworkErrorToast,showSuccessToast } from "../../utils/Notification.jsx";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import ForgotPassword from "../../components/Auth/ForgotPassword.jsx";
+
 // Dummy data for development
 const dummyUser = {
   name: "Alex Thompson",
@@ -623,7 +625,7 @@ const SettingsTab = ({ userData }) => {
   confirmPassword: "",
 });
 const [passwordLoading, setPasswordLoading] = useState(false);
-
+const [showForgotPassword, setShowForgotPassword] = useState(false);
 // DELETE ACCOUNT MODAL STATES 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deletePassword, setDeletePassword] = useState("");
@@ -1014,7 +1016,14 @@ const handleDeleteAccount = async () => {
         </div>
         
         {/* Submit Button */}
-        <div className="flex justify-end">
+        <div className="flex justify-end gap-5">
+
+           <button
+          onClick={() => setShowForgotPassword(true)}
+          className="text-sm text-blue-600 hover:text-blue-700 hover:underline font-medium"
+        >
+          Reset Password
+        </button>
           <button
             type="submit"
             disabled={passwordLoading}
@@ -1028,6 +1037,7 @@ const handleDeleteAccount = async () => {
           </button>
         </div>
       </form>
+     
     </div>
 
     {/* Danger Zone - SAME AS BEFORE */}
@@ -1054,6 +1064,13 @@ const handleDeleteAccount = async () => {
     </div>
   </div>
 )}
+
+<ForgotPassword 
+  isOpen={showForgotPassword}
+  onClose={() => setShowForgotPassword(false)}
+  defaultRole="LEARNER"
+/>
+
 {/* ✅ DELETE ACCOUNT MODAL - BLUR BACKGROUND VERSION */}
 {showDeleteModal && (
   <div className="fixed inset-0 backdrop-blur-sm bg-black/30 flex items-center justify-center p-4 z-50 animate-fadeIn">

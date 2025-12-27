@@ -12,11 +12,13 @@ import { useNavigate } from "react-router-dom";
 import { showSuccessToast, showErrorToast, showNetworkErrorToast } from "../utils/Notification.jsx";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import ForgotPassword from "../components/Auth/ForgotPassword.jsx";
 const SignIn = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [submitting, isSubmitting] = useState(false);
   const [showPass, setShowPass] = useState(false);
+  const [showForgotPasswordModal, setShowForgotPasswordModal] = useState(false);
 
   const handleShowPass = () => {
     setShowPass(!showPass);
@@ -67,8 +69,6 @@ const SignIn = () => {
             }
     }
   };
-
- 
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4 py-10 text-black font-sans">
@@ -175,6 +175,17 @@ const SignIn = () => {
             )}
           </div>
 
+          {/* FORGOT PASSWORD LINK */}
+        <div className="text-right mb-4">
+          <button
+               type="button"
+               onClick={() => setShowForgotPasswordModal(true)}
+               className="text-sm text-blue-600 hover: text-blue-700 hover:underline transition-colors cursor-pointer"
+               >
+               Forgot Password?
+          </button>
+        </div>
+
           {/* Submit Button */}
           <button
             type="submit"
@@ -195,6 +206,12 @@ const SignIn = () => {
           </Link>
         </p>
       </div>
+
+      {/* ✅ ADD this instead */}
+       <ForgotPassword 
+         isOpen={showForgotPasswordModal}
+         onClose={() => setShowForgotPasswordModal(false)}
+        />
     </div>
   );
 };
