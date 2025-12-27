@@ -959,8 +959,8 @@ const handleDeleteAccount = async () => {
   <div className={`p-6 rounded-lg shadow-sm bg-[#b4c0b2]`}>
     <div className="mb-6">
       <h3 className="text-lg font-medium mb-4">Password</h3>
-      
-      {/* ✅ FORM KO HANDLER SE CONNECT KIYA */}
+
+      {/* FORM CONNECT TO HANDLER */}
       <form onSubmit={handlePasswordUpdate}>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
           {/* Current Password */}
