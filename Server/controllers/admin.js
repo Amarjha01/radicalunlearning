@@ -1,4 +1,4 @@
-import { EducatorUserModel , LearnerUserModel ,  WithdrawelRequestModel , WalletTransactionModel} from "../models/user.js";
+import { EducatorUserModel , LearnerUserModel ,  WithdrawelRequestModel , WalletTransactionModel, AdminModel} from "../models/user.js";
 import jwt from 'jsonwebtoken'
 
 import Stripe from 'stripe';
@@ -460,4 +460,89 @@ export async function getWithdrawelRequests(req, res) {
   
 export async function initiate(params) {
   
+}
+
+// fetching revenue data
+export async function getRevenueData(req, res) {
+  try {
+    const token = req.cookies.accessToken;
+
+    if (!token) {
+      return res.status(401).json({
+        message: "Unauthorized",
+        error: true,
+        success: false,
+      });
+    }
+
+    let decoded;
+    try {
+      decoded = jwt.verify(token, process.env.JWT_SECRET);
+    } catch (err) {
+      return res.status(401).json({
+        message: "Invalid or expired token",
+        error: true,
+        success: false,
+      });
+    }
+
+    // Get year from query params (default to current year)
+    const requestedYear = parseInt(req.query.year) || new Date().getFullYear();
+
+    // Fetch admin data
+    const admin = await AdminModel.findById(decoded.id).select("revenue revenueByYear");
+
+    if (!admin) {
+      return res.status(404).json({
+        message: "Admin not found",
+        error: true,
+        success: false,
+      });
+    }
+
+    let revenueData = [];
+    let availableYears = [];
+
+    // Check if new structure exists
+    if (admin.revenueByYear && admin.revenueByYear.length > 0) {
+      // Get available years
+      availableYears = admin. revenueByYear.map(item => item.year).sort((a, b) => b - a);
+      
+      // Find data for requested year
+      const yearData = admin.revenueByYear.find(item => item.year === requestedYear);
+      revenueData = yearData ? yearData.months : [];
+    } else if (admin.revenue && admin.revenue.length > 0) {
+      // Fallback to legacy structure (assume current year)
+      revenueData = admin.revenue;
+      availableYears = [new Date().getFullYear()];
+    }
+
+    // Calculate total revenue for the year
+    const totalRevenue = revenueData.reduce((sum, item) => sum + (item.revenue || 0), 0);
+    
+    // Get current month revenue
+    const currentMonth = new Date().toLocaleString('default', { month: 'short' });
+    const currentMonthData = revenueData. find(item => item.month === currentMonth);
+    const monthlyRevenue = currentMonthData ? currentMonthData.revenue :  0;
+
+    return res.status(200).json({
+      message: "Revenue data fetched successfully",
+      data: {
+        revenueChart: revenueData || [],
+        totalRevenue,
+        monthlyRevenue,
+        currentYear: requestedYear,
+        availableYears,
+      },
+      error: false,
+      success: true,
+    });
+  } catch (error) {
+    console.error("Error fetching revenue data:", error);
+    return res.status(500).json({
+      message: "Internal server error",
+      error: true,
+      success:  false,
+    });
+  }
 }
