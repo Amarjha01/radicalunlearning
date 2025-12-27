@@ -1041,6 +1041,7 @@ const fetchWalletAmount = async() =>{
           </div>
 
           <div className="flex justify-end items-center gap-5">
+            <button className="px-6 py-2 rounded-md font-medium bg-red-600 hover:bg-red-700 text-white">Forgot Password</button>
             <FaUserEdit 
               onClick={() => setEditProfile(!editProfile)} 
               className={`text-4xl cursor-pointer ${editProfile ? 'text-green-600' : 'text-white'}`}
