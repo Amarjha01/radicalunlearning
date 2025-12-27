@@ -598,7 +598,8 @@ export async function updateUserDetails(req, res) {
     });
   }
 }
-// Update Password Function 
+
+// -----------------------------Update Password------------------------------------------------
 export async function updatePassword(req, res) {
   try {
     const token = req.cookies.accessToken;
@@ -710,7 +711,7 @@ export async function updatePassword(req, res) {
   }
 }
 
-// SELF-DELETE FUNCTION
+// -----------------------------Delete Account------------------------------------------------
 export async function deleteAccount(req, res) {
   try {
     const token = req.cookies.accessToken;
