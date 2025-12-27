@@ -83,6 +83,11 @@ forgotPasswordReset: {
     url: `${backendDomain}/api/admin/processWithdrawRequest`,
   },
 
+  getRevenueData: {
+    url: `${backendDomain}/api/admin/getRevenueData`,
+    method: "get"
+  },
+
   // --------------------APIs for learner------------------
   searchEducator:{
     url: `${backendDomain}/api/user/searchEducator`,
