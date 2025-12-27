@@ -832,6 +832,191 @@ export async function deleteAccount(req, res) {
   }
 }
 
+// ✅✅✅ ADD THIS COMPLETE SECTION ✅✅✅
+
+// FORGOT PASSWORD - SEND OTP
+export async function forgotPasswordSendOTP(req, res) {
+  try {
+    const { email, role } = req.body;
+
+    if (!email || !role) {
+      return res.status(400).json({
+        message: "Email and role are required",
+        error: true,
+        success: false
+      });
+    }
+
+    // Find user based on role
+    let user;
+    const roleUpper = role.toUpperCase();
+    
+    if (roleUpper === "LEARNER") {
+      user = await LearnerUserModel. findOne({ email });
+    } else if (roleUpper === "EDUCATOR") {
+      user = await EducatorUserModel.findOne({ email });
+    } else if (roleUpper === "ADMIN") {
+      user = await AdminModel.findOne({ email });
+    } else {
+      return res.status(400).json({
+        message: "Invalid role",
+        error: true,
+        success: false
+      });
+    }
+
+    if (!user) {
+      return res.status(404).json({
+        message: `No ${role} account found with this email`,
+        error: true,
+        success: false
+      });
+    }
+
+    // Generate 6-digit OTP
+    const otp = Math.floor(100000 + Math.random() * 900000);
+
+    // Save OTP to database (expires in 10 minutes)
+    user.otp = otp;
+    user.otpExpiry = Date.now() + 10 * 60 * 1000; // 10 minutes
+    await user.save();
+
+    // Send email
+    const emailSent = await sendEmail(
+      email,
+      "Password Reset OTP - Radical Unlearning",
+      `
+        <div style="font-family: Arial, sans-serif; padding: 20px; background-color: #f4f4f4;">
+          <div style="max-width: 600px; margin:  0 auto; background-color: white; padding: 30px; border-radius: 10px;">
+            <h2 style="color: #DC2626;">Password Reset Request</h2>
+            <p>Hello ${user.name},</p>
+            <p>You requested to reset your password. Use the OTP below: </p>
+            <div style="background-color: #FEE2E2; padding: 20px; text-align: center; border-radius: 8px; margin: 20px 0;">
+              <h1 style="color: #DC2626; font-size: 32px; letter-spacing: 5px; margin: 0;">${otp}</h1>
+            </div>
+            <p><strong>This OTP will expire in 10 minutes.</strong></p>
+            <p>If you didn't request this, please ignore this email.</p>
+            <hr style="border: none; border-top: 1px solid #E5E7EB; margin:  20px 0;">
+            <p style="font-size: 12px; color: #6B7280;">© 2025 Radical Unlearning. All rights reserved.</p>
+          </div>
+        </div>
+      `
+    );
+
+    if (! emailSent. success) {
+      return res. status(500).json({
+        message: "Failed to send OTP email",
+        error: true,
+        success: false
+      });
+    }
+
+    return res. status(200).json({
+      message: "OTP sent to your email successfully",
+      error: false,
+      success: true
+    });
+
+  } catch (error) {
+    console.error("Forgot password OTP error:", error);
+    return res.status(500).json({
+      message: "Internal server error",
+      error: error.message,
+      success: false
+    });
+  }
+}
+
+// FORGOT PASSWORD - VERIFY OTP & RESET PASSWORD
+export async function forgotPasswordResetPassword(req, res) {
+  try {
+    const { email, role, otp, newPassword } = req.body;
+
+    if (!email || !role || !otp || !newPassword) {
+      return res.status(400).json({
+        message: "All fields are required",
+        error:  true,
+        success: false
+      });
+    }
+
+    if (newPassword.length < 6) {
+      return res.status(400).json({
+        message: "Password must be at least 6 characters",
+        error:  true,
+        success: false
+      });
+    }
+
+    // Find user based on role
+    let user;
+    const roleUpper = role.toUpperCase();
+    
+    if (roleUpper === "LEARNER") {
+      user = await LearnerUserModel.findOne({ email });
+    } else if (roleUpper === "EDUCATOR") {
+      user = await EducatorUserModel.findOne({ email });
+    } else if (roleUpper === "ADMIN") {
+      user = await AdminModel.findOne({ email });
+    } else {
+      return res.status(400).json({
+        message: "Invalid role",
+        error: true,
+        success: false
+      });
+    }
+
+    if (!user) {
+      return res.status(404).json({
+        message: "No account found",
+        error: true,
+        success: false
+      });
+    }
+
+    // Verify OTP
+    if (! user.otp || user.otp !== parseInt(otp)) {
+      return res.status(400).json({
+        message: "Invalid OTP",
+        error: true,
+        success: false
+      });
+    }
+
+    // Check OTP expiry
+    if (Date.now() > user.otpExpiry) {
+      return res.status(400).json({
+        message: "OTP has expired.  Please request a new one",
+        error: true,
+        success:  false
+      });
+    }
+
+    // Hash new password
+    const salt = await bcryptjs.genSalt(10);
+    const hashedPassword = await bcryptjs. hash(newPassword, salt);
+
+    // Update password and clear OTP
+    user.password = hashedPassword;
+    user.otp = undefined;
+    user.otpExpiry = undefined;
+    await user.save();
+
+    return res.status(200).json({
+      message: "Password reset successfully.  You can now login with your new password",
+      error: false,
+      success: true
+    });
+
+  } catch (error) {
+    console.error("Password reset error:", error);
+    return res.status(500).json({
+      message: "Internal server error",
+      error: error.message,
+      success: false
+    });
+  }
+}
 
 export async function signout(request, response) {
   console.log('sign out');
