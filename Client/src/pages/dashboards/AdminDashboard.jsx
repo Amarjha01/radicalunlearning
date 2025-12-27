@@ -62,6 +62,9 @@ const [monthlyRevenue, setMonthlyRevenue] = useState(0);
 const [revenueLoading, setRevenueLoading] = useState(true);
 const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
 const [availableYears, setAvailableYears] = useState([]);
+
+const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+const [deleteTarget, setDeleteTarget] = useState({ email: '', role: '' });
   
   // Calculate stats
   const totalEducators = educators.length;
@@ -354,35 +357,138 @@ const handleYearChange = (year) => {
       }
        
        {/* // User Details Modal */}
-           {
-  viewUserDetails && (
-    <>
-      {/* Overlay Background */}
-      <div 
-        className="fixed inset-0 z-40  bg-opacity-60 backdrop-blur-sm"
-        onClick={() => setViewUserDetails(false)}
-      />
-      
-      {/* Modal Content */}
-      <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto p-4">
-        <div className="relative w-full max-w-6xl my-8 bg-white rounded-xl shadow-2xl">
-          {/* Close Button */}
-          <button 
-            onClick={() => setViewUserDetails(false)} 
-            className="sticky top-4 float-right mr-4 mt-4 z-10 text-gray-500 hover:text-gray-800 text-3xl font-bold bg-white rounded-full w-12 h-12 flex items-center justify-center shadow-lg hover:shadow-xl transition-all hover:rotate-90"
-          >
-            ×
-          </button>
-          
-          {/* User Details */}
-          <div className="p-6">
-            <UserDetailsList userEmail={email} role={role} />
-          </div>
-        </div>
-      </div>
-    </>
-  )
-}
+       {
+          viewUserDetails && (
+            <>
+              {/* Overlay Background */}
+              <div 
+                className="fixed inset-0 z-40  bg-opacity-60 backdrop-blur-sm"
+                onClick={() => setViewUserDetails(false)}
+              />
+              
+              {/* Modal Content */}
+              <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto p-4">
+                <div className="relative pb-4 w-full max-w-6xl my-8 bg-white rounded-xl shadow-2xl">
+                  {/* Header with Actions */}
+                  <div className="top-0 bg-white border-b border-gray-200 px-6 py-4 rounded-t-xl flex items-center justify-between z-10">
+                    {/* Title */}
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-100 to-purple-100 flex items-center justify-center">
+                        <svg className="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                        </svg>
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-semibold text-gray-800">User Details</h3>
+                        <p className="text-sm text-gray-500 capitalize">{role}</p>
+                      </div>
+                    </div>
+
+                    {/* Action Buttons */}
+                    <div className="flex items-center gap-2">
+                      {/* Delete Button */}
+                      <button 
+                        onClick={() => {
+                          setDeleteTarget({ email, role });
+                          setShowDeleteConfirm(true);
+                        }}
+                        className="px-4 py-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-2 border border-red-200 hover:border-red-300"
+                        title="Delete User Permanently"
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                        Delete
+                      </button>
+
+                      {/* Close Button */}
+                      <button 
+                        onClick={() => setViewUserDetails(false)} 
+                        className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-2"
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                        Close
+                      </button>
+                    </div>
+                  </div>
+                  
+                  {/* User Details */}
+                  <div className="pb-6">
+                    <UserDetailsList userEmail={email} role={role} />
+                  </div>
+
+                  {/* ✅ Modern Delete Confirmation Modal */}
+                  {showDeleteConfirm && (
+                    <div className="absolute inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-20 rounded-xl p-4">
+                      <div className="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl transform transition-all animate-slideUp">
+                        {/* Warning Icon */}
+                        <div className="flex items-center justify-center mb-4">
+                          <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center">
+                            <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                            </svg>
+                          </div>
+                        </div>
+
+                        {/* Title */}
+                        <h3 className="text-xl font-bold text-gray-900 text-center mb-2">
+                          Delete User Permanently? 
+                        </h3>
+                        <p className="text-sm text-gray-600 text-center mb-6">
+                          This action cannot be undone. All user data will be permanently removed.
+                        </p>
+
+                        {/* User Info Card */}
+                        <div className="bg-gradient-to-r from-red-50 to-orange-50 border-l-4 border-red-500 rounded-lg p-4 mb-6">
+                          <div className="space-y-2">
+                            <div className="flex items-center gap-2">
+                              <svg className="w-4 h-4 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                              </svg>
+                              <p className="text-sm font-semibold text-gray-800 capitalize">{deleteTarget.role}</p>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <svg className="w-4 h-4 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                              </svg>
+                              <p className="text-sm text-gray-700 break-all">{deleteTarget.email}</p>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Action Buttons */}
+                        <div className="flex gap-3">
+                          <button
+                            onClick={() => setShowDeleteConfirm(false)}
+                            className="flex-1 px-4 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl font-semibold transition-all duration-200"
+                          >
+                            Cancel
+                          </button>
+                          <button
+                            onClick={() => {
+                              deleteUser(deleteTarget.email, deleteTarget.role);
+                              setShowDeleteConfirm(false);
+                              setViewUserDetails(false);
+                            }}
+                            className="flex-1 px-4 py-3 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
+                          >
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                            Delete
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </>
+          )
+        }
+        
       {/* Sidebar - Desktop */}
       <div className="hidden md:flex relative left-0 min-h-screen w-64 bg-[#f2c078] shadow-md flex-col">
         <div className="p-4 flex items-center space-x-2">
