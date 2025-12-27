@@ -497,6 +497,7 @@ export async function signin(request, response) {
           experience: user.experience,
           subjects: user.subjects,
           serviceType: user.serviceType,
+          sessionfee: user.sessionfee, 
           payoutMethod: user.payoutMethod,
           upiID: user.upiId,
           Approved: user.Approved,
@@ -554,19 +555,32 @@ export async function updateUserDetails(req, res) {
           ...(language && { language }),
           ...(bio && { bio }),
           ...(avatar && { avatar }),
-        }
+        },
+        { new: true }
       );
     } else if (role === "EDUCATOR") {
-      const { bio, experience, avatar } = req.body;
+      const { name, bio, experience, avatar, subrole, language, serviceType, sessionfee } = req.body;
 
       updateUser = await EducatorUserModel.updateOne(
         { _id: userId },
         {
+          ...(name && { name }),
           ...(bio && { bio }),
           ...(experience && { experience }),
           ...(avatar && { avatar }),
-        }
+          ...(subrole && { subrole }),
+          ...(language && { language }),
+          ...(serviceType && { serviceType }),
+          ...(sessionfee && { sessionfee: Number(sessionfee) }),
+        },
+        { new: true }
       );
+      if (sessionfee) {
+        await SessionModel.updateMany(
+          { educatorId: userId }, 
+          { $set: { sessionfee: Number(sessionfee) } },
+        );
+      }
     }
 
     return res.status(200).json({
@@ -581,6 +595,240 @@ export async function updateUserDetails(req, res) {
       message: "Internal server error",
       error: true,
       success: false,
+    });
+  }
+}
+
+// -----------------------------Update Password------------------------------------------------
+export async function updatePassword(req, res) {
+  try {
+    const token = req.cookies.accessToken;
+
+    if (!token) {
+      return res.status(401).json({ 
+        message: "Unauthorized - No token provided", 
+        error: true, 
+        success: false 
+      });
+    }
+
+    // Verify JWT token
+    let decoded;
+    try {
+      decoded = jwt. verify(token, process.env. JWT_SECRET);
+    } catch (err) {
+      if (err.name === "TokenExpiredError") {
+        return res.status(401).json({ 
+          message: "Access token expired, please login again", 
+          error: true, 
+          success: false 
+        });
+      }
+      return res. status(403).json({ 
+        message: "Invalid token", 
+        error: true, 
+        success: false 
+      });
+    }
+
+    const userId = decoded.id;
+    const role = decoded.role?. toUpperCase();
+    const { currentPassword, newPassword } = req. body;
+
+    // Validation
+    if (!currentPassword || ! newPassword) {
+      return res.status(400).json({ 
+        message: "Current password and new password are required", 
+        error: true, 
+        success: false 
+      });
+    }
+
+    if (newPassword.length < 6) {
+      return res.status(400).json({ 
+        message: "New password must be at least 6 characters", 
+        error: true, 
+        success: false 
+      });
+    }
+
+    // Find user based on role
+    let user;
+    if (role === "LEARNER") {
+      user = await LearnerUserModel.findById(userId);
+    } else if (role === "EDUCATOR") {
+      user = await EducatorUserModel.findById(userId);
+    } else if (role === "ADMIN") {
+      user = await AdminModel. findById(userId);
+    } else {
+      return res.status(400).json({ 
+        message: "Invalid role", 
+        error: true, 
+        success: false 
+      });
+    }
+
+    if (!user) {
+      return res.status(404).json({ 
+        message: "User not found", 
+        error: true, 
+        success: false 
+      });
+    }
+
+    // Verify current password
+    const isPasswordValid = await bcryptjs.compare(currentPassword, user.password);
+    
+    if (!isPasswordValid) {
+      return res.status(400).json({ 
+        message: "Current password is incorrect", 
+        error: true, 
+        success: false 
+      });
+    }
+
+    // Hash new password
+    const salt = await bcryptjs.genSalt(10);
+    const hashedPassword = await bcryptjs. hash(newPassword, salt);
+
+    // Update password
+    user.password = hashedPassword;
+    await user.save();
+
+    return res.status(200).json({ 
+      message: "Password updated successfully", 
+      error: false, 
+      success:  true 
+    });
+
+  } catch (error) {
+    console.error("Password update error:", error);
+    return res.status(500).json({ 
+      message: "Internal server error", 
+      error: error.message, 
+      success: false 
+    });
+  }
+}
+
+// -----------------------------Delete Account------------------------------------------------
+export async function deleteAccount(req, res) {
+  try {
+    const token = req.cookies.accessToken;
+
+    if (!token) {
+      return res.status(401).json({ 
+        message: "Unauthorized - No token provided", 
+        error: true, 
+        success: false 
+      });
+    }
+
+    // Verify JWT token
+    let decoded;
+    try {
+      decoded = jwt.verify(token, process.env.JWT_SECRET);
+    } catch (err) {
+      if (err.name === "TokenExpiredError") {
+        return res.status(401).json({ 
+          message: "Access token expired, please login again", 
+          error: true, 
+          success:  false 
+        });
+      }
+      return res.status(403).json({ 
+        message: "Invalid token", 
+        error: true, 
+        success:  false 
+      });
+    }
+
+    const userId = decoded.id;
+    const role = decoded.role?. toUpperCase();
+    const { password } = req.body;
+
+    // Password confirmation required
+    if (! password) {
+      return res. status(400).json({ 
+        message: "Password is required to delete account", 
+        error:  true, 
+        success: false 
+      });
+    }
+
+    // Find user based on role
+    let user;
+    let deletedUser;
+    
+    if (role === "LEARNER") {
+      user = await LearnerUserModel.findById(userId);
+      if (!user) {
+        return res.status(404).json({ 
+          message: "User not found", 
+          error:  true, 
+          success: false 
+        });
+      }
+
+      // Verify password
+      const isPasswordValid = await bcryptjs.compare(password, user. password);
+      if (!isPasswordValid) {
+        return res. status(400).json({ 
+          message: "Incorrect password", 
+          error:  true, 
+          success: false 
+        });
+      }
+
+      // Delete user
+      deletedUser = await LearnerUserModel.findByIdAndDelete(userId);
+      
+    } else if (role === "EDUCATOR") {
+      user = await EducatorUserModel.findById(userId);
+      if (!user) {
+        return res.status(404).json({ 
+          message: "User not found", 
+          error: true, 
+          success: false 
+        });
+      }
+
+      // Verify password
+      const isPasswordValid = await bcryptjs.compare(password, user.password);
+      if (!isPasswordValid) {
+        return res.status(400).json({ 
+          message: "Incorrect password", 
+          error:  true, 
+          success: false 
+        });
+      }
+
+      // Delete user
+      deletedUser = await EducatorUserModel.findByIdAndDelete(userId);
+    } else {
+      return res. status(400).json({ 
+        message: "Invalid role", 
+        error: true, 
+        success: false 
+      });
+    }
+
+    // Clear cookies
+    res.clearCookie("accessToken");
+    res.clearCookie("refreshToken");
+
+    return res.status(200).json({ 
+      message: "Account deleted successfully", 
+      error: false, 
+      success: true 
+    });
+
+  } catch (error) {
+    console.error("Account deletion error:", error);
+    return res.status(500).json({ 
+      message: "Internal server error", 
+      error:  error.message, 
+      success: false 
     });
   }
 }
@@ -625,10 +873,10 @@ export async function searchEducator(req, res) {
 
     const educators = await EducatorUserModel.find({
       subjects: { $regex: searchKey, $options: 'i' },
-      Approved: true,         // Ensures only approved educators are returned
-      suspended: 'NO'         // Ensures only non-suspended educators are returned
+      Approved: true,
+      suspended: 'NO'
     })
-    .select('name country bio _id subjects documentUrl videoUrl ');
+    .select('name country bio _id subjects documentUrl videoUrl sessionfee');
 
     if (educators.length > 0) {
       res.status(200).json({

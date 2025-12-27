@@ -35,7 +35,7 @@ import { CiChat1, CiMenuFries, CiLock } from "react-icons/ci";
 import { TbUserSearch } from "react-icons/tb";
 import { MdOutlineSearch } from "react-icons/md";
 import { useSelector, useDispatch } from "react-redux";
-import { clearUser } from "../../store/slices/userSlice.jsx";
+import { clearUser , updateUser} from "../../store/slices/userSlice.jsx";
 import axios from "axios";
 import AIChat from "../../components/ChatBot/Aichat.jsx";
 import { loadStripe } from "@stripe/stripe-js";
@@ -44,7 +44,7 @@ const stripePromise = loadStripe("pk_test_51ReIOAG29xGWG9CnT01F3xstpqxHMWQ7zbh73
 import API from "../../common/apis/ServerBaseURL.jsx";
 import TodoApp from "../../components/Dashboard/TodoApp.jsx";
 import { Link } from "react-router-dom";
-import { showErrorToast, showNetworkErrorToast } from "../../utils/Notification.jsx";
+import { showErrorToast, showNetworkErrorToast,showSuccessToast } from "../../utils/Notification.jsx";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 // Dummy data for development
@@ -615,6 +615,19 @@ const SettingsTab = ({ userData }) => {
   const [changedData, setChangedData] = useState({});
   const [loading, setLoading] = useState(false);
   const [file, setFile] = useState(null);
+   const dispatch = useDispatch();
+
+   const [passwordData, setPasswordData] = useState({
+  currentPassword: "",
+  newPassword: "",
+  confirmPassword: "",
+});
+const [passwordLoading, setPasswordLoading] = useState(false);
+
+// DELETE ACCOUNT MODAL STATES 
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deletePassword, setDeletePassword] = useState("");
+  const [deleteLoading, setDeleteLoading] = useState(false);
 
  const handleImageUpload = async (file) => {
   const formData = new FormData();
@@ -645,32 +658,41 @@ const handleProfileUpdate = async (e) => {
 
   let updatedData = { ...changedData };
 
- if (file) {
-  const imageUrl = await handleImageUpload(file);
-  if (imageUrl) {
-    updatedData.avatar = imageUrl;
+  if (file) {
+    const imageUrl = await handleImageUpload(file);
+    if (imageUrl) {
+      updatedData.avatar = imageUrl;
+    }
+    setFile(null); 
   }
-  setFile(null); 
-}
-
 
   try {
-    const response = await axios.patch(
+    const response = await axios. patch(
       API.updateUserDetails.url,
       updatedData,
       { withCredentials: true }
     );
 
-    console.log(response);
-    setEditProfile(false);
+    
+    if (response.status === 200) {
+      // Redux store update
+      dispatch(updateUser(updatedData));
+      
+      // Local state reset 
+      setChangedData({});
+      setEditProfile(false);
+      
+      showSuccessToast("Profile updated successfully!");
+    }
+    
   } catch (error) {
-    showErrorToast(error.response.data.message)
+    showErrorToast(error.response?. data?.message || "Update failed")
     console.error("Update failed:", error);
-     if (error.message === "Network Error") {
-        showNetworkErrorToast(
-          "Your Network connection Is Unstable OR Disconected"
-        );
-      }
+    if (error.message === "Network Error") {
+      showNetworkErrorToast(
+        "Your Network connection Is Unstable OR Disconnected"
+      );
+    }
   } finally {
     setLoading(false);
   }
@@ -680,6 +702,109 @@ const handleProfileUpdate = async (e) => {
   const handleChange = (field, value) => {
     setChangedData((prev) => ({ ...prev, [field]: value }));
   };
+
+
+
+  // Password update handler
+const handlePasswordUpdate = async (e) => {
+  e.preventDefault();
+  
+  // Validation
+  if (!passwordData.currentPassword || !passwordData. newPassword || !passwordData.confirmPassword) {
+    showErrorToast("All password fields are required");
+    return;
+  }
+
+  if (passwordData.newPassword !== passwordData.confirmPassword) {
+    showErrorToast("New passwords don't match!");
+    return;
+  }
+
+  if (passwordData.newPassword.length < 6) {
+    showErrorToast("Password must be at least 6 characters");
+    return;
+  }
+
+  setPasswordLoading(true);
+
+  try {
+    const response = await axios.patch(
+      API.updatePassword.url,
+      {
+        currentPassword: passwordData.currentPassword,
+        newPassword: passwordData.newPassword,
+      },
+      { withCredentials: true }
+    );
+
+    if (response.status === 200) {
+      showSuccessToast("Password updated successfully!");
+      setPasswordData({
+        currentPassword:  "",
+        newPassword: "",
+        confirmPassword: "",
+      });
+    }
+  } catch (error) {
+    console.error("Password update failed:", error);
+    showErrorToast(error. response?.data?.message || "Failed to update password");
+    
+    if (error.message === "Network Error") {
+      showNetworkErrorToast("Your Network connection Is Unstable OR Disconnected");
+    }
+  } finally {
+    setPasswordLoading(false);
+  }
+};
+
+// Password input change handler
+const handlePasswordChange = (field, value) => {
+  setPasswordData((prev) => ({ ...prev, [field]:  value }));
+};
+
+//  DELETE ACCOUNT HANDLER (UPDATED)
+const handleDeleteAccount = async () => {
+  if (!deletePassword) {
+    showErrorToast("Please enter your password");
+    return;
+  }
+
+  setDeleteLoading(true);
+
+  try {
+    const response = await axios.delete(
+      API.deleteAccount.url,
+      {
+        data: { password: deletePassword },
+        withCredentials: true
+      }
+    );
+
+    if (response.status === 200) {
+      showSuccessToast("Account deleted successfully.  Redirecting...");
+      
+      // Clear Redux store
+      dispatch(clearUser());
+      
+      // Close modal
+      setShowDeleteModal(false);
+      
+      // Redirect to home page after 2 seconds
+      setTimeout(() => {
+        window.location.href = "/";
+      }, 2000);
+    }
+  } catch (error) {
+    console.error("Account deletion failed:", error);
+    showErrorToast(error. response?.data?.message || "Failed to delete account");
+    
+    if (error.message === "Network Error") {
+      showNetworkErrorToast("Your Network connection Is Unstable OR Disconnected");
+    }
+  } finally {
+    setDeleteLoading(false);
+  }
+};
 
   return (
     <div>
@@ -830,78 +955,231 @@ const handleProfileUpdate = async (e) => {
       )}
 
       {/* Account Section */}
-      {activeSection === "account" && (
-        <div className={`p-6 rounded-lg shadow-sm bg-[#b4c0b2]`}>
-          <div className="mb-6">
-            <h3 className="text-lg font-medium mb-4">Password</h3>
-            <form>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                <div>
-                  <label className="block text-sm font-medium mb-1">
-                    Current Password
-                  </label>
-                  <input
-                    type="password"
-                    className={`w-full p-2 rounded-md border bg-white border-gray-300`}
-                    placeholder="••••••••"
-                  />
-                </div>
-                <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium mb-1">
-                      New Password
-                    </label>
-                    <input
-                      type="password"
-                      className={`w-full p-2 rounded-md border bg-white border-gray-300`}
-                      placeholder="New password"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">
-                      Confirm New Password
-                    </label>
-                    <input
-                      type="password"
-                      className={`w-full p-2 rounded-md border bg-white border-gray-30`}
-                      placeholder="Confirm new password"
-                    />
-                  </div>
-                </div>
-              </div>
-              <div className="flex justify-end">
-                <button
-                  type="submit"
-                  className="bg-[#f2c078] hover:bg-[#c5a271] text-black px-4 py-2 rounded-md"
-                >
-                  Update Password
-                </button>
-              </div>
-            </form>
-          </div>
+{activeSection === "account" && (
+  <div className={`p-6 rounded-lg shadow-sm bg-[#b4c0b2]`}>
+    <div className="mb-6">
+      <h3 className="text-lg font-medium mb-4">Password</h3>
 
+      {/* FORM CONNECT TO HANDLER */}
+      <form onSubmit={handlePasswordUpdate}>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          {/* Current Password */}
           <div>
-            <h3 className="text-lg font-medium mb-4">Danger Zone</h3>
-            <div
-              className={`p-4 rounded-md border border-red-300 bg-red-50`}
-            >
-              <div className="flex justify-between items-center">
-                <div>
-                  <p className="font-medium text-red-600 dark:text-red-400">
-                    Delete Account
-                  </p>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
-                    Once deleted, all your data will be permanently removed.
-                  </p>
-                </div>
-                <button className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-md text-sm">
-                  Delete Account
-                </button>
-              </div>
+            <label className="block text-sm font-medium mb-1">
+              Current Password
+            </label>
+            <input
+              type="password"
+              value={passwordData.currentPassword}
+              onChange={(e) => handlePasswordChange("currentPassword", e.target.value)}
+              className={`w-full p-2 rounded-md border bg-white border-gray-300`}
+              placeholder="••••••••"
+              required
+            />
+          </div>
+          
+          <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* New Password */}
+            <div>
+              <label className="block text-sm font-medium mb-1">
+                New Password
+              </label>
+              <input
+                type="password"
+                value={passwordData.newPassword}
+                onChange={(e) => handlePasswordChange("newPassword", e.target.value)}
+                className={`w-full p-2 rounded-md border bg-white border-gray-300`}
+                placeholder="New password"
+                required
+                minLength="6"
+              />
+            </div>
+            
+            {/* Confirm New Password */}
+            <div>
+              <label className="block text-sm font-medium mb-1">
+                Confirm New Password
+              </label>
+              <input
+                type="password"
+                value={passwordData.confirmPassword}
+                onChange={(e) => handlePasswordChange("confirmPassword", e. target.value)}
+                className={`w-full p-2 rounded-md border bg-white border-gray-300`}
+                placeholder="Confirm new password"
+                required
+                minLength="6"
+              />
             </div>
           </div>
         </div>
-      )}
+        
+        {/* Submit Button */}
+        <div className="flex justify-end">
+          <button
+            type="submit"
+            disabled={passwordLoading}
+            className={`px-4 py-2 rounded-md ${
+              passwordLoading
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-[#f2c078] hover:bg-[#c5a271] cursor-pointer"
+            } text-black`}
+          >
+            {passwordLoading ? "Updating..." : "Update Password"}
+          </button>
+        </div>
+      </form>
+    </div>
+
+    {/* Danger Zone - SAME AS BEFORE */}
+    <div>
+      <h3 className="text-lg font-medium mb-4">Danger Zone</h3>
+      <div className={`p-4 rounded-md border border-red-300 bg-red-50`}>
+        <div className="flex justify-between items-center">
+          <div>
+            <p className="font-medium text-red-600 dark:text-red-400">
+              Delete Account
+            </p>
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              Once deleted, all your data will be permanently removed.
+            </p>
+          </div>
+      <button 
+  onClick={() => setShowDeleteModal(true)}
+  className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-md text-sm cursor-pointer transition-colors"
+>
+  Delete Account
+</button>
+        </div>
+      </div>
+    </div>
+  </div>
+)}
+{/* ✅ DELETE ACCOUNT MODAL - BLUR BACKGROUND VERSION */}
+{showDeleteModal && (
+  <div className="fixed inset-0 backdrop-blur-sm bg-black/30 flex items-center justify-center p-4 z-50 animate-fadeIn">
+    <div className="bg-white rounded-xl shadow-2xl max-w-md w-full p-6 transform transition-all animate-scaleIn">
+      {/* Warning Icon */}
+      <div className="flex justify-center mb-4">
+        <div className="bg-red-100 rounded-full p-3">
+          <svg 
+            className="w-12 h-12 text-red-600" 
+            fill="none" 
+            stroke="currentColor" 
+            viewBox="0 0 24 24"
+          >
+            <path 
+              strokeLinecap="round" 
+              strokeLinejoin="round" 
+              strokeWidth="2" 
+              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+            />
+          </svg>
+        </div>
+      </div>
+
+      {/* Title */}
+      <h2 className="text-2xl font-bold text-center text-gray-800 mb-2">
+        Delete Account
+      </h2>
+
+      {/* Warning Message */}
+      <div className="bg-red-50 border-l-4 border-red-500 p-4 mb-4 rounded">
+        <div className="flex">
+          <div className="flex-shrink-0">
+            <svg 
+              className="h-5 w-5 text-red-500" 
+              fill="currentColor" 
+              viewBox="0 0 20 20"
+            >
+              <path 
+                fillRule="evenodd" 
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" 
+                clipRule="evenodd"
+              />
+            </svg>
+          </div>
+          <div className="ml-3">
+            <p className="text-sm text-red-700 font-medium">
+              This action is irreversible! 
+            </p>
+            <p className="text-xs text-red-600 mt-1">
+              All your data, sessions, and progress will be permanently deleted.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Password Input */}
+      <div className="mb-6">
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          Enter your password to confirm
+        </label>
+        <input
+          type="password"
+          value={deletePassword}
+          onChange={(e) => setDeletePassword(e.target.value)}
+          placeholder="Enter your password"
+          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition-all"
+          disabled={deleteLoading}
+          autoFocus
+        />
+      </div>
+
+      {/* Action Buttons */}
+      <div className="flex gap-3">
+        <button
+          onClick={() => {
+            setShowDeleteModal(false);
+            setDeletePassword("");
+          }}
+          disabled={deleteLoading}
+          className="flex-1 px-4 py-3 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-lg font-medium transition-all disabled:opacity-50 disabled: cursor-not-allowed"
+        >
+          Cancel
+        </button>
+       <button
+  onClick={handleDeleteAccount}
+  disabled={deleteLoading || !deletePassword}
+  className={`flex-1 px-4 py-3 text-white rounded-lg font-medium transition-all flex items-center justify-center gap-2 ${
+    deleteLoading
+      ? "bg-red-800 cursor-wait"
+      : ! deletePassword
+      ? "bg-red-300 cursor-not-allowed"
+      : "bg-red-600 hover:bg-red-700 active:bg-red-800 cursor-pointer"
+  }`}
+>
+  {deleteLoading ? (
+    <>
+      <svg 
+        className="animate-spin h-5 w-5 text-white" 
+        xmlns="http://www.w3.org/2000/svg" 
+        fill="none" 
+        viewBox="0 0 24 24"
+      >
+        <circle 
+          className="opacity-25" 
+          cx="12" 
+          cy="12" 
+          r="10" 
+          stroke="currentColor" 
+          strokeWidth="4"
+        />
+        <path 
+          className="opacity-75" 
+          fill="currentColor" 
+          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+        />
+      </svg>
+      Deleting...
+    </>
+  ) : (
+    "Delete My Account"
+  )}
+</button>
+      </div>
+    </div>
+  </div>
+)}
     </div>
   );
 };

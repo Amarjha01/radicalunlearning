@@ -192,7 +192,7 @@ const Educator_userSchema = new mongoose.Schema({
     required: true,
   },
   sessionfee: {
-    type: String,
+    type: Number
   },
   wallet: {
     type: Number,
