@@ -107,6 +107,9 @@ const Lerner_userSchema = new mongoose.Schema({
     type: Number,
     default: 0
   },
+  otpExpiry: {          // OTP Expiry
+    type: Date
+  },
   suspended: {
     type: String,
     enum: ['YES', 'NO'],
@@ -147,6 +150,14 @@ const Educator_userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+
+  otp: {               // OTP
+  type: Number,
+  default: 0
+},
+otpExpiry: {         // OTP Expiry
+  type: Date
+},
   role: {
     type: String,
   },
