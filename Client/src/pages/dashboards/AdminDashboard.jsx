@@ -86,6 +86,19 @@ const [availableYears, setAvailableYears] = useState([]);
     FilterEducators();
   }, [educators]);
 
+  // Handle body overflow
+  useEffect(() => {
+  if (viewUserDetails) {
+    document.body.style.overflow = 'hidden';
+  } else {
+    document.body.style.overflow = 'unset';
+  }
+
+  return () => {
+    document.body.style.overflow = 'unset';
+  };
+}, [viewUserDetails]);
+
 
 
   const SidebarItem = ({ icon, label, active, onClick, }) => (
@@ -339,14 +352,37 @@ const handleYearChange = (year) => {
           <Loader />
         )
       }
+       
+       {/* // User Details Modal */}
            {
-      viewUserDetails && (
-        <div className={` w-full 2xl:w-[80%]  absolute z-50  flex justify-center`}>
-          <UserDetailsList userEmail={email} role={role}/>
-        <span onClick={()=>{setViewUserDetails(false)}} className=' text-black absolute right-10 text-3xl top-5 cursor-pointer'>X</span>
+  viewUserDetails && (
+    <>
+      {/* Overlay Background */}
+      <div 
+        className="fixed inset-0 z-40  bg-opacity-60 backdrop-blur-sm"
+        onClick={() => setViewUserDetails(false)}
+      />
+      
+      {/* Modal Content */}
+      <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto p-4">
+        <div className="relative w-full max-w-6xl my-8 bg-white rounded-xl shadow-2xl">
+          {/* Close Button */}
+          <button 
+            onClick={() => setViewUserDetails(false)} 
+            className="sticky top-4 float-right mr-4 mt-4 z-10 text-gray-500 hover:text-gray-800 text-3xl font-bold bg-white rounded-full w-12 h-12 flex items-center justify-center shadow-lg hover:shadow-xl transition-all hover:rotate-90"
+          >
+            ×
+          </button>
+          
+          {/* User Details */}
+          <div className="p-6">
+            <UserDetailsList userEmail={email} role={role} />
+          </div>
         </div>
-      )
-     }
+      </div>
+    </>
+  )
+}
       {/* Sidebar - Desktop */}
       <div className="hidden md:flex relative left-0 min-h-screen w-64 bg-[#f2c078] shadow-md flex-col">
         <div className="p-4 flex items-center space-x-2">
