@@ -17,6 +17,16 @@ const Admin = new mongoose.Schema({
       type : String,
       required : true
   },
+  revenueByYear: [{
+    year: {
+      type: Number,
+      required: true
+    },
+    months: [{
+      month: String,
+      revenue: Number
+    }]
+  }],
   revenue:[
     {
       month: String,
