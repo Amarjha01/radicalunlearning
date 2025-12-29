@@ -353,26 +353,26 @@ const SearchTab = ({ darkMode, userData }) => {
                   </div>
 
                 <button
-  onClick={() => handlePay(educator._id, educator?.sessionFee || 10 )}
-  disabled={loadingEducatorId === educator._id}
-  className={`w-full py-3 px-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-medium rounded-lg flex items-center justify-center transition-all 
-    ${loadingEducatorId === educator._id ? 'opacity-50 cursor-not-allowed' : 'hover:from-blue-700 hover:to-purple-700'}`}
->
-  {loadingEducatorId === educator._id ? (
-    <>
-      <svg className="animate-spin h-5 w-5 mr-2 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
-      </svg>
-      Processing...
-    </>
-  ) : (
-    <>
-      <CiLock className="mr-2 text-lg" />
-      Pay to Book Session
-    </>
-  )}
-</button>
+                  onClick={() => handlePay(educator._id, educator?.sessionFee || 10 )}
+                  disabled={loadingEducatorId === educator._id}
+                  className={`w-full py-3 px-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-medium rounded-lg flex items-center justify-center transition-all 
+                    ${loadingEducatorId === educator._id ? 'opacity-50 cursor-not-allowed' : 'hover:from-blue-700 hover:to-purple-700'}`}
+                >
+                  {loadingEducatorId === educator._id ? (
+                    <>
+                      <svg className="animate-spin h-5 w-5 mr-2 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
+                      </svg>
+                      Processing...
+                    </>
+                  ) : (
+                    <>
+                      <CiLock className="mr-2 text-lg" />
+                      Pay to Book Session
+                    </>
+                  )}
+                </button>
 
                 </div>
               </div>
@@ -1274,7 +1274,7 @@ const LearnerDashboard = () => {
           onClick={() => setMobileSidebarOpen(!mobileSidebarOpen)}
           className={`p-2 rounded-md hover:bg-blue-700 text-xl cursor-pointer transition-all duration-500 transform ${
             mobileSidebarOpen ? "rotate-90" : "rotate-0"
-          }`}
+          } z-1`}
         >
           {mobileSidebarOpen ? <IoMdClose /> : <CiMenuFries />}
         </button>
