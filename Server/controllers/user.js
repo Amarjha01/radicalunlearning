@@ -469,8 +469,10 @@ export async function signin(request, response) {
 
     const cookiesOption = {
       httpOnly: true,
-      sameSite: "Lax",
+      sameSite:  "Lax",
       secure: false,
+      maxAge: 7 * 24 * 60 * 60 * 1000, // ✅ ADDED - 7 days
+      path:  "/",                         // ✅ ADDED - All routes
     };
 
     response.cookie("accessToken", accessToken, cookiesOption);
