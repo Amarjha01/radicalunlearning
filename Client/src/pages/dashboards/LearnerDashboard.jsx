@@ -1071,7 +1071,7 @@ const handleDeleteAccount = async () => {
   defaultRole="LEARNER"
 />
 
-{/* ✅ DELETE ACCOUNT MODAL - BLUR BACKGROUND VERSION */}
+{/*  DELETE ACCOUNT MODAL - BLUR BACKGROUND VERSION */}
 {showDeleteModal && (
   <div className="fixed inset-0 backdrop-blur-sm bg-black/30 flex items-center justify-center p-4 z-50 animate-fadeIn">
     <div className="bg-white rounded-xl shadow-2xl max-w-md w-full p-6 transform transition-all animate-scaleIn">
