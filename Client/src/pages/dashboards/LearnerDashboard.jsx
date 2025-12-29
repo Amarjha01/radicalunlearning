@@ -854,7 +854,7 @@ const handleDeleteAccount = async () => {
                 type="file"
                 accept="image/*"
                 onChange={(e) => setFile(e.target.files[0])}
-                className={`w-48 md:w-40 lg:w-52 bg-yellow-200 flex items-center justify-center px-4 py-2 rounded-md text-sm text-gray-700  ${editProfile ? "hover:bg-yellow-300 cursor-pointer" : "cursor-not-allowed"}`}
+                className={`w-48 md:w-40 lg:w-52 bg-yellow-200 flex items-center justify-center px-4 py-2 rounded-md text-sm text-gray-700  ${editProfile ? "hover:bg-yellow-300 cursor-pointer" : "cursor-not-allowed"} disabled:opacity-50`}
                 id="avatarUpload"
               />
             </div>
@@ -869,7 +869,7 @@ const handleDeleteAccount = async () => {
                     </label>
                     <input
                       type="text"
-                      className={`w-full p-2 rounded-md border bg-[#faf3dd]`}
+                      className={`w-full p-2 rounded-md border bg-[#faf3dd] disabled:opacity-50 disabled:cursor-not-allowed`}
                       defaultValue={userData.name}
                       disabled={!editProfile}
                       onChange={(e) => handleChange("name", e.target.value)}
@@ -881,7 +881,7 @@ const handleDeleteAccount = async () => {
                     </label>
                     <input
                       type="email"
-                      className={`w-full p-2 rounded-md border bg-[#faf3dd]`}
+                      className={`w-full p-2 rounded-md border bg-[#faf3dd] disabled:opacity-50 disabled:cursor-not-allowed`}
                       defaultValue={userData.email}
                       disabled={!editProfile}
                       onChange={(e) => handleChange("email", e.target.value)}
@@ -896,7 +896,7 @@ const handleDeleteAccount = async () => {
                     </label>
                     <input
                       type="text"
-                      className={`w-full p-2 rounded-md border bg-[#faf3dd]`}
+                      className={`w-full p-2 rounded-md border bg-[#faf3dd] disabled:opacity-50 disabled:cursor-not-allowed`}
                       defaultValue={userData.country}
                       disabled={!editProfile}
                       onChange={(e) => handleChange("country", e.target.value)}
@@ -907,7 +907,7 @@ const handleDeleteAccount = async () => {
                       Language
                     </label>
                     <select
-                      className={`w-full p-2 rounded-md border bg-[#faf3dd]`}
+                      className={`w-full p-2 rounded-md border bg-[#faf3dd] disabled:opacity-50 disabled:cursor-not-allowed`}
                       defaultValue={userData.language}
                       disabled={!editProfile}
                       onChange={(e) => handleChange("language", e.target.value)}
@@ -924,7 +924,7 @@ const handleDeleteAccount = async () => {
                 <div className="mb-4">
                   <label className="block text-sm font-medium mb-1">Bio</label>
                   <textarea
-                    className={`w-full p-2 rounded-md border bg-[#faf3dd]`}
+                    className={`w-full p-2 rounded-md border bg-[#faf3dd] disabled:opacity-50 disabled:cursor-not-allowed`}
                     rows="4"
                     defaultValue={userData.bio}
                     disabled={!editProfile}
@@ -1284,8 +1284,8 @@ const LearnerDashboard = () => {
         <div
           className={`
           ${
-            mobileSidebarOpen ? "block" : "hidden"
-          } md:block w-64 h-[100vh] z-10 border-r border-gray-200 shadow-sm px-2 fixed bg-[#f2c078]`}
+            mobileSidebarOpen ? "block translate-x-0" : "hidden translate-x-full"
+          } md:block md:translate-x-0 w-64 h-[100vh] z-10 border-r border-gray-200 shadow-sm px-2 fixed bg-[#f2c078] top-0 transition-transform duration-300 ease-in-out`}
         >
           {/* Logo */}
           <div className="p-4 flex flex-col text-black">
@@ -1315,7 +1315,7 @@ const LearnerDashboard = () => {
           </div>
 
           {/* Navigation */}
-          <nav className="flex flex-col space-y-2">
+          <nav className="flex-1 px-4 py-6 space-y-1">
             {[
               { name: "Overview", icon: <Home size={18} /> },
               { name: "Search For Expert", icon: <TbUserSearch size={18} /> },
@@ -1344,12 +1344,13 @@ const LearnerDashboard = () => {
           </nav>
 
           {/* Dark Mode Toggle & Logout */}
-          <div className="absolute bottom-0 left-0 w-64 border-t border-gray-200 p-4">
+          <div className="px-4 py-6 border-t border-gray-200 dark:border-gray-700">
+              
             <button
               onClick={() => {
                 handleSignOut();
               }}
-              className="flex items-center text-red-500 hover:text-red-600 px-3 py-2 rounded-md w-full cursor-pointer"
+              className="flex items-center w-full px-3 py-2 text-sm font-medium text-red-500 hover:text-red-600 rounded-md cursor-pointer"
             >
               <LogOut size={18} className="mr-2" />
               Sign Out
@@ -1386,6 +1387,13 @@ const LearnerDashboard = () => {
           )}
         </div>
       </div>
+      {/* Overlay for mobile */}
+      {mobileSidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/30 backdrop-blur-[2px] z-0 md:hidden"
+          onClick={() => setMobileSidebarOpen(false)}
+        />
+      )}  
     </div>
   );
 };
