@@ -184,6 +184,8 @@ const SearchTab = ({ darkMode, userData }) => {
       if (response.status === 200) {
         setAllEducator(response.data.data); // Assuming the API returns an array of educators
       }
+      // console.log(response.data.data);
+      
     } catch (error) {
       console.error("Error fetching educators:", error);
        if (error.message === "Network Error") {

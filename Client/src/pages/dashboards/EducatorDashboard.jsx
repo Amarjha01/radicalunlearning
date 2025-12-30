@@ -46,6 +46,7 @@ export default function EducatorDashboard() {
   const [profileData, setProfileData] = useState({});
   const [sessions, setSessions] = useState({previous:[],upcoming:[]});
   const [isChangePasswordOpen, setIsChangePasswordOpen] = useState(false);
+  const [isProfileUpdating , setIsProfileUpdating] = useState(false)
   console.log(activeTab);
   
   const dispatch = useDispatch();

@@ -1063,7 +1063,7 @@ export async function searchEducator(req, res) {
       Approved: true,
       suspended: 'NO'
     })
-    .select('name country bio _id subjects documentUrl videoUrl sessionfee');
+    .select('name country bio _id subjects documentUrl videoUrl sessionfee avatar');
 
     if (educators.length > 0) {
       res.status(200).json({
