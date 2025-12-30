@@ -47,6 +47,8 @@ import { Link } from "react-router-dom";
 import { showErrorToast, showNetworkErrorToast,showSuccessToast } from "../../utils/Notification.jsx";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import ForgotPassword from "../../components/Auth/ForgotPassword.jsx";
+
 // Dummy data for development
 const dummyUser = {
   name: "Alex Thompson",
@@ -351,26 +353,26 @@ const SearchTab = ({ darkMode, userData }) => {
                   </div>
 
                 <button
-  onClick={() => handlePay(educator._id, educator?.sessionFee || 10 )}
-  disabled={loadingEducatorId === educator._id}
-  className={`w-full py-3 px-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-medium rounded-lg flex items-center justify-center transition-all 
-    ${loadingEducatorId === educator._id ? 'opacity-50 cursor-not-allowed' : 'hover:from-blue-700 hover:to-purple-700'}`}
->
-  {loadingEducatorId === educator._id ? (
-    <>
-      <svg className="animate-spin h-5 w-5 mr-2 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
-      </svg>
-      Processing...
-    </>
-  ) : (
-    <>
-      <CiLock className="mr-2 text-lg" />
-      Pay to Book Session
-    </>
-  )}
-</button>
+                  onClick={() => handlePay(educator._id, educator?.sessionFee || 10 )}
+                  disabled={loadingEducatorId === educator._id}
+                  className={`w-full py-3 px-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-medium rounded-lg flex items-center justify-center transition-all 
+                    ${loadingEducatorId === educator._id ? 'opacity-50 cursor-not-allowed' : 'hover:from-blue-700 hover:to-purple-700'}`}
+                >
+                  {loadingEducatorId === educator._id ? (
+                    <>
+                      <svg className="animate-spin h-5 w-5 mr-2 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
+                      </svg>
+                      Processing...
+                    </>
+                  ) : (
+                    <>
+                      <CiLock className="mr-2 text-lg" />
+                      Pay to Book Session
+                    </>
+                  )}
+                </button>
 
                 </div>
               </div>
@@ -623,7 +625,7 @@ const SettingsTab = ({ userData }) => {
   confirmPassword: "",
 });
 const [passwordLoading, setPasswordLoading] = useState(false);
-
+const [showForgotPassword, setShowForgotPassword] = useState(false);
 // DELETE ACCOUNT MODAL STATES 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deletePassword, setDeletePassword] = useState("");
@@ -852,7 +854,7 @@ const handleDeleteAccount = async () => {
                 type="file"
                 accept="image/*"
                 onChange={(e) => setFile(e.target.files[0])}
-                className={`w-48 md:w-40 lg:w-52 bg-yellow-200 flex items-center justify-center px-4 py-2 rounded-md text-sm text-gray-700  ${editProfile ? "hover:bg-yellow-300 cursor-pointer" : "cursor-not-allowed"}`}
+                className={`w-48 md:w-40 lg:w-52 bg-yellow-200 flex items-center justify-center px-4 py-2 rounded-md text-sm text-gray-700  ${editProfile ? "hover:bg-yellow-300 cursor-pointer" : "cursor-not-allowed"} disabled:opacity-50`}
                 id="avatarUpload"
               />
             </div>
@@ -867,7 +869,7 @@ const handleDeleteAccount = async () => {
                     </label>
                     <input
                       type="text"
-                      className={`w-full p-2 rounded-md border bg-[#faf3dd]`}
+                      className={`w-full p-2 rounded-md border bg-[#faf3dd] disabled:opacity-50 disabled:cursor-not-allowed`}
                       defaultValue={userData.name}
                       disabled={!editProfile}
                       onChange={(e) => handleChange("name", e.target.value)}
@@ -879,7 +881,7 @@ const handleDeleteAccount = async () => {
                     </label>
                     <input
                       type="email"
-                      className={`w-full p-2 rounded-md border bg-[#faf3dd]`}
+                      className={`w-full p-2 rounded-md border bg-[#faf3dd] disabled:opacity-50 disabled:cursor-not-allowed`}
                       defaultValue={userData.email}
                       disabled={!editProfile}
                       onChange={(e) => handleChange("email", e.target.value)}
@@ -894,7 +896,7 @@ const handleDeleteAccount = async () => {
                     </label>
                     <input
                       type="text"
-                      className={`w-full p-2 rounded-md border bg-[#faf3dd]`}
+                      className={`w-full p-2 rounded-md border bg-[#faf3dd] disabled:opacity-50 disabled:cursor-not-allowed`}
                       defaultValue={userData.country}
                       disabled={!editProfile}
                       onChange={(e) => handleChange("country", e.target.value)}
@@ -905,7 +907,7 @@ const handleDeleteAccount = async () => {
                       Language
                     </label>
                     <select
-                      className={`w-full p-2 rounded-md border bg-[#faf3dd]`}
+                      className={`w-full p-2 rounded-md border bg-[#faf3dd] disabled:opacity-50 disabled:cursor-not-allowed`}
                       defaultValue={userData.language}
                       disabled={!editProfile}
                       onChange={(e) => handleChange("language", e.target.value)}
@@ -922,7 +924,7 @@ const handleDeleteAccount = async () => {
                 <div className="mb-4">
                   <label className="block text-sm font-medium mb-1">Bio</label>
                   <textarea
-                    className={`w-full p-2 rounded-md border bg-[#faf3dd]`}
+                    className={`w-full p-2 rounded-md border bg-[#faf3dd] disabled:opacity-50 disabled:cursor-not-allowed`}
                     rows="4"
                     defaultValue={userData.bio}
                     disabled={!editProfile}
@@ -1014,7 +1016,14 @@ const handleDeleteAccount = async () => {
         </div>
         
         {/* Submit Button */}
-        <div className="flex justify-end">
+        <div className="flex justify-end gap-5">
+
+           <button
+          onClick={() => setShowForgotPassword(true)}
+          className="text-sm text-blue-600 hover:text-blue-700 hover:underline font-medium"
+        >
+          Reset Password
+        </button>
           <button
             type="submit"
             disabled={passwordLoading}
@@ -1028,6 +1037,7 @@ const handleDeleteAccount = async () => {
           </button>
         </div>
       </form>
+     
     </div>
 
     {/* Danger Zone - SAME AS BEFORE */}
@@ -1054,7 +1064,14 @@ const handleDeleteAccount = async () => {
     </div>
   </div>
 )}
-{/* ✅ DELETE ACCOUNT MODAL - BLUR BACKGROUND VERSION */}
+
+<ForgotPassword 
+  isOpen={showForgotPassword}
+  onClose={() => setShowForgotPassword(false)}
+  defaultRole="LEARNER"
+/>
+
+{/*  DELETE ACCOUNT MODAL - BLUR BACKGROUND VERSION */}
 {showDeleteModal && (
   <div className="fixed inset-0 backdrop-blur-sm bg-black/30 flex items-center justify-center p-4 z-50 animate-fadeIn">
     <div className="bg-white rounded-xl shadow-2xl max-w-md w-full p-6 transform transition-all animate-scaleIn">
@@ -1257,7 +1274,7 @@ const LearnerDashboard = () => {
           onClick={() => setMobileSidebarOpen(!mobileSidebarOpen)}
           className={`p-2 rounded-md hover:bg-blue-700 text-xl cursor-pointer transition-all duration-500 transform ${
             mobileSidebarOpen ? "rotate-90" : "rotate-0"
-          }`}
+          } z-1`}
         >
           {mobileSidebarOpen ? <IoMdClose /> : <CiMenuFries />}
         </button>
@@ -1267,8 +1284,8 @@ const LearnerDashboard = () => {
         <div
           className={`
           ${
-            mobileSidebarOpen ? "block" : "hidden"
-          } md:block w-64 h-[100vh] z-10 border-r border-gray-200 shadow-sm px-2 fixed bg-[#f2c078]`}
+            mobileSidebarOpen ? "block translate-x-0" : "hidden translate-x-full"
+          } md:block md:translate-x-0 w-64 h-[100vh] z-10 border-r border-gray-200 shadow-sm px-2 fixed bg-[#f2c078] top-0 transition-transform duration-300 ease-in-out`}
         >
           {/* Logo */}
           <div className="p-4 flex flex-col text-black">
@@ -1298,7 +1315,7 @@ const LearnerDashboard = () => {
           </div>
 
           {/* Navigation */}
-          <nav className="flex flex-col space-y-2">
+          <nav className="flex-1 px-4 py-6 space-y-1">
             {[
               { name: "Overview", icon: <Home size={18} /> },
               { name: "Search For Expert", icon: <TbUserSearch size={18} /> },
@@ -1327,12 +1344,13 @@ const LearnerDashboard = () => {
           </nav>
 
           {/* Dark Mode Toggle & Logout */}
-          <div className="absolute bottom-0 left-0 w-64 border-t border-gray-200 p-4">
+          <div className="px-4 py-6 border-t border-gray-200 dark:border-gray-700">
+              
             <button
               onClick={() => {
                 handleSignOut();
               }}
-              className="flex items-center text-red-500 hover:text-red-600 px-3 py-2 rounded-md w-full cursor-pointer"
+              className="flex items-center w-full px-3 py-2 text-sm font-medium text-red-500 hover:text-red-600 rounded-md cursor-pointer"
             >
               <LogOut size={18} className="mr-2" />
               Sign Out
@@ -1369,6 +1387,13 @@ const LearnerDashboard = () => {
           )}
         </div>
       </div>
+      {/* Overlay for mobile */}
+      {mobileSidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/30 backdrop-blur-[2px] z-0 md:hidden"
+          onClick={() => setMobileSidebarOpen(false)}
+        />
+      )}  
     </div>
   );
 };

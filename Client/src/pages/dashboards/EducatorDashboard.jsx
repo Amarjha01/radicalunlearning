@@ -35,6 +35,7 @@ import AIChat from '../../components/ChatBot/Aichat.jsx';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { showErrorToast, showNetworkErrorToast, showSuccessToast } from "../../utils/Notification.jsx";
+import ForgotPassword from "../../components/Auth/ForgotPassword.jsx";
 import React from "react";
 // Main Component
 export default function EducatorDashboard() {
@@ -286,6 +287,8 @@ const fetchWalletAmount = async() =>{
     "Thai",
     "Gujarati",
   ];
+
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
 
   return (
     <div className="w-[100vw] min-h-screen flex max-w-[1680px] mx-auto">
@@ -1041,6 +1044,9 @@ const fetchWalletAmount = async() =>{
           </div>
 
           <div className="flex justify-end items-center gap-5">
+
+            <button type="button" onClick={(()=> setShowForgotPassword(true))} className="px-6 py-2 rounded-md font-medium bg-red-600 hover:bg-red-700 text-white">Forgot Password</button>
+
             <FaUserEdit 
               onClick={() => setEditProfile(!editProfile)} 
               className={`text-4xl cursor-pointer ${editProfile ? 'text-green-600' : 'text-white'}`}
@@ -1057,9 +1063,13 @@ const fetchWalletAmount = async() =>{
             >
               {loading ? 'Saving...' : 'Save Profile'}
             </button>
+                
           </div>
         </form>
+        
+
       </div>
+      <ForgotPassword isOpen={showForgotPassword} onClose={() => setShowForgotPassword(false)} defaultRole="EDUCATOR"/>
     </div>
   </div>
 )}

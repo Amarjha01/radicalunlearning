@@ -36,6 +36,17 @@ deleteAccount: {
   method: 'DELETE',
 },
 
+// Forget password Send OTP Endpoint
+forgotPasswordSendOTP: {      
+  url: `${backendDomain}/api/user/forgot-password-send-otp`,
+  method: 'POST',
+},
+// Forget password Reset Password Endpoint
+forgotPasswordReset: {        
+  url: `${backendDomain}/api/user/forgot-password-reset`,
+  method: 'POST',
+},
+
   // ------------------------APIs for Admin dashboard---------------------------
   educatorsData: { 
     url: `${backendDomain}/api/admin/get-all-educator-data`,
@@ -70,6 +81,11 @@ deleteAccount: {
   },
   processWithdrawRequest: { 
     url: `${backendDomain}/api/admin/processWithdrawRequest`,
+  },
+
+  getRevenueData: {
+    url: `${backendDomain}/api/admin/getRevenueData`,
+    method: "get"
   },
 
   // --------------------APIs for learner------------------

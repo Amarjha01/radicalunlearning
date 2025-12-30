@@ -17,6 +17,16 @@ const Admin = new mongoose.Schema({
       type : String,
       required : true
   },
+  revenueByYear: [{
+    year: {
+      type: Number,
+      required: true
+    },
+    months: [{
+      month: String,
+      revenue: Number
+    }]
+  }],
   revenue:[
     {
       month: String,
@@ -107,6 +117,9 @@ const Lerner_userSchema = new mongoose.Schema({
     type: Number,
     default: 0
   },
+  otpExpiry: {          // OTP Expiry
+    type: Date
+  },
   suspended: {
     type: String,
     enum: ['YES', 'NO'],
@@ -147,6 +160,14 @@ const Educator_userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+
+  otp: {               // OTP
+  type: Number,
+  default: 0
+},
+otpExpiry: {         // OTP Expiry
+  type: Date
+},
   role: {
     type: String,
   },
