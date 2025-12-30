@@ -559,16 +559,18 @@ export async function updateUserDetails(req, res) {
     } else if (role === "EDUCATOR") {
       const { bio, experience, avatar } = req.body;
 
-      updateUser = await EducatorUserModel.updateOne(
-        { _id: userId },
+      updateUser = await EducatorUserModel.findByIdAndUpdate(
+        userId,
         {
           ...(bio && { bio }),
           ...(experience && { experience }),
           ...(avatar && { avatar }),
-        }
+        },
+        {new : true}
       );
     }
-
+  console.log(updateUser);
+   
     return res.status(200).json({
       message: "Updated successfully",
       error: false,

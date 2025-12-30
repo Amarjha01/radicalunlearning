@@ -24,13 +24,14 @@ const ChatInput = ({ roomId, currentUser }) => {
   return (
     <div className="flex p-2 border-t  bg-[#b4c0b2]">
       <input
+        disabled={true}
         type="text"
-        className="flex-1 p-2 rounded bg-[#faf3dd] text-black focus:outline-none"
+        className="flex-1 p-2 rounded bg-[#faf3dd] text-black focus:outline-none cursor-not-allowed"
         value={text}
         onChange={(e) => setText(e.target.value)}
-        placeholder="Type a message..."
+        placeholder="Community chat is temporarily disabled."
       />
-      <button onClick={handleSend} className="ml-2 px-4 py-2 bg-[#f2c078] text-black rounded">
+      <button onClick={handleSend} className="ml-2 px-4 py-2 bg-[#f2c078] text-black rounded cursor-not-allowed">
         Send
       </button>
     </div>

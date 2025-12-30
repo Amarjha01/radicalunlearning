@@ -182,6 +182,8 @@ const [expandedRequestId, setExpandedRequestId] = useState(null);
 
   //  delete user
   const deleteUser = async (email, role) => {
+    console.log(email , role);
+    
     try {
       SetLoader(true)
       const response = await axios.delete(API.deleteUser.url, {
@@ -197,6 +199,7 @@ const [expandedRequestId, setExpandedRequestId] = useState(null);
         showSuccessToast("user Deleted successfully")
         fetchEducatorsData();
         fetchLearnersData();
+
       }
     } catch (error) {
       SetLoader(false)
@@ -259,14 +262,14 @@ const getWithdrawelRequests = async() =>{
       }
            {
       viewUserDetails && (
-        <div className={` w-full 2xl:w-[80%]  absolute z-50  flex justify-center`}>
-          <UserDetailsList userEmail={email} role={role}/>
+        <div className={` w-full 2xl:w-[80%] fixed z-50 bg-amber-30 max-h-screen  flex justify-center`}>
+          <UserDetailsList userEmail={email} role={role} deleteUser={deleteUser}/>
         <span onClick={()=>{setViewUserDetails(false)}} className=' text-black absolute right-10 text-3xl top-5 cursor-pointer'>X</span>
         </div>
       )
      }
       {/* Sidebar - Desktop */}
-      <div className="hidden md:flex relative left-0 min-h-screen w-64 bg-[#f2c078] shadow-md flex-col">
+      <div className="hidden md:flex fixed left-0 min-h-screen w-64 bg-[#f2c078] shadow-md flex-col z-20">
         <div className="p-4 flex items-center space-x-2">
           <BookOpen className="h-8 w-8  " />
           <h1 className="text-xl font-bold ">Admin Tools</h1>
@@ -433,9 +436,9 @@ const getWithdrawelRequests = async() =>{
         </div>
       )}
       {/* top bar */}
-      <div className=" grow-1 min-h-screen bg-[#faf3dd] p-5">
-        <div className=" shadow rounded-lg mb-4 p-4 flex justify-between items-center">
-          <div className="flex items-center">
+      <div className=" grow-1 min-h-screen bg-[#faf3dd] p-5 md:pl-70">
+        <div className=" shadow rounded-lg mb-4 p-4 flex justify-between items-center sticky top-0 transition-all duration-500 backdrop-blur-2xl">
+          <div className="flex items-center ">
             <h2 className="text-xl font-semibold ">
               {activeView === "dashboard" && "Dashboard"}
               {activeView === "educators" && "Educators Management"}

@@ -2,10 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { User, Mail, Phone, Calendar, Globe, Shield, Ban, ShieldCheck, ExternalLink, Clock, MapPin, BookOpen, Award, Users, Star } from 'lucide-react';
 import API from '../../../common/apis/ServerBaseURL';
 import axios from 'axios';
+import { LuLoader } from 'react-icons/lu';
+import { MdDelete } from 'react-icons/md';
 
-const UserDetails = ({ userEmail, role }) => {
+const UserDetails = ({ userEmail, role , deleteUser }) => {
   const [user, setUserData] = useState({});
-
+  console.log(user);
+  
+  const [loading , setLoading] = useState(false)
   const fetchUserData = async (userEmail, role) => {
     try {
       if (role === "educator") {
@@ -46,19 +50,29 @@ const UserDetails = ({ userEmail, role }) => {
   }
 
   const handleSuspendUser = async () => {
+    setLoading(true)
     try {
       const response = await axios.post(API.suspendUser.url, { role: user.role, _id: user._id },
         { withCredentials: true }
       );
       if (response.status === 200) {
         const updatedUser = response.data.data;
-        setUserData(updatedUser); // update user state if suspension status changes
+        setUserData(updatedUser); 
+        setLoading(false)
       }
     } catch (error) {
       console.log(error);
     }
   };
-
+   const handleDeleteUser = async()=>{
+    try {
+      setLoading(true)
+     await deleteUser(user.email , user.role)
+     setLoading(false)
+    } catch (error) {
+      
+    }
+   }
   const getFieldIcon = (key) => {
     const iconMap = {
       email: Mail,
@@ -105,9 +119,9 @@ const UserDetails = ({ userEmail, role }) => {
   };
 
   return (
-    <div className="p-6 w-full max-w-5xl mx-auto h-[100vh]">
+    <div className="p-1 w-full max-w-5xl mx-auto min-h-screen sticky top-1 ">
       {/* Header */}
-      <div className="px-8 py-6 bg-gradient-to-r from-amber-100 to-green-100 border-b-2 border-amber-200 rounded-t-3xl">
+      <div className="px-8 py-1 bg-gradient-to-r from-amber-100 to-green-100 border-b-2 border-amber-200 rounded-t-3xl">
         <div className="flex items-center justify-between">
           <div className="flex items-center">
             <div className="w-12 h-12 rounded-full bg-gradient-to-br from-amber-200 to-green-200 flex items-center justify-center mr-4 shadow-lg">
@@ -120,8 +134,13 @@ const UserDetails = ({ userEmail, role }) => {
               <p className="text-gray-600 text-sm mt-1">Comprehensive user information</p>
             </div>
           </div>
-
+  <actionButtom className=" flex justify-center gap-10">
+  <button disabled={loading} onClick={()=>(handleDeleteUser())} className={`text-3xl text-red-600 `}>
+      
+      {loading ? <LuLoader className={`animate-spin`} /> : <MdDelete className=' cursor-pointer' /> }
+    </button>
           <button
+          // disabled={}
             onClick={handleSuspendUser}
             className={`px-6 py-3 rounded-2xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 ${
               user.suspended === "YES"
@@ -134,6 +153,7 @@ const UserDetails = ({ userEmail, role }) => {
               {user.suspended === "YES" ? 'Unsuspend User' : 'Suspend User'}
             </div>
           </button>
+  </actionButtom>
         </div>
       </div>
       <div className='h-[80vh] overflow-y-scroll'>

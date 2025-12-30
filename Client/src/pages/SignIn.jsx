@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { FaUserAlt } from "react-icons/fa";
 import { RiLockPasswordFill } from "react-icons/ri";
 import { IoMdEye, IoMdEyeOff } from "react-icons/io";
+import { LuLoader } from "react-icons/lu";
 import API from "../common/apis/ServerBaseURL.jsx";
 import { useDispatch } from 'react-redux';
 import { userinfo } from "../store/slices/userSlice.jsx";
@@ -15,7 +16,7 @@ import 'react-toastify/dist/ReactToastify.css';
 const SignIn = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [submitting, isSubmitting] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPass, setShowPass] = useState(false);
 
   const handleShowPass = () => {
@@ -29,10 +30,12 @@ const SignIn = () => {
   } = useForm();
 
   const [errorMessage, setErrorMessage] = useState("");
+console.log('setIsSubmitting' , isSubmitting);
 
   const onSubmit = async (data) => {
+     setIsSubmitting(true);
     try {
-      isSubmitting(true);
+     
       const response = await axios.post(
         API.signIn.url,
         data,
@@ -43,16 +46,22 @@ const SignIn = () => {
 
       if (response?.data?.success === true) {
         const responseData = response.data;
+        // console.log(response);
+        
         const userData = responseData.userData;
         const statePayload = {
           userData,
         };
+        console.log(statePayload);
+        
         dispatch(userinfo(statePayload));
 
         if (response?.status === 200) {
       showSuccessToast("Login successful.");
   }
+  
         const timeout = setTimeout(() => {
+          setIsSubmitting(false)
           navigate(`/dashboard/${userData.role.toLowerCase()}`);
         }, 1000);
 
@@ -177,10 +186,11 @@ const SignIn = () => {
 
           {/* Submit Button */}
           <button
+          disabled={isSubmitting}
             type="submit"
-            className="w-full bg-[#f2c078] text-black font-semibold py-2 rounded-lg hover:brightness-110 transition-all cursor-pointer"
+            className={`w-full flex justify-center bg-[#f2c078] text-black font-semibold py-2 rounded-lg transition-all cursor-pointer ${isSubmitting ? 'opacity-50 cursor-not-allowed' : 'hover:brightness-110'}`}
           >
-            Sign In
+            {isSubmitting ?  <LuLoader className=" animate-spin text-2xl"/> : "Sign In" }
           </button>
         </form>
 

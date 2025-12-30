@@ -13,7 +13,7 @@ import { CiChat1 } from "react-icons/ci";
 
 // API & Redux
 import API from "../../common/apis/ServerBaseURL.jsx";
-import { clearUser } from "../../store/slices/userSlice.jsx";
+import { clearUser, userinfo } from "../../store/slices/userSlice.jsx";
 
 // Components
 import GroupChat from "../../components/Chat/GroupChat.jsx";
@@ -23,6 +23,7 @@ import AIChat from "../../components/ChatBot/Aichat.jsx";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { showErrorToast, showNetworkErrorToast } from "../../utils/Notification.jsx";
+import { RiLoader2Fill } from "react-icons/ri";
 // Main Component
 export default function EducatorDashboard() {
   const [activeTab, setActiveTab] = useState("dashboard");
@@ -33,7 +34,7 @@ export default function EducatorDashboard() {
   const [sessions, setSessions] = useState({ previous: [], upcoming: [] });
   const [isChangePasswordOpen, setIsChangePasswordOpen] = useState(false);
   const [walletAmount, setWalletAmount] = useState();
-
+  const [isProfileUpdating , setIsProfileUpdating] = useState(false)
   const dispatch = useDispatch();
   const Navigate = useNavigate();
   const user = useSelector((state) => state.user);
@@ -145,7 +146,7 @@ export default function EducatorDashboard() {
   const handleProfileUpdate = async (e) => {
     e.preventDefault();
     setLoading(true);
-
+     setIsProfileUpdating(true)
     let updatedData = { ...changedData };
 
     if (file) {
@@ -157,12 +158,24 @@ export default function EducatorDashboard() {
     }
 
     try {
+     
       const response = await axios.patch(
         API.updateUserDetails.url,
         updatedData,
         { withCredentials: true }
       );
-
+     if(response.status === 200){
+      const payloadData= {
+              UserData:{
+                user:{
+                  ...response.data.data
+                },
+                role:response.data.data.role
+              }
+      }
+      dispatch(userinfo(payloadData))
+      setIsProfileUpdating(false)
+     }
       console.log(response);
       setEditProfile(false);
     } catch (error) {
@@ -234,7 +247,7 @@ export default function EducatorDashboard() {
       {/* sidebar desktop */}
       <div className="hidden fixed md:flex  left-0 min-h-screen w-64 bg-[#f2c078] shadow-md flex-col">
         <aside className="min-h-screen inset-y-0 left-0 z-10 w-64 shadow-lg transform transition-transform duration-300 md:translate-x-0 hidden md:block">
-          <div className="flex flex-col  h-full">
+          <div className="flex flex-col  min-h-full">
             <div className="px-4 py-6 flex items-center justify-center border-b border-gray-200 dark:border-gray-700">
               <div className="relative w-12 h-12 rounded-full overflow-hidden bg-[#e0e7ff]  mr-3">
                 <img
@@ -325,11 +338,10 @@ export default function EducatorDashboard() {
               </button>
             </nav>
 
-            <div className="px-4 py-6 border-t border-gray-200 dark:border-gray-700">
-              <div className="flex items-center justify-between mb-4"></div>
+            <div className="px-4 py-6 border-t border-gray-200 dark:border-gray-700 absolute bottom-5 w-full flex justify-center">
               <button
                 onClick={handleSignOut}
-                className="flex items-center w-full px-3 py-2 text-sm font-medium text-black hover:text-red-600 dark:hover:text-red-400 cursor-pointer"
+                className=" items-center w-fit text-md font-medium text-black hover:text-red-800  flex justify-center  cursor-pointer"
               >
                 <LogOut className="h-5 w-5 mr-2" />
                 <span>Logout</span>
@@ -496,28 +508,29 @@ export default function EducatorDashboard() {
         <div className="md:hidden text-black bg-[#faf3dd] shadow-sm py-4 px-4 sticky top-0 z-20">
           <div className="flex items-center justify-between">
             <div className="flex items-center">
-              <button
-                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="p-2 rounded-md text-gray-600 -300 hover:bg-[#f2c078]"
-              >
-                {mobileMenuOpen ? (
-                  <X className="h-6 w-6" />
-                ) : (
-                  <svg
-                    className="h-6 w-6"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M4 6h16M4 12h16M4 18h16"
-                    />
-                  </svg>
-                )}
-              </button>
+            <button
+  onClick={() => setMobileMenuOpen(!mobileMenuOpen)}  // This is the onClick handler
+  className="p-2 rounded-md text-gray-600 -300 hover:bg-[#f2c078]"
+>
+  {mobileMenuOpen ? (  // Conditional rendering of icon based on the state `mobileMenuOpen`
+    <X className="h-6 w-6" />
+  ) : (
+    <svg
+      className="h-6 w-6"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M4 6h16M4 12h16M4 18h16"
+      />
+    </svg>
+  )}
+</button>
+
               <h1 className="ml-2 text-lg font-semibold text-black">
                 Educator Portal
               </h1>
@@ -1000,10 +1013,10 @@ export default function EducatorDashboard() {
                         handleProfileUpdate(profileData);
                       }}
                       type="submit"
-                      disabled={true}
-                      className="px-6 py-2 bg-gray-500 cursor-not-allowed text-white rounded-md font-medium "
+                      // disabled={true}
+                      className="px-6 py-2 bg-[#f2c078]  hover:shadow-2xl text-white rounded-md font-medium cursor-pointer"
                     >
-                      Save Profile
+                      {loading ? <RiLoader2Fill  className=" animate-spin"/> : "Save Profile"}
                     </button>
                   </div>
                 </form>
@@ -1032,8 +1045,8 @@ export default function EducatorDashboard() {
                 </div>
                 <button
                   onClick={() => {
-                    setTempFee(sessionFee);
-                    setIsEditing(true);
+                    setTempFee(sessionFee)
+                    setIsEditing(true)
                   }}
                   className="text-sm bg-[#f2c078] hover:bg-[#d0a871] text-black cursor-pointer px-4 py-2 rounded-lg transition"
                 >
