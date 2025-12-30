@@ -1,5 +1,6 @@
 import { Router } from "express";
-import { registerLearnerController , registerEducatorController , signin , signout , updateUserDetails, registerAdminController, searchEducator, addtodos, fetchtodos, deletetodos, toggleTodoComplete, getEducatorSessions, getLearnerSessions, WithdrawelRequest, fetchWalletAmount, } from "../controllers/user.js";
+import { registerLearnerController , registerEducatorController , signin , signout , updateUserDetails, updatePassword, deleteAccount,forgotPasswordSendOTP,        
+  forgotPasswordResetPassword,registerAdminController, searchEducator, addtodos, fetchtodos, deletetodos, toggleTodoComplete, getEducatorSessions, getLearnerSessions, WithdrawelRequest, fetchWalletAmount, } from "../controllers/user.js";
 import { createZoomMeeting } from "../utils/createZoomMeeting.js";
 
 const userRouter = Router();
@@ -10,6 +11,10 @@ userRouter.post('/register-admin', registerAdminController);
 userRouter.post('/signin',signin);
 userRouter.post('/signout',signout);
 userRouter.patch('/updateUserDetails', updateUserDetails);
+userRouter.patch('/updatePassword', updatePassword);
+userRouter.delete('/deleteAccount', deleteAccount);
+userRouter.post('/forgot-password-send-otp', forgotPasswordSendOTP);
+userRouter.post('/forgot-password-reset', forgotPasswordResetPassword);
 userRouter.get('/searchEducator', searchEducator);
 userRouter.post('/addtodos', addtodos);
 userRouter.get('/fetchtodos', fetchtodos);
